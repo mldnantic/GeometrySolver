@@ -9,7 +9,7 @@ if(!gl)
 // alert("Dobrodosli u GeometrySolver :D");
 
 
-const vertexData = [
+const vertexDataCube = [
     // Front
     0.5, 0.5, 0.5,
     0.5, -.5, 0.5,
@@ -59,20 +59,37 @@ const vertexData = [
     -.5, -.5, -.5,
 ];
 
+const vertexData= [
+	2.0, 0.0, 0.0,
+	0.0 , 0.0, 0.0,
+	0.0, 2.0, 0.0,
+	0.0, 0.0, 0.0,
+	0.0, 0.0, -2.0,
+	0.0, 0.0, 0.0,
+];
+
 function randomColor()
 {
     return [Math.random(),Math.random(),Math.random()];
 }
 
-const colorData = [];
-for(let face=0;face<6;face++)
-{
-    let faceColor = randomColor();
-    for(let vertex=0;vertex<6;vertex++)
-    {
-        colorData.push(...faceColor);
-    }
-}
+const colorData = [
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+];
+
+// for(let face=0;face<2;face++)
+// {
+//     let faceColor = randomColor();
+//     for(let vertex=0;vertex<2;vertex++)
+//     {
+//         colorData.push(...faceColor);
+//     }
+// }
 
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
@@ -163,6 +180,7 @@ function animate() {
 
     mat4.multiply(finalMatrix,projectionMatrix,matrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, finalMatrix);
-    gl.drawArrays(gl.TRIANGLES, 0, vertexData.length/3);
+    gl.drawArrays(gl.LINES, 0, vertexData.length/3);
 }
 animate();
+
