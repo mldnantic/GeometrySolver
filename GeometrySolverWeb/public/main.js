@@ -90,7 +90,7 @@ function randomColor()
 //     }
 // }
 
-let density = 8;
+let density = 4;
 let size = 2.0;
 let factor = size/density;
 
