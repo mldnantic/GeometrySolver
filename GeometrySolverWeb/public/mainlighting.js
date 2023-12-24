@@ -61,6 +61,8 @@ const vertexData = [
     -.5, -.5, -.5,
 ];
 
+const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
+
 // Construct an Array by repeating `pattern` n times
 function repeat(n, pattern) {
     return [...Array(n)].reduce(sum => sum.concat(pattern), []);
@@ -117,7 +119,7 @@ function loadTexture(url) {
     return texture;
 }
 
-const brick = loadTexture(`textures/invent-box-logo-512px.jpg`);
+const brick = loadTexture(`default_brick.png`);
 
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_2D, brick);
