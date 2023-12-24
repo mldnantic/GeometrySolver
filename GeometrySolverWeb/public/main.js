@@ -10,7 +10,7 @@ alert("Dobrodosli u GeometrySolver :D");
 
 
 const vertexData = [
-    0,1,0,
+    0,0.707,0,
     1,-1,0,
     -1,-1,0,
 ];
@@ -20,6 +20,8 @@ const colorData = [
     0, 1, 0,
     0, 0, 1,
 ];
+
+const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -53,7 +55,7 @@ precision mediump float;
 varying vec3 vColor;
 
 void main(){
-    gl_FragColor = vec4(1, 0, 0, 1);
+    gl_FragColor = vec4(vColor, 1);
 }
 `);
 gl.compileShader(fragmentShader);
@@ -80,14 +82,22 @@ gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
 
 gl.useProgram(program);
 
-// const uniformLocations = {
-//     matrix: gl.getUniformLocation(program,`matrix`),
-// };
+const uniformLocations = {
+    matrix: gl.getUniformLocation(program,`matrix`),
+};
 
 
-// const matrix = mat4.create();
-// mat4.translate(matrix,matrix,[.3,.2,0]);
+const matrix = mat4.create();
+mat4.scale(matrix,matrix,[0.5,0.5,0.5]);
 
-// gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
+gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
+
+function animate() {
+    requestAnimationFrame(animate);
+    mat4.rotateZ(matrix, matrix, Math.PI/2 / 70);
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+animate();
