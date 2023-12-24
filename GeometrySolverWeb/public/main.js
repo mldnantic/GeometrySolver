@@ -96,15 +96,15 @@ let factor = size/density;
 
 for (i = 0; i <= density*2; i++)
     {
-        gridVertex1 = [size,-size+factor*i,0.0];
-        gridVertex2 = [-size,-size+factor*i,0.0];
+        gridVertex1 = [size,0.0,-size+factor*i];
+        gridVertex2 = [-size,0.0,-size+factor*i];
         vertexData.push(...gridVertex1);
         vertexData.push(...gridVertex2);
         gridColor = [0.6,0.6,0.6];
         colorData.push(...gridColor);
         colorData.push(...gridColor);
-        gridVertex3 = [size-factor*i,size,0.0];
-        gridVertex4 = [size-factor*i,-size,0.0];
+        gridVertex3 = [size-factor*i,0.0,size];
+        gridVertex4 = [size-factor*i,0.0,-size];
         vertexData.push(...gridVertex3);
         vertexData.push(...gridVertex4);
         colorData.push(...gridColor);
@@ -196,13 +196,13 @@ mat4.translate(modelMatrix,modelMatrix,[0.0,0.0,0.0]);
 mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
-mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
+// mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
 
 function animate() {
     gl.clearColor(0.4, 0.4, 0.4, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     requestAnimationFrame(animate);
-    mat4.rotateZ(modelMatrix, modelMatrix, Math.PI/400);
+    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
