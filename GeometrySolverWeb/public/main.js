@@ -96,15 +96,15 @@ let factor = size/density;
 
 for (i = 0; i <= density*2; i++)
     {
-        gridVertex1 = [size,0.0,-size+factor*i];
-        gridVertex2 = [-size,0.0,-size+factor*i];
+        gridVertex1 = [size,-0.01,-size+factor*i];
+        gridVertex2 = [-size,-0.01,-size+factor*i];
         vertexData.push(...gridVertex1);
         vertexData.push(...gridVertex2);
         gridColor = [0.6,0.6,0.6];
         colorData.push(...gridColor);
         colorData.push(...gridColor);
-        gridVertex3 = [size-factor*i,0.0,size];
-        gridVertex4 = [size-factor*i,0.0,-size];
+        gridVertex3 = [size-factor*i,-0.01,size];
+        gridVertex4 = [size-factor*i,-0.01,-size];
         vertexData.push(...gridVertex3);
         vertexData.push(...gridVertex4);
         colorData.push(...gridColor);
@@ -112,6 +112,38 @@ for (i = 0; i <= density*2; i++)
     }
 
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
+
+// Construct an Array by repeating `pattern` n times
+function repeat(n, pattern) {
+    return [...Array(n)].reduce(sum => sum.concat(pattern), []);
+}
+
+const uvData = repeat(6, [
+    1, 1, // top right
+    1, 0, // bottom right
+    0, 1, // top left
+
+    0, 1, // top left
+    1, 0, // bottom right
+    0, 0  // bottom left
+]);
+
+
+function loadTexture(url) {
+    const texture = gl.createTexture();
+    const image = new Image();
+
+    image.onload = e => {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+        gl.generateMipmap(gl.TEXTURE_2D);
+    };
+
+    image.src = url;
+    return texture;
+}
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
