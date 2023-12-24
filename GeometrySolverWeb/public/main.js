@@ -197,7 +197,6 @@ mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
 mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
-// mat4.rotateZ(modelMatrix, modelMatrix, Math.PI/4);
 
 function animate() {
     gl.clearColor(0.4, 0.4, 0.4, 1.0);
