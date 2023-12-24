@@ -142,17 +142,27 @@ const uniformLocations = {
 
 
 const matrix = mat4.create();
-mat4.scale(matrix,matrix,[0.5,0.5,0.5]);
+
+const projectionMatrix = mat4.create();
+mat4.perspective(projectionMatrix, 90*Math.PI/180,canvas.width/canvas.height,1e-4,1e2);
+
+const finalMatrix = mat4.create();
+
+
+mat4.translate(matrix,matrix,[0.0,-1.0,-4.0]);
 
 gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
 
-mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
-mat4.rotateX(matrix, matrix, -Math.PI/4);
+mat4.rotateX(matrix, matrix, Math.PI/2);
 
 function animate() {
     requestAnimationFrame(animate);
-    mat4.rotateY(matrix, matrix, Math.PI/2 / 70);
-    gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
+    // mat4.rotateX(matrix, matrix, Math.PI/2 / 70);
+    // mat4.rotateY(matrix, matrix, -Math.PI/2 / 70);
+    mat4.rotateZ(matrix, matrix, Math.PI/2 / 70);
+
+    mat4.multiply(finalMatrix,projectionMatrix,matrix);
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, finalMatrix);
     gl.drawArrays(gl.TRIANGLES, 0, vertexData.length/3);
 }
 animate();
