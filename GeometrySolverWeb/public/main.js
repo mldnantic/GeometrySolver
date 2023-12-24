@@ -8,7 +8,6 @@ if(!gl)
 
 // alert("Dobrodosli u GeometrySolver :D");
 
-
 const vertexDataCube = [
     // Front
     0.5, 0.5, 0.5,
@@ -190,6 +189,8 @@ gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
 mat4.rotateX(matrix, matrix, Math.PI/2);
 
 function animate() {
+    gl.clearColor(0.4, 0.4, 0.4, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
     requestAnimationFrame(animate);
     // mat4.rotateX(matrix, matrix, Math.PI/2 / 70);
     // mat4.rotateY(matrix, matrix, -Math.PI/2 / 70);
