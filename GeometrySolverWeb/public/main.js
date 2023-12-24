@@ -81,7 +81,8 @@ const colorData = [
     0.0, 0.0, 1.0,
     0.0, 0.0, 1.0,
 ];
-
+let density = 8;
+let factor = 2.0/density;
 // for(let face=0;face<2;face++)
 // {
 //     let faceColor = randomColor();
@@ -90,6 +91,22 @@ const colorData = [
 //         colorData.push(...faceColor);
 //     }
 // }
+for (i = 0; i <= density*2; i++)
+    {
+        gridVertex1 = [2.0,-2.0+factor*i,0.0];
+        gridVertex2 = [-2.0,-2.0+factor*i,0.0];
+        vertexData.push(...gridVertex1);
+        vertexData.push(...gridVertex2);
+        gridColor = [0.6,0.6,0.6];
+        colorData.push(...gridColor);
+        colorData.push(...gridColor);
+        gridVertex3 = [2.0-factor*i,2.0,0.0];
+        gridVertex4 = [2.0-factor*i,-2.0,0.0];
+        vertexData.push(...gridVertex3);
+        vertexData.push(...gridVertex4);
+        colorData.push(...gridColor);
+        colorData.push(...gridColor);
+    }
 
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
@@ -161,12 +178,12 @@ const uniformLocations = {
 const matrix = mat4.create();
 
 const projectionMatrix = mat4.create();
-mat4.perspective(projectionMatrix, 90*Math.PI/180,canvas.width/canvas.height,1e-4,1e2);
+mat4.perspective(projectionMatrix, 75*Math.PI/180,canvas.width/canvas.height,1e-4,1e2);
 
 const finalMatrix = mat4.create();
 
 
-mat4.translate(matrix,matrix,[0.0,-1.0,-4.0]);
+mat4.translate(matrix,matrix,[0.0,-2.0,-6.0]);
 
 gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
 
@@ -176,7 +193,7 @@ function animate() {
     requestAnimationFrame(animate);
     // mat4.rotateX(matrix, matrix, Math.PI/2 / 70);
     // mat4.rotateY(matrix, matrix, -Math.PI/2 / 70);
-    mat4.rotateZ(matrix, matrix, Math.PI/2 / 70);
+    mat4.rotateZ(matrix, matrix, Math.PI/2 / 280);
 
     mat4.multiply(finalMatrix,projectionMatrix,matrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, finalMatrix);
