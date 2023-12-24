@@ -3,3 +3,7 @@ canvas{
     width: 50%;
     height: 50%;
 }
+body
+{
+    background-color: rgb(44, 44, 48);
+}
