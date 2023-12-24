@@ -67,11 +67,6 @@ const vertexData= [
 	0.0, 0.0, 0.0,
 ];
 
-function randomColor()
-{
-    return [Math.random(),Math.random(),Math.random()];
-}
-
 const colorData = [
     1.0, 0.0, 0.0,
     1.0, 0.0, 0.0,
@@ -80,8 +75,12 @@ const colorData = [
     0.0, 0.0, 1.0,
     0.0, 0.0, 1.0,
 ];
-let density = 8;
-let factor = 2.0/density;
+
+function randomColor()
+{
+    return [Math.random(),Math.random(),Math.random()];
+}
+
 // for(let face=0;face<2;face++)
 // {
 //     let faceColor = randomColor();
@@ -90,17 +89,22 @@ let factor = 2.0/density;
 //         colorData.push(...faceColor);
 //     }
 // }
+
+let density = 8;
+let size = 2.0;
+let factor = size/density;
+
 for (i = 0; i <= density*2; i++)
     {
-        gridVertex1 = [2.0,-2.0+factor*i,0.0];
-        gridVertex2 = [-2.0,-2.0+factor*i,0.0];
+        gridVertex1 = [size,-size+factor*i,0.0];
+        gridVertex2 = [-size,-size+factor*i,0.0];
         vertexData.push(...gridVertex1);
         vertexData.push(...gridVertex2);
         gridColor = [0.6,0.6,0.6];
         colorData.push(...gridColor);
         colorData.push(...gridColor);
-        gridVertex3 = [2.0-factor*i,2.0,0.0];
-        gridVertex4 = [2.0-factor*i,-2.0,0.0];
+        gridVertex3 = [size-factor*i,size,0.0];
+        gridVertex4 = [size-factor*i,-size,0.0];
         vertexData.push(...gridVertex3);
         vertexData.push(...gridVertex4);
         colorData.push(...gridColor);
@@ -174,31 +178,37 @@ const uniformLocations = {
 };
 
 
-const matrix = mat4.create();
-
+const modelMatrix = mat4.create();
+const viewMatrix = mat4.create();
 const projectionMatrix = mat4.create();
-mat4.perspective(projectionMatrix, 75*Math.PI/180,canvas.width/canvas.height,1e-4,1e2);
 
-const finalMatrix = mat4.create();
+mat4.perspective(projectionMatrix,
+     75*Math.PI/180,
+     canvas.width/canvas.height,
+     1e-4,
+     1e2);
+
+const mvMatrix =mat4.create();
+const mvpMatrix = mat4.create();
 
 
-mat4.translate(matrix,matrix,[0.0,-2.0,-6.0]);
+mat4.translate(modelMatrix,modelMatrix,[0.0,0.0,0.0]);
+mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
+mat4.invert(viewMatrix,viewMatrix);
 
-gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
-
-mat4.rotateX(matrix, matrix, Math.PI/2);
+mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
+// mat4.rotateZ(modelMatrix, modelMatrix, Math.PI/4);
 
 function animate() {
     gl.clearColor(0.4, 0.4, 0.4, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     requestAnimationFrame(animate);
-    // mat4.rotateX(matrix, matrix, Math.PI/2 / 70);
-    // mat4.rotateY(matrix, matrix, -Math.PI/2 / 70);
-    mat4.rotateZ(matrix, matrix, Math.PI/2 / 280);
-
-    mat4.multiply(finalMatrix,projectionMatrix,matrix);
-    gl.uniformMatrix4fv(uniformLocations.matrix, false, finalMatrix);
+    mat4.rotateZ(modelMatrix, modelMatrix, Math.PI/400);
+    mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+    mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
     gl.drawArrays(gl.LINES, 0, vertexData.length/3);
 }
+
 animate();
 
