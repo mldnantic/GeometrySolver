@@ -1,5 +1,26 @@
+
+var host = document.body;
+
+const connectionString = 'mongodb://localhost:27017';
+
+let tempEl = document.createElement("div");
+tempEl.className="glavniDiv";
+tempEl.id = "glavniDiv";
+host.appendChild(tempEl);
+
+let glavniDiv = document.getElementById("glavniDiv");
+
+
+
+tempEl = document.createElement("canvas");
+glavniDiv.appendChild(tempEl);
+const _c = document.getElementsByTagName('canvas')[0];
+_c.width = window.innerWidth;
+_c.height = window.innerHeight;
+
 const canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
+
 
 if(!gl)
 {
@@ -7,6 +28,196 @@ if(!gl)
 }
 
 // alert("Dobrodosli u GeometrySolver :D");
+
+var menu = document.createElement("div");
+menu.className="menuDiv";
+menu.id="menuDiv";
+glavniDiv.appendChild(menu);
+
+let naziv = document.createElement("h1");
+naziv.innerHTML="GeometrySolver";
+menu.appendChild(naziv);
+
+
+
+
+ // Create label element
+ var label = document.createElement("label");
+ label.setAttribute("for", "shapes");
+ label.textContent = "Select a shape:";
+
+ // Create select element
+ var select = document.createElement("select");
+ select.id = "shapes";
+ menu.appendChild(select);
+//  select.onchange=(ev)=>drawShape(select.value);
+
+//  btnRacuni.onclick=(ev)=>this.vidiRacune(this.id);
+
+ // Create option elements and append them to the select element
+
+ var option2 = document.createElement("option");
+ option2.value = "trapezoid";
+ option2.textContent = "Trapezoid";
+ select.appendChild(option2);
+
+
+ var option3 = document.createElement("option");
+ option3.value = "rectangle";
+ option3.textContent = "Rectangle";
+ select.appendChild(option3);
+
+
+ var option1 = document.createElement("option");
+ option1.value = "triangle";
+ option1.textContent = "Triangle";
+ select.appendChild(option1);
+
+
+ // Append label and select elements to the body
+menu.appendChild(label);
+menu.appendChild(select);
+
+///  a
+var aDiv = document.createElement("div");
+let aLabel = document.createElement("label");
+aLabel.innerHTML = "a: ";
+aDiv.appendChild(aLabel);
+
+var a = document.createElement("input");
+a.id = "aInput"
+a.type = "number";
+aDiv.appendChild(a);
+
+menu.appendChild(aDiv);
+
+/// b
+var bDiv = document.createElement("div");
+let bLabel = document.createElement("label");
+bLabel.innerHTML = "b: ";
+bDiv.appendChild(bLabel);
+
+var b = document.createElement("input");
+b.id = "bInput"
+b.type = "number";
+bDiv.appendChild(b);
+menu.appendChild(bDiv);
+
+/// h
+
+var hDiv = document.createElement("div");
+let hLabel = document.createElement("label");
+hLabel.innerHTML = "h: ";
+hDiv.appendChild(hLabel);
+
+var h = document.createElement("input");
+h.id = "aInput"
+h.type = "number";
+hDiv.appendChild(h);
+menu.appendChild(hDiv);
+ // Get the select element
+ var select = document.getElementById("shapes");
+
+ // Attach an onchange event listener
+ select.onchange = (ev) => {
+   // Get the selected value
+   let izabrano = select.value;
+
+   // Get the input element with id "a"
+   var a = document.getElementById("aInput");
+
+   // Disable or enable the input based on the selected value
+   if (izabrano == "triangle") {
+     b.disabled = true;
+     b.value = '';
+   } else {
+     b.disabled = false;
+   }
+   if (izabrano == "rectangle") {
+    h.disabled = true;
+    h.value = '';
+  } else {
+    h.disabled = false;
+  }
+ };
+
+// Data to be inserted
+const dataToInsert = {
+    a: 3,
+    b: 4,
+    h: 5
+  };
+
+// // Function to insert data
+// async function insertData() {
+//     const client = new MongoClient(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+  
+//     try {
+//       await client.connect();
+//       console.log('Connected to the database');
+  
+//       const database = client.db('AIPS_Baza');
+//       const collection = database.collection('geometries');
+  
+//       // Insert the document
+//       const result = await collection.insertOne(dataToInsert);
+//       console.log(`Document inserted with ID: ${result.insertedId}`);
+//     } finally {
+//       await client.close();
+//       console.log('Connection closed');
+//     }
+//   }
+  
+//   // Execute the insertData function
+//   insertData();
+
+// function drawShape() {
+//     // Get the selected value
+//     var selectedValue = document.getElementById("shapes").value;
+
+//     // Get the canvas and its context
+//     var canvas = document.querySelector("canvas");
+//     var ctx = canvas.getContext("2d");
+
+//     // Clear the canvas
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//     // Draw the selected shape
+//     if (selectedValue === "triangle") {
+//       // Draw a triangle
+//       ctx.beginPath();
+//       ctx.moveTo(10, 190);
+//       ctx.lineTo(150, 10);
+//       ctx.lineTo(290, 190);
+//       ctx.closePath();
+//       ctx.stroke();
+//     } else if (selectedValue === "trapezoid") {
+//       // Draw a trapezoid
+//       ctx.beginPath();
+//       ctx.moveTo(50, 190);
+//       ctx.lineTo(250, 190);
+//       ctx.lineTo(200, 10);
+//       ctx.lineTo(100, 10);
+//       ctx.closePath();
+//       ctx.stroke();
+//     } else if (selectedValue === "rectangle") {
+//       // Draw a rectangle
+//       ctx.strokeRect(50, 50, 200, 100);
+//     }
+//   }
+
+// function changeShape() {
+//     var selectedShape = document.getElementById("shape").value;
+    
+//     document.getElementById("triangle").style.display = "none";
+//     document.getElementById("trapezoid").style.display = "none";
+//     document.getElementById("rectangle").style.display = "none";
+
+//     document.getElementById(selectedShape).style.display = "block";
+// }
+
+
+
 
 const vertexDataCube = [
     // Front
