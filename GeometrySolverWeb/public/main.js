@@ -345,20 +345,14 @@ const vertexDataCube = [
 ];
 
 const vertexData= [
-	1.0, 0.0, 0.0,
-	0.0 , 0.0, 0.0,
-	0.0, 1.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 1.0,
-	0.0, 0.0, 0.0,
+	-2.0, 0.0, 0.0,
+	2.0 , 0.0, 0.0,
+	0.0, 2.0, 0.0,
 ];
 
 const colorData = [
     1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
     0.0, 1.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
     0.0, 0.0, 1.0,
 ];
 
@@ -376,26 +370,30 @@ function randomColor()
 //     }
 // }
 
-let density = 4;
-let size = 2.0;
-let factor = size/density;
+function drawGrid()
+{
+    let density = 4;
+    let size = 2.0;
+    let factor = size/density;
+    
+    for (i = 0; i <= density*2; i++)
+        {
+            gridVertex1 = [size,-0.01,-size+factor*i];
+            gridVertex2 = [-size,-0.01,-size+factor*i];
+            vertexData.push(...gridVertex1);
+            vertexData.push(...gridVertex2);
+            gridColor = [0.6,0.6,0.6];
+            colorData.push(...gridColor);
+            colorData.push(...gridColor);
+            gridVertex3 = [size-factor*i,-0.01,size];
+            gridVertex4 = [size-factor*i,-0.01,-size];
+            vertexData.push(...gridVertex3);
+            vertexData.push(...gridVertex4);
+            colorData.push(...gridColor);
+            colorData.push(...gridColor);
+        }
+}
 
-for (i = 0; i <= density*2; i++)
-    {
-        gridVertex1 = [size,-0.01,-size+factor*i];
-        gridVertex2 = [-size,-0.01,-size+factor*i];
-        vertexData.push(...gridVertex1);
-        vertexData.push(...gridVertex2);
-        gridColor = [0.6,0.6,0.6];
-        colorData.push(...gridColor);
-        colorData.push(...gridColor);
-        gridVertex3 = [size-factor*i,-0.01,size];
-        gridVertex4 = [size-factor*i,-0.01,-size];
-        vertexData.push(...gridVertex3);
-        vertexData.push(...gridVertex4);
-        colorData.push(...gridColor);
-        colorData.push(...gridColor);
-    }
 
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
@@ -524,7 +522,7 @@ function animate() {
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-    gl.drawArrays(gl.LINES, 0, vertexData.length/3);
+    gl.drawArrays(gl.TRIANGLES, 0, vertexData.length/3);
 }
 
 animate();
