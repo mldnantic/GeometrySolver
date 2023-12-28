@@ -111,10 +111,85 @@ hLabel.innerHTML = "h: ";
 hDiv.appendChild(hLabel);
 
 var h = document.createElement("input");
-h.id = "aInput"
+h.id = "hInput"
 h.type = "number";
 hDiv.appendChild(h);
 menu.appendChild(hDiv);
+
+var btnDiv = document.createElement("div");
+menu.appendChild(btnDiv);
+var btn = document.createElement("button");
+btn.innerHTML="Insert";
+btn.onclick = (ev) =>{
+
+    let aa,be,ha;
+    
+    if(document.getElementById("shapes").value === "rectangle")
+    {
+        aa = document.getElementById("aInput").value;
+        be = document.getElementById("bInput").value;
+        ha = -1;
+    }
+
+    if(document.getElementById("shapes").value === "triangle")
+    {
+        aa = document.getElementById("aInput").value;
+        be = -1;
+        ha = document.getElementById("hInput").value;
+    }
+
+    if(document.getElementById("shapes").value === "trapezoid")
+    {
+        aa = document.getElementById("aInput").value;
+        be = document.getElementById("bInput").value;
+        ha = document.getElementById("hInput").value;
+    }
+
+    const newFigure = {
+        a: aa,
+        b: be,
+        h: ha,
+        figura: document.getElementById("shapes").value,
+        username: "qwerty"
+    };
+
+    fetch("http://localhost:3000/addFigure", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newFigure),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Figure added successfully:", data);
+        // You can update your WebGL rendering here if needed
+    })
+    .catch(error => {
+        console.error("Error adding figure:", error);
+    });
+}
+btnDiv.appendChild(btn);
+btn = document.createElement("button");
+btn.innerHTML="Get";
+btn.onclick = (ev) =>{
+
+    fetch('/getFigures')
+        .then(response => response.json())
+        .then(data => {
+    
+            data.forEach(item => {
+            let podatak = document.createElement("label");
+            podatak.innerHTML=`a: ${item.a}, b: ${item.b} h: ${item.h}, figura: ${item.figura}`;
+            menu.appendChild(podatak);
+        })
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+btnDiv.appendChild(btn);
+
  // Get the select element
  var select = document.getElementById("shapes");
 

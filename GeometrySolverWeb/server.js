@@ -15,7 +15,7 @@ const FigureSchema = mongoose.Schema({
     h: Number,
     figura: String,
     username: String,
-});
+},{ versionKey: false });
 
 const FigureModel = mongoose.model("figure", FigureSchema);
 
