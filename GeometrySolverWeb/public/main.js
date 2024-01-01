@@ -345,14 +345,20 @@ const vertexDataCube = [
 ];
 
 const vertexData= [
-	-2.0, 0.0, 0.0,
-	2.0 , 0.0, 0.0,
-	0.0, 2.0, 0.0,
+	1.0, 0.0, 0.0,
+	0.0, 0.0, 0.0,
+	0.0 , 1.0, 0.0,
+	0.0 , 0.0, 0.0,
+	0.0, 0.0, 1.0,
+	0.0, 0.0, 0.0,
 ];
 
 const colorData = [
     1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
     0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0,
     0.0, 0.0, 1.0,
 ];
 
@@ -393,7 +399,7 @@ function drawGrid()
             colorData.push(...gridColor);
         }
 }
-
+drawGrid();
 
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
@@ -522,7 +528,7 @@ function animate() {
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-    gl.drawArrays(gl.TRIANGLES, 0, vertexData.length/3);
+    gl.drawArrays(gl.LINES, 0, vertexData.length/3);
 }
 
 animate();
