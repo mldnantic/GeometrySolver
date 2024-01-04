@@ -399,7 +399,42 @@ function drawGrid()
             colorData.push(...gridColor);
         }
 }
-drawGrid();
+// drawGrid();
+
+function drawCircle()
+{
+    let density = 4;
+    let size = 1.0;
+    let factor = size/density;
+    
+    // for (i = 0; i <= density*2; i++)
+    //     {
+            vertexMiddle = [0.0,0.01,size];
+            vertexData.push(...vertexMiddle);
+            vertexMiddle = [size,0.01,0.0];
+            vertexData.push(...vertexMiddle);
+            vertexData.push(...vertexMiddle);
+            vertexMiddle = [0.0,0.01,-size];
+            vertexData.push(...vertexMiddle);
+            vertexData.push(...vertexMiddle);
+            vertexMiddle = [-size,0.01,0.0];
+            vertexData.push(...vertexMiddle);
+            vertexData.push(...vertexMiddle);
+            vertexMiddle = [0.0,0.01,size];
+            vertexData.push(...vertexMiddle);
+            vertexColor = [0.6,0.6,0.6];
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+
+        // }
+}
+drawCircle();
 
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
