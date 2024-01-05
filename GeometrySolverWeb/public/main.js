@@ -345,21 +345,21 @@ const vertexDataCube = [
 ];
 
 const vertexData= [
-	1.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.0 , 1.0, 0.0,
-	0.0 , 0.0, 0.0,
-	0.0, 0.0, 1.0,
-	0.0, 0.0, 0.0,
+	// 1.0, 0.0, 0.0,
+	// 0.0, 0.0, 0.0,
+	// 0.0 , 1.0, 0.0,
+	// 0.0 , 0.0, 0.0,
+	// 0.0, 0.0, 1.0,
+	0.0, 3.0, 0.0,
 ];
 
 const colorData = [
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
+    // 1.0, 0.0, 0.0,
+    // 1.0, 0.0, 0.0,
+    // 0.0, 1.0, 0.0,
+    // 0.0, 1.0, 0.0,
+    // 0.0, 0.0, 1.0,
+    // 0.0, 0.0, 1.0,
 ];
 
 function randomColor()
@@ -403,26 +403,45 @@ function drawGrid()
 
 function drawCircle()
 {
-    let density = 4;
-    let size = 1.0;
+    let density = 2.25;
+    let size = 1.5;
     let factor = size/density;
     
     // for (i = 0; i <= density*2; i++)
     //     {
-            vertexMiddle = [0.0,0.01,size];
-            vertexData.push(...vertexMiddle);
-            vertexMiddle = [size,0.01,0.0];
-            vertexData.push(...vertexMiddle);
-            vertexData.push(...vertexMiddle);
-            vertexMiddle = [0.0,0.01,-size];
-            vertexData.push(...vertexMiddle);
-            vertexData.push(...vertexMiddle);
-            vertexMiddle = [-size,0.01,0.0];
-            vertexData.push(...vertexMiddle);
-            vertexData.push(...vertexMiddle);
-            vertexMiddle = [0.0,0.01,size];
+            vertexMiddle = 
+            [0.0,0.01,size,
+            size*factor,0.01,size*factor,
+            size*factor,0.01,size*factor,
+            size,0.01,0.0,
+            size,0.01,0.0,
+            size*factor,0.01,-size*factor,
+            size*factor,0.01,-size*factor,
+            0.0,0.01,-size,
+            0.0,0.01,-size,
+            -size*factor,0.01,-size*factor,
+            -size*factor,0.01,-size*factor,
+            -size,0.01,0.0,
+            -size,0.01,0.0,
+            -size*factor,0.01,size*factor,
+            -size*factor,0.01,size*factor,
+            0.0,0.01,size,
+            ];
             vertexData.push(...vertexMiddle);
             vertexColor = [0.6,0.6,0.6];
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
+            colorData.push(...vertexColor);
             colorData.push(...vertexColor);
             colorData.push(...vertexColor);
             colorData.push(...vertexColor);
@@ -563,7 +582,7 @@ function animate() {
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-    gl.drawArrays(gl.LINES, 0, vertexData.length/3);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexData.length/3);
 }
 
 animate();
