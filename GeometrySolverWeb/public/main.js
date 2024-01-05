@@ -345,6 +345,7 @@ const vertexDataCube = [
 ];
 
 const vertexData= [
+    //koordinatne ose
 	// 1.0, 0.0, 0.0,
 	// 0.0, 0.0, 0.0,
 	// 0.0 , 1.0, 0.0,
@@ -354,6 +355,7 @@ const vertexData= [
 ];
 
 const colorData = [
+    //boje x,y,z ose
     // 1.0, 0.0, 0.0,
     // 1.0, 0.0, 0.0,
     // 0.0, 1.0, 0.0,
