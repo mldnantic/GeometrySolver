@@ -180,7 +180,7 @@ btn.onclick = (ev) =>{
     
             data.forEach(item => {
             let podatak = document.createElement("label");
-            podatak.innerHTML=`a: ${item.a}, b: ${item.b} h: ${item.h}, figura: ${item.figura}`;
+            podatak.innerHTML=` a: ${item.a}, b: ${item.b} h: ${item.h}, figura: ${item.figura}`;
             menu.appendChild(podatak);
         })
         })

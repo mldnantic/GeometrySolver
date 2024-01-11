@@ -3,6 +3,25 @@
  * Author: Darius @ InventBox <inventboxtutorial@gmail.com>
  */
 
+
+var host = document.body;
+
+const connectionString = 'mongodb://localhost:27017';
+
+let tempEl = document.createElement("div");
+tempEl.className="glavniDiv";
+tempEl.id = "glavniDiv";
+host.appendChild(tempEl);
+
+let glavniDiv = document.getElementById("glavniDiv");
+
+
+tempEl = document.createElement("canvas");
+glavniDiv.appendChild(tempEl);
+const _c = document.getElementsByTagName('canvas')[0];
+_c.width = window.innerWidth;
+_c.height = window.innerHeight;
+
 const canvas = document.querySelector('canvas');
 const gl = canvas.getContext('webgl');
 
