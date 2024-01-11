@@ -348,10 +348,11 @@ const vertexData= [
     //koordinatne ose
 	// 1.0, 0.0, 0.0,
 	// 0.0, 0.0, 0.0,
-	// 0.0 , 1.0, 0.0,
-	// 0.0 , 0.0, 0.0,
+	// 0.0, 1.0, 0.0,
+	// 0.0, 0.0, 0.0,
 	// 0.0, 0.0, 1.0,
-	0.0, 3.0, 0.0,
+    // 0.0, 0.0, 0.0
+    0.0,0.0,0.0
 ];
 
 const colorData = [
@@ -405,55 +406,23 @@ function drawGrid()
 
 function drawCircle()
 {
-    let density = 2.25;
-    let size = 1.5;
-    let factor = size/density;
-    
-    // for (i = 0; i <= density*2; i++)
-    //     {
-            vertexMiddle = 
-            [0.0,0.01,size,
-            size*factor,0.01,size*factor,
-            size*factor,0.01,size*factor,
-            size,0.01,0.0,
-            size,0.01,0.0,
-            size*factor,0.01,-size*factor,
-            size*factor,0.01,-size*factor,
-            0.0,0.01,-size,
-            0.0,0.01,-size,
-            -size*factor,0.01,-size*factor,
-            -size*factor,0.01,-size*factor,
-            -size,0.01,0.0,
-            -size,0.01,0.0,
-            -size*factor,0.01,size*factor,
-            -size*factor,0.01,size*factor,
-            0.0,0.01,size,
-            ];
-            vertexData.push(...vertexMiddle);
-            vertexColor = [0.6,0.6,0.6];
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-            colorData.push(...vertexColor);
-
-        // }
+    let density = 24;
+    let size = 1;
+    let theta = (Math.PI*2)/density;
+    let cosine = Math.cos(theta);
+    let sine = Math.sin(theta);
+    circleVertex = [size,0.0,0.0];
+    vertexData.push(...circleVertex);
+    circleColor = [0.8,0.8,0.8];
+    colorData.push(...circleColor);
+    for(i=0;i<density;i++)
+    {
+        circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
+        vertexData.push(...circleVertex);
+        vertexData.push(...circleVertex);
+        colorData.push(...circleColor);
+        colorData.push(...circleColor);
+    }
 }
 drawCircle();
 
