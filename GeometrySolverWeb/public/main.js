@@ -29,6 +29,29 @@ if(!gl)
 
 // alert("Dobrodosli u GeometrySolver :D");
 
+const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
+
+
+var vertexData= [
+    //koordinatne ose
+	// 1.0, 0.0, 0.0,
+	// 0.0, 0.0, 0.0,
+	// 0.0, 1.0, 0.0,
+	// 0.0, 0.0, 0.0,
+	// 0.0, 0.0, 1.0,
+    // 0.0, 0.0, 0.0
+];
+
+var colorData = [
+    //boje x,y,z ose
+    // 1.0, 0.0, 0.0,
+    // 1.0, 0.0, 0.0,
+    // 0.0, 1.0, 0.0,
+    // 0.0, 1.0, 0.0,
+    // 0.0, 0.0, 1.0,
+    // 0.0, 0.0, 1.0,
+];
+
 var menu = document.createElement("div");
 menu.className="menuDiv";
 menu.id="menuDiv";
@@ -190,6 +213,19 @@ btn.onclick = (ev) =>{
 }
 btnDiv.appendChild(btn);
 
+let range = document.createElement("input");
+range.setAttribute("type","range");
+range.setAttribute("min",3);
+range.setAttribute("max",24);
+range.oninput=(ev)=>
+{
+    vertexData=[0.0,2.0,0.0];
+    colorData=[];
+    range.innerText = this.value;
+    drawCircle(range.value)
+}
+btnDiv.appendChild(range);
+
  // Get the select element
  var select = document.getElementById("shapes");
 
@@ -293,78 +329,6 @@ const dataToInsert = {
 
 
 
-
-const vertexDataCube = [
-    // Front
-    0.5, 0.5, 0.5,
-    0.5, -.5, 0.5,
-    -.5, 0.5, 0.5,
-    -.5, 0.5, 0.5,
-    0.5, -.5, 0.5,
-    -.5, -.5, 0.5,
-
-    // Left
-    -.5, 0.5, 0.5,
-    -.5, -.5, 0.5,
-    -.5, 0.5, -.5,
-    -.5, 0.5, -.5,
-    -.5, -.5, 0.5,
-    -.5, -.5, -.5,
-
-    // Back
-    -.5, 0.5, -.5,
-    -.5, -.5, -.5,
-    0.5, 0.5, -.5,
-    0.5, 0.5, -.5,
-    -.5, -.5, -.5,
-    0.5, -.5, -.5,
-
-    // Right
-    0.5, 0.5, -.5,
-    0.5, -.5, -.5,
-    0.5, 0.5, 0.5,
-    0.5, 0.5, 0.5,
-    0.5, -.5, 0.5,
-    0.5, -.5, -.5,
-
-    // Top
-    0.5, 0.5, 0.5,
-    0.5, 0.5, -.5,
-    -.5, 0.5, 0.5,
-    -.5, 0.5, 0.5,
-    0.5, 0.5, -.5,
-    -.5, 0.5, -.5,
-
-    // Bottom
-    0.5, -.5, 0.5,
-    0.5, -.5, -.5,
-    -.5, -.5, 0.5,
-    -.5, -.5, 0.5,
-    0.5, -.5, -.5,
-    -.5, -.5, -.5,
-];
-
-const vertexData= [
-    //koordinatne ose
-	// 1.0, 0.0, 0.0,
-	// 0.0, 0.0, 0.0,
-	// 0.0, 1.0, 0.0,
-	// 0.0, 0.0, 0.0,
-	// 0.0, 0.0, 1.0,
-    // 0.0, 0.0, 0.0
-    0.0,0.0,0.0
-];
-
-const colorData = [
-    //boje x,y,z ose
-    // 1.0, 0.0, 0.0,
-    // 1.0, 0.0, 0.0,
-    // 0.0, 1.0, 0.0,
-    // 0.0, 1.0, 0.0,
-    // 0.0, 0.0, 1.0,
-    // 0.0, 0.0, 1.0,
-];
-
 function randomColor()
 {
     return [Math.random(),Math.random(),Math.random()];
@@ -404,9 +368,9 @@ function drawGrid()
 }
 // drawGrid();
 
-function drawCircle()
+function drawCircle(dense)
 {
-    let density = 24;
+    let density = dense;
     let size = 1;
     let theta = (Math.PI*2)/density;
     let cosine = Math.cos(theta);
@@ -423,25 +387,26 @@ function drawCircle()
         colorData.push(...circleColor);
         colorData.push(...circleColor);
     }
+    webgl()
 }
-drawCircle();
 
-const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
 // Construct an Array by repeating `pattern` n times
 function repeat(n, pattern) {
     return [...Array(n)].reduce(sum => sum.concat(pattern), []);
 }
 
-const uvData = repeat(6, [
-    1, 1, // top right
-    1, 0, // bottom right
-    0, 1, // top left
+function webgl()
+{
+    const uvData = repeat(6, [
+        1, 1, // top right
+        1, 0, // bottom right
+        0, 1, // top left
 
-    0, 1, // top left
-    1, 0, // bottom right
-    0, 0  // bottom left
-]);
+        0, 1, // top left
+        1, 0, // bottom right
+        0, 0  // bottom left
+    ]);
 
 
 function loadTexture(url) {
@@ -544,17 +509,24 @@ mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
 // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
+gl.clearColor(0.4, 0.4, 0.4, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
+mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexData.length/3);
+// function animate() {
+//     gl.clearColor(0.4, 0.4, 0.4, 1.0);
+//     gl.clear(gl.COLOR_BUFFER_BIT);
+//     requestAnimationFrame(animate);
+//     mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
+//     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+//     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+//     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+//     gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexData.length/3);
+// }
 
-function animate() {
-    gl.clearColor(0.4, 0.4, 0.4, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    requestAnimationFrame(animate);
-    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
-    mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
-    mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
-    gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexData.length/3);
+// animate();
+
 }
-
-animate();
-
