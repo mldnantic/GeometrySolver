@@ -129,8 +129,6 @@ b.type = "number";
 bDiv.appendChild(b);
 menu.appendChild(bDiv);
 
-/// h
-
 var hDiv = document.createElement("div");
 let hLabel = document.createElement("label");
 hLabel.innerHTML = "h: ";
@@ -150,7 +148,7 @@ btn.onclick = (ev) =>{
 
     if(!usernameInput.value=="")
     {
-        const newFigure = {
+        const newUser = {
             username: usernameInput.value
         };
 
@@ -159,7 +157,7 @@ btn.onclick = (ev) =>{
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(newFigure),
+            body: JSON.stringify(newUser),
         })
         .then(response => response.json())
         .then(data => {
@@ -220,7 +218,7 @@ range.oninput=(ev)=>
         ha = document.getElementById("hInput").value;
     }
     let oblik = document.getElementById("shapes").value;
-    vertexData=[0.0,0.0,0.0];
+    vertexData=[];
     colorData=[];
     range.innerText = this.value;
     switch(oblik)
@@ -229,7 +227,7 @@ range.oninput=(ev)=>
             drawCone(aa,ha,range.value);
             break;
         case "rectangle":
-            drawCircle(range.value);
+            drawCylinder(aa,be,range.value);
             break;
         case "trapezoid":
             console.log("drawTruncatedCone(range.value)");
@@ -356,8 +354,28 @@ function randomColor()
 //     }
 // }
 
-function drawGrid()
+function drawGrid(rotating)
 {
+    vertexData= [
+        //koordinatne ose
+        1.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0
+    ];
+    
+    colorData = [
+        //boje x,y,z ose
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+    ];
+
     let density = 4;
     let size = 2.0;
     let factor = size/density;
@@ -378,28 +396,29 @@ function drawGrid()
             colorData.push(...gridColor);
             colorData.push(...gridColor);
         }
+    webgl(gl.LINES,rotating);
 }
 
-function drawCircle(dense)
+function drawCircle(dense,r)
 {
     let density = dense;
-    let size = 1;
+    let size = r;
     let theta = (Math.PI*2)/density;
     let cosine = Math.cos(theta);
     let sine = Math.sin(theta);
     circleVertex = [size,0.0,0.0];
     vertexData.push(...circleVertex);
     circleColor = [0.8,0.8,0.8];
-    colorData.push(...circleColor);
+    colorData.push(...randomColor());
     for(i=0;i<density;i++)
     {
         circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
         vertexData.push(...circleVertex);
         vertexData.push(...circleVertex);
-        colorData.push(...circleColor);
-        colorData.push(...circleColor);
+        colorData.push(...randomColor());
+        colorData.push(...randomColor());
     }
-    webgl()
+    webgl(gl.TRIANGLE_FAN,false);
 }
 
 function drawCone(a,h,dense)
@@ -407,46 +426,63 @@ function drawCone(a,h,dense)
     if(a==0 || h==0)
     {
         console.log("nepopunjene dimenzije");
-        console.log(a);
-        console.log(h);
     }
     else
     {
-        let density = dense;
         let base = a;
         let height = h;
-        let theta = (Math.PI*2)/density;
-        let cosine = Math.cos(theta);
-        let sine = Math.sin(theta);
+        coneTipVertex = [0.0,h,0.0];
+        vertexData.push(...coneTipVertex);
         coneColor = [0.8,0.8,0.8];
-        colorData.push(...coneColor);
-        coneVertex = [a,0.0,0.0];
-        vertexData.push(...coneVertex);
-        vertexData.push(...coneVertex);
-        colorData.push(...coneColor);
-        colorData.push(...coneColor);
-        coneVertex = [0.0,h,0.0];
-        vertexData.push(...coneVertex);
-        vertexData.push(...coneVertex);
-        colorData.push(...coneColor);
-        colorData.push(...coneColor);
-        coneVertex=[0.0,0.0,0.0];
-        vertexData.push(coneVertex);
-        vertexData.push(coneVertex);
-        colorData.push(coneColor);
-        colorData.push(coneColor);
-        webgl()
+        colorData.push(...randomColor());
+        drawCircle(dense,a);
     }
         
 }
 
+function drawCylinder(a,b,dense)
+{
+    if(a==0 || b==0)
+    {
+        console.log("nepopunjene dimenzije");
+    }
+    else
+    {
+        let theta = (Math.PI*2)/dense;
+        let cosine = Math.cos(theta);
+        let sine = Math.sin(theta);
+
+        let radius = a;
+        let height = b;
+
+        wrapVertexBottom = [radius,0.0,0.0];
+        wrapVertexTop = [radius,height,0.0];
+        vertexData.push(...wrapVertexBottom);
+        vertexData.push(...wrapVertexTop);
+
+        cylinderColor = [0.8,0.8,0.8];
+        colorData.push(...randomColor());
+        colorData.push(...randomColor());
+
+        for(i=0;i<dense;i++)
+        {
+            wrapVertexTop = [cosine*wrapVertexTop[0]+sine*wrapVertexTop[2],height,-sine*wrapVertexTop[0]+cosine*wrapVertexTop[2]];
+            wrapVertexBottom = [cosine*wrapVertexBottom[0]+sine*wrapVertexBottom[2],0.0,-sine*wrapVertexBottom[0]+cosine*wrapVertexBottom[2]];
+            vertexData.push(...wrapVertexBottom);
+            vertexData.push(...wrapVertexTop);
+            colorData.push(...randomColor());
+            colorData.push(...randomColor());
+        }
+        webgl(gl.TRIANGLE_STRIP,false);
+    }
+}
 
 // Construct an Array by repeating `pattern` n times
 function repeat(n, pattern) {
     return [...Array(n)].reduce(sum => sum.concat(pattern), []);
 }
 
-function webgl()
+function webgl(glDrawMode,animacija)
 {
     const uvData = repeat(6, [
         1, 1, // top right
@@ -558,25 +594,33 @@ mat4.translate(modelMatrix,modelMatrix,[0.0,0.0,0.0]);
 mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
-// mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
-gl.clearColor(0.4, 0.4, 0.4, 1.0);
-gl.clear(gl.COLOR_BUFFER_BIT);
-mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
-mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
-mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
-gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexData.length/3);
-// function animate() {
-//     gl.clearColor(0.4, 0.4, 0.4, 1.0);
-//     gl.clear(gl.COLOR_BUFFER_BIT);
-//     requestAnimationFrame(animate);
-//     mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
-//     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
-//     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
-//     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-//     gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexData.length/3);
-// }
+function animate() {
+    gl.clearColor(0.4, 0.4, 0.4, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    requestAnimationFrame(animate);
+    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
+    mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+    mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+    gl.drawArrays(glDrawMode, 0, vertexData.length/3);
+}
 
-// animate();
+// mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
+if(!animacija)
+{
+    gl.clearColor(0.4, 0.4, 0.4, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
+    mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+    mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+    gl.drawArrays(glDrawMode, 0, vertexData.length/3);
+}
+else
+{
+    animate();
+}
+
+
 
 }

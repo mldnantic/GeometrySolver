@@ -5,6 +5,6 @@ const userSchema = new mongoose.Schema({
   myProjects:Array
 },{ versionKey: false });
 
-const userModel = mongoose.model("figure", userSchema);
+const userModel = mongoose.model("user", userSchema);
 
 module.exports = userModel;
