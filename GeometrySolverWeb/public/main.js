@@ -101,6 +101,9 @@ menu.appendChild(naziv);
 menu.appendChild(label);
 menu.appendChild(select);
 
+var usernameInput = document.createElement("input");
+menu.appendChild(usernameInput);
+
 ///  a
 var aDiv = document.createElement("div");
 let aLabel = document.createElement("label");
@@ -169,14 +172,10 @@ btn.onclick = (ev) =>{
     }
 
     const newFigure = {
-        a: aa,
-        b: be,
-        h: ha,
-        figura: document.getElementById("shapes").value,
-        username: "qwerty"
+        username: usernameInput.value
     };
 
-    fetch("http://localhost:3000/addFigure", {
+    fetch("http://localhost:3000/addUser", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -185,7 +184,7 @@ btn.onclick = (ev) =>{
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Figure added successfully:", data);
+        console.log("User registered successfully:", data);
         // You can update your WebGL rendering here if needed
     })
     .catch(error => {
@@ -197,14 +196,15 @@ btn = document.createElement("button");
 btn.innerHTML="Get";
 btn.onclick = (ev) =>{
 
-    fetch('/getFigures')
+    fetch('/getUsers')
         .then(response => response.json())
         .then(data => {
     
             data.forEach(item => {
-            let podatak = document.createElement("label");
-            podatak.innerHTML=` a: ${item.a}, b: ${item.b} h: ${item.h}, figura: ${item.figura}`;
-            menu.appendChild(podatak);
+                console.log(item);
+                let podatak = document.createElement("label");
+                podatak.innerHTML=` username: ${item.username} , id: ${item._id} `;
+                menu.appendChild(podatak);
         })
         })
         .catch(error => {
@@ -219,7 +219,7 @@ range.setAttribute("min",3);
 range.setAttribute("max",24);
 range.oninput=(ev)=>
 {
-    vertexData=[0.0,2.0,0.0];
+    vertexData=[0.0,0.0,0.0];
     colorData=[];
     range.innerText = this.value;
     drawCircle(range.value)
@@ -366,7 +366,6 @@ function drawGrid()
             colorData.push(...gridColor);
         }
 }
-// drawGrid();
 
 function drawCircle(dense)
 {

@@ -9,38 +9,34 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const FigureSchema = mongoose.Schema({
-    a: Number,
-    b: Number,
-    h: Number,
-    figura: String,
+const UserSchema = mongoose.Schema({
     username: String,
 },{ versionKey: false });
 
-const FigureModel = mongoose.model("figure", FigureSchema);
+const UserModel = mongoose.model("user", UserSchema);
 
-app.get("/getFigures", async (req, res) => {
+app.get("/getUsers", async (req, res) => {
     try {
-        const figures = await FigureModel.find({});
-        res.json(figures);
+        const users = await UserModel.find({});
+        res.json(users);
     } catch (error) {
         console.log(error);
         res.status(500).send("Internal Server Error");
     }
 });
 
-app.post("/addFigure", async (req, res) => {
+app.post("/addUser", async (req, res) => {
     try {
-        const { a, b, h, figura, username } = req.body;
+        const { username } = req.body;
 
         // Create a new figure instance using the Mongoose model
-        const newFigure = new FigureModel({ a, b, h, figura, username });
+        const newUser = new UserModel({ username });
 
         // Save the figure to the database
-        const savedFigure = await newFigure.save();
+        const savedUser = await newUser.save();
 
         // Respond with the saved figure
-        res.json(savedFigure);
+        res.json(savedUser);
     } catch (error) {
         console.log(error);
         res.status(500).send("Internal Server Error");
