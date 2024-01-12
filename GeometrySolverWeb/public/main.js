@@ -141,15 +141,64 @@ h.id = "hInput"
 h.type = "number";
 hDiv.appendChild(h);
 menu.appendChild(hDiv);
-
+var aa,be,ha;
 var btnDiv = document.createElement("div");
 menu.appendChild(btnDiv);
 var btn = document.createElement("button");
-btn.innerHTML="Insert";
+btn.innerHTML="Register";
 btn.onclick = (ev) =>{
 
-    let aa,be,ha;
+    if(!usernameInput.value=="")
+    {
+        const newFigure = {
+            username: usernameInput.value
+        };
+
+        fetch("http://localhost:3000/addUser", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newFigure),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("User registered successfully:", data);
+            // You can update your WebGL rendering here if needed
+        })
+        .catch(error => {
+            console.error("Error adding figure:", error);
+        });
+    }
+}
+btnDiv.appendChild(btn);
+btn = document.createElement("button");
+btn.innerHTML="Get";
+btn.onclick = (ev) =>{
+
+    fetch('/getUsers')
+        .then(response => response.json())
+        .then(data => {
     
+            data.forEach(item => {
+                console.log(item);
+                let podatak = document.createElement("label");
+                podatak.innerHTML=` username: ${item.username} `/*, id: ${item._id} `*/;
+                menu.appendChild(podatak);
+        })
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+btnDiv.appendChild(btn);
+
+let range = document.createElement("input");
+range.setAttribute("type","range");
+range.setAttribute("min",3);
+range.setAttribute("max",24);
+range.oninput=(ev)=>
+{
     if(document.getElementById("shapes").value === "rectangle")
     {
         aa = document.getElementById("aInput").value;
@@ -170,59 +219,23 @@ btn.onclick = (ev) =>{
         be = document.getElementById("bInput").value;
         ha = document.getElementById("hInput").value;
     }
-
-    const newFigure = {
-        username: usernameInput.value
-    };
-
-    fetch("http://localhost:3000/addUser", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newFigure),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("User registered successfully:", data);
-        // You can update your WebGL rendering here if needed
-    })
-    .catch(error => {
-        console.error("Error adding figure:", error);
-    });
-}
-btnDiv.appendChild(btn);
-btn = document.createElement("button");
-btn.innerHTML="Get";
-btn.onclick = (ev) =>{
-
-    fetch('/getUsers')
-        .then(response => response.json())
-        .then(data => {
-    
-            data.forEach(item => {
-                console.log(item);
-                let podatak = document.createElement("label");
-                podatak.innerHTML=` username: ${item.username} , id: ${item._id} `;
-                menu.appendChild(podatak);
-        })
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-}
-btnDiv.appendChild(btn);
-
-let range = document.createElement("input");
-range.setAttribute("type","range");
-range.setAttribute("min",3);
-range.setAttribute("max",24);
-range.oninput=(ev)=>
-{
+    let oblik = document.getElementById("shapes").value;
     vertexData=[0.0,0.0,0.0];
     colorData=[];
     range.innerText = this.value;
-    drawCircle(range.value)
+    switch(oblik)
+    {
+        case "triangle":
+            drawCone(aa,ha,range.value);
+            break;
+        case "rectangle":
+            drawCircle(range.value);
+            break;
+        case "trapezoid":
+            console.log("drawTruncatedCone(range.value)");
+            break;
+    }
+    
 }
 btnDiv.appendChild(range);
 
@@ -250,14 +263,14 @@ btnDiv.appendChild(range);
   } else {
     h.disabled = false;
   }
- };
+};
 
 // Data to be inserted
-const dataToInsert = {
-    a: 3,
-    b: 4,
-    h: 5
-  };
+// const dataToInsert = {
+//     a: 3,
+//     b: 4,
+//     h: 5
+//   };
 
 // // Function to insert data
 // async function insertData() {
@@ -387,6 +400,44 @@ function drawCircle(dense)
         colorData.push(...circleColor);
     }
     webgl()
+}
+
+function drawCone(a,h,dense)
+{
+    if(a==0 || h==0)
+    {
+        console.log("nepopunjene dimenzije");
+        console.log(a);
+        console.log(h);
+    }
+    else
+    {
+        let density = dense;
+        let base = a;
+        let height = h;
+        let theta = (Math.PI*2)/density;
+        let cosine = Math.cos(theta);
+        let sine = Math.sin(theta);
+        coneColor = [0.8,0.8,0.8];
+        colorData.push(...coneColor);
+        coneVertex = [a,0.0,0.0];
+        vertexData.push(...coneVertex);
+        vertexData.push(...coneVertex);
+        colorData.push(...coneColor);
+        colorData.push(...coneColor);
+        coneVertex = [0.0,h,0.0];
+        vertexData.push(...coneVertex);
+        vertexData.push(...coneVertex);
+        colorData.push(...coneColor);
+        colorData.push(...coneColor);
+        coneVertex=[0.0,0.0,0.0];
+        vertexData.push(coneVertex);
+        vertexData.push(coneVertex);
+        colorData.push(coneColor);
+        colorData.push(coneColor);
+        webgl()
+    }
+        
 }
 
 
