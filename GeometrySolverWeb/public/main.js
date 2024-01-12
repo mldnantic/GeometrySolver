@@ -180,9 +180,6 @@ btn.onclick = (ev) =>{
     
             data.forEach(item => {
                 console.log(item);
-                let podatak = document.createElement("label");
-                podatak.innerHTML=` username: ${item.username} `/*, id: ${item._id} `*/;
-                menu.appendChild(podatak);
         })
         })
         .catch(error => {
