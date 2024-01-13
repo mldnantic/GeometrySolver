@@ -227,7 +227,7 @@ range.oninput=(ev)=>
             drawCylinder(aa,be,range.value);
             break;
         case "trapezoid":
-            console.log("drawTruncatedCone(range.value)");
+            drawTruncatedCone(aa,be,ha,range.value);
             break;
     }
     
@@ -474,6 +474,42 @@ function drawCylinder(a,b,dense)
     }
 }
 
+function drawTruncatedCone(a,b,h,dense)
+{
+    if(a==0 || b==0 || h==0)
+    {
+        console.log("nepopunjene dimenzije");
+    }
+    else
+    {
+        let theta = (Math.PI*2)/dense;
+        let cosine = Math.cos(theta);
+        let sine = Math.sin(theta);
+
+        let outer = a;
+        let inner = b;
+
+        wrapVertexOuter = [outer,0.0,0.0];
+        wrapVertexInner = [inner,h,0.0];
+        vertexData.push(...wrapVertexOuter);
+        vertexData.push(...wrapVertexInner);
+
+        cylinderColor = [0.8,0.8,0.8];
+        colorData.push(...randomColor());
+        colorData.push(...randomColor());
+
+        for(i=0;i<dense;i++)
+        {
+            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
+            wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],h,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
+            vertexData.push(...wrapVertexOuter);
+            vertexData.push(...wrapVertexInner);
+            colorData.push(...randomColor());
+            colorData.push(...randomColor());
+        }
+        webgl(gl.TRIANGLE_STRIP,false);
+    }
+}
 // Construct an Array by repeating `pattern` n times
 function repeat(n, pattern) {
     return [...Array(n)].reduce(sum => sum.concat(pattern), []);
