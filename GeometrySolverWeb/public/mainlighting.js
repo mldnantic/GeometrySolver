@@ -80,6 +80,118 @@ const vertexData = [
     -.5, -.5, -.5,
 ];
 
+const colorData =
+[
+    0.8208771372239099,
+    0.8377264682056472,
+    0.5595970833259835,
+    0.8208771372239099,
+    0.8377264682056472,
+    0.5595970833259835,
+    0.8208771372239099,
+    0.8377264682056472,
+    0.5595970833259835,
+    0.8208771372239099,
+    0.8377264682056472,
+    0.5595970833259835,
+    0.8208771372239099,
+    0.8377264682056472,
+    0.5595970833259835,
+    0.8208771372239099,
+    0.8377264682056472,
+    0.5595970833259835,
+    0.6383697899098857,
+    0.7542970804033661,
+    0.15987469526874187,
+    0.6383697899098857,
+    0.7542970804033661,
+    0.15987469526874187,
+    0.6383697899098857,
+    0.7542970804033661,
+    0.15987469526874187,
+    0.6383697899098857,
+    0.7542970804033661,
+    0.15987469526874187,
+    0.6383697899098857,
+    0.7542970804033661,
+    0.15987469526874187,
+    0.6383697899098857,
+    0.7542970804033661,
+    0.15987469526874187,
+    0.4748058969160487,
+    0.1434985986967683,
+    0.33132941767944335,
+    0.4748058969160487,
+    0.1434985986967683,
+    0.33132941767944335,
+    0.4748058969160487,
+    0.1434985986967683,
+    0.33132941767944335,
+    0.4748058969160487,
+    0.1434985986967683,
+    0.33132941767944335,
+    0.4748058969160487,
+    0.1434985986967683,
+    0.33132941767944335,
+    0.4748058969160487,
+    0.1434985986967683,
+    0.33132941767944335,
+    0.6797687963970465,
+    0.497134726814609,
+    0.8521957428261815,
+    0.6797687963970465,
+    0.497134726814609,
+    0.8521957428261815,
+    0.6797687963970465,
+    0.497134726814609,
+    0.8521957428261815,
+    0.6797687963970465,
+    0.497134726814609,
+    0.8521957428261815,
+    0.6797687963970465,
+    0.497134726814609,
+    0.8521957428261815,
+    0.6797687963970465,
+    0.497134726814609,
+    0.8521957428261815,
+    0.18835062149041593,
+    0.3262350267153872,
+    0.6784154021153825,
+    0.18835062149041593,
+    0.3262350267153872,
+    0.6784154021153825,
+    0.18835062149041593,
+    0.3262350267153872,
+    0.6784154021153825,
+    0.18835062149041593,
+    0.3262350267153872,
+    0.6784154021153825,
+    0.18835062149041593,
+    0.3262350267153872,
+    0.6784154021153825,
+    0.18835062149041593,
+    0.3262350267153872,
+    0.6784154021153825,
+    0.5548753105818753,
+    0.9993365733813392,
+    0.9789370174013655,
+    0.5548753105818753,
+    0.9993365733813392,
+    0.9789370174013655,
+    0.5548753105818753,
+    0.9993365733813392,
+    0.9789370174013655,
+    0.5548753105818753,
+    0.9993365733813392,
+    0.9789370174013655,
+    0.5548753105818753,
+    0.9993365733813392,
+    0.9789370174013655,
+    0.5548753105818753,
+    0.9993365733813392,
+    0.9789370174013655
+];
+
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
 // Construct an Array by repeating `pattern` n times
@@ -87,15 +199,6 @@ function repeat(n, pattern) {
     return [...Array(n)].reduce(sum => sum.concat(pattern), []);
 }
 
-const uvData = repeat(6, [
-    1, 1, // top right
-    1, 0, // bottom right
-    0, 1, // top left
-
-    0, 1, // top left
-    1, 0, // bottom right
-    0, 0  // bottom left
-]);
 
 // F|L|B|R|T|U
 const normalData = [
@@ -111,37 +214,13 @@ const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
 
-const uvBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvData), gl.STATIC_DRAW);
-
 const normalBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
 
-// RESOURCE LOADING
-// ================
-
-function loadTexture(url) {
-    const texture = gl.createTexture();
-    const image = new Image();
-
-    image.onload = e => {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-
-        gl.generateMipmap(gl.TEXTURE_2D);
-    };
-
-    image.src = url;
-    return texture;
-}
-
-const brick = loadTexture(`default_brick.png`);
-
-gl.activeTexture(gl.TEXTURE0);
-gl.bindTexture(gl.TEXTURE_2D, brick);
+const colorBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
 
 // SHADER PROGRAM
 // ==============
@@ -155,10 +234,9 @@ let uniformLocations;
     const float ambient = 0.1;
 
     attribute vec3 position;
-    attribute vec2 uv;
     attribute vec3 normal;
-
-    varying vec2 vUV;
+    attribute vec3 color;
+    varying vec3 vColor;
     varying float vBrightness;
 
     uniform mat4 matrix;
@@ -167,9 +245,8 @@ let uniformLocations;
     void main() {        
         vec3 worldNormal = (normalMatrix * vec4(normal, 1)).xyz;
         float diffuse = max(0.0, dot(worldNormal, lightDirection));
-
-        vUV = uv;
         vBrightness = ambient + diffuse;
+        vColor = color*vBrightness;
 
         gl_Position = matrix * vec4(position, 1);
     }
@@ -180,15 +257,11 @@ let uniformLocations;
     gl.shaderSource(fragmentShader, `
     precision mediump float;
 
-    varying vec2 vUV;
     varying float vBrightness;
-
-    uniform sampler2D textureID;
+    varying vec3 vColor;
 
     void main() {
-        vec4 texel = texture2D(textureID, vUV);
-        texel.xyz *= vBrightness;
-        gl_FragColor = texel;
+        gl_FragColor = vec4(vColor,1.0);
     }
     `);
     gl.compileShader(fragmentShader);
@@ -205,15 +278,15 @@ let uniformLocations;
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
-    const uvLocation = gl.getAttribLocation(program, `uv`);
-    gl.enableVertexAttribArray(uvLocation);
-    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-    gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 0, 0);
-
     const normalLocation = gl.getAttribLocation(program, `normal`);
     gl.enableVertexAttribArray(normalLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
     gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+
+    const colorLocation = gl.getAttribLocation(program, `color`);
+    gl.enableVertexAttribArray(colorLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
 
     gl.useProgram(program);
     gl.enable(gl.DEPTH_TEST);
@@ -221,10 +294,7 @@ let uniformLocations;
     uniformLocations = {
         matrix: gl.getUniformLocation(program, `matrix`),
         normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
-        textureID: gl.getUniformLocation(program, 'textureID'),
     };
-
-    gl.uniform1i(uniformLocations.textureID, 0);
 })();
 
 
@@ -254,8 +324,8 @@ const normalMatrix = mat4.create();
 function animate() {
     requestAnimationFrame(animate);
 
-    mat4.rotateX(modelMatrix, modelMatrix, Math.PI/100);
-    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
+    mat4.rotateX(modelMatrix, modelMatrix, Math.PI/200);
+    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
 
     mat4.multiply(mvMatrix, viewMatrix, modelMatrix);
     mat4.multiply(mvpMatrix, projectionMatrix, mvMatrix);
