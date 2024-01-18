@@ -1,16 +1,53 @@
-
-var host = document.body;
-
 const connectionString = 'mongodb://localhost:27017';
+
+let host = document.body;
 
 let tempEl = document.createElement("div");
 tempEl.className="glavniDiv";
 tempEl.id = "glavniDiv";
 host.appendChild(tempEl);
 
+let userInteraction = document.createElement("div");
+userInteraction.className = "userInteraction";
+userInteraction.id = "userInteraction";
+host.appendChild(userInteraction);
+
+var btnKomentar = document.createElement("button");
+btnKomentar.innerHTML="Posalji";
+btnKomentar.onclick = (ev) =>{
+    console.log("poslat komentar + username + userID")
+    //todo post comment
+    if(!komentar.value=="")
+    {
+        // const newUser = {
+        //     username: usernameInput.value
+        // };
+
+        // fetch("http://localhost:3000/addUser", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify(newUser),
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     console.log("User registered successfully:", data);
+        //     // You can update your WebGL rendering here if needed
+        // })
+        // .catch(error => {
+        //     console.error("Error adding figure:", error);
+        // });
+    }
+}
+userInteraction.appendChild(btnKomentar);
+
+var komentar = document.createElement("input");
+komentar.placeholder = "Unesite komentar...";
+komentar.id = "commentText";
+userInteraction.appendChild(komentar);
+
 let glavniDiv = document.getElementById("glavniDiv");
-
-
 
 tempEl = document.createElement("canvas");
 glavniDiv.appendChild(tempEl);
@@ -52,6 +89,11 @@ var colorData = [
     // 0.0, 0.0, 1.0,
 ];
 
+let poprecni = document.createElement("canvas");
+poprecni.className="poprecniPresek";
+poprecni.id="poprecniPresek";
+glavniDiv.appendChild(poprecni);
+
 var menu = document.createElement("div");
 menu.className="menuDiv";
 menu.id="menuDiv";
@@ -61,8 +103,81 @@ let naziv = document.createElement("h1");
 naziv.innerHTML="GeometrySolver";
 menu.appendChild(naziv);
 
+let userLabel = document.createElement("label");
+userLabel.innerHTML = "Prijavi se ili registruj: ";
+menu.appendChild(userLabel);
 
+var usernameInput = document.createElement("input");
+usernameInput.id = "usernameInput";
+menu.appendChild(usernameInput);
 
+let registerLoginDiv = document.createElement("div");
+registerLoginDiv.className = "registerLoginDiv";
+menu.appendChild(registerLoginDiv);
+
+let btnRegister = document.createElement("button");
+btnRegister.innerHTML="Registracija";
+btnRegister.onclick =async (ev) =>{
+    
+    if(!usernameInput.value=="")
+    {
+        const newUser = {
+            username: usernameInput.value
+        };
+
+        await fetch(`/getUser?username=${usernameInput.value}`)
+        .then(response => response.json())
+        .then(data => {
+                if(data.username==usernameInput.value)
+                {
+                    console.log("korisnik sa tim imenom vec postoji")
+                }
+                else
+                {
+                    fetch("http://localhost:3000/addUser", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(newUser),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("User registered successfully:", data);
+                    })
+                    .catch(error => {
+                        console.error("Error registering user:", error);
+                    });
+                }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+
+        
+    }
+}
+registerLoginDiv.appendChild(btnRegister);
+
+let btnLogin = document.createElement("button");
+btnLogin.innerHTML="Prijava";
+btnLogin.onclick = async (ev) =>{
+    if(!usernameInput.value=="")
+    {
+    console.log(usernameInput.value);
+
+    await fetch(`/getUser?username=${usernameInput.value}`)
+        .then(response => response.json())
+        .then(data => {
+                console.log(data);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+    }
+}
+
+registerLoginDiv.appendChild(btnLogin);
 
  // Create label element
  var label = document.createElement("label");
@@ -101,9 +216,6 @@ menu.appendChild(naziv);
 menu.appendChild(label);
 menu.appendChild(select);
 
-var usernameInput = document.createElement("input");
-menu.appendChild(usernameInput);
-
 ///  a
 var aDiv = document.createElement("div");
 let aLabel = document.createElement("label");
@@ -140,53 +252,7 @@ h.type = "number";
 hDiv.appendChild(h);
 menu.appendChild(hDiv);
 var aa,be,ha;
-var btnDiv = document.createElement("div");
-menu.appendChild(btnDiv);
-var btn = document.createElement("button");
-btn.innerHTML="Register";
-btn.onclick = (ev) =>{
 
-    if(!usernameInput.value=="")
-    {
-        const newUser = {
-            username: usernameInput.value
-        };
-
-        fetch("http://localhost:3000/addUser", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newUser),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("User registered successfully:", data);
-            // You can update your WebGL rendering here if needed
-        })
-        .catch(error => {
-            console.error("Error adding figure:", error);
-        });
-    }
-}
-btnDiv.appendChild(btn);
-btn = document.createElement("button");
-btn.innerHTML="Get";
-btn.onclick = (ev) =>{
-
-    fetch('/getUsers')
-        .then(response => response.json())
-        .then(data => {
-    
-            data.forEach(item => {
-                console.log(item);
-        })
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-}
-btnDiv.appendChild(btn);
 
 let range = document.createElement("input");
 range.setAttribute("type","range");
@@ -232,7 +298,7 @@ range.oninput=(ev)=>
     }
     
 }
-btnDiv.appendChild(range);
+menu.appendChild(range);
 
  // Get the select element
  var select = document.getElementById("shapes");
@@ -641,7 +707,7 @@ function animate() {
 // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
 if(!animacija)
 {
-    gl.clearColor(0.4, 0.4, 0.4, 1.0);
+    gl.clearColor(0.412, 0.412, 0.412, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);

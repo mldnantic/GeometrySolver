@@ -1,12 +1,21 @@
-canvas{
-    /* border: 1px solid black; */
-    width: 65%;
-    height: 100%;
-}
-/* body
+body
 {
-    background-color: rgb(44, 44, 48);
-} */
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    height:90%;
+    margin:5%;
+}
+
+canvas
+{
+    display: flex;
+    flex-flow:row wrap;
+    min-width: 50%;
+    flex:1 0;
+    justify-content:flex-start;
+    background-color: rgb(105,105,105);
+}
 
 h1
 {
@@ -16,15 +25,78 @@ h1
     border-radius: 10px;
 }
 
-.glavniDiv{
+.glavniDiv
+{
     display: flex;
     flex-direction: row;
+    min-height: 35%;
+}
+
+.userInteraction
+{
+    display: flex;
+    flex-direction: column-reverse;
+    min-height: 200px;
+    background-color: rgb(44, 44, 48);
+    padding: 5px;
+}
+
+.poprecniPresek
+{
+    background-color: rgb(32, 32, 32);
+    display: flex;
+    min-width: 20%;
+    flex-flow:row wrap;
+    flex:1 0;
+    justify-content:flex-start;
 }
 
 .menuDiv{
-    width: 35%;
-    min-height: 100%;
-    background-color: rgb(72, 224, 230);
+    display:flex;
+    flex:1 0;
+    flex-flow: column wrap;
+    justify-content: space-evenly;
+    background-color: lightgray;
+    padding: 5px;
+}
+
+.registerLoginDiv
+{
+    display: flex;
+}
+label
+{
+    color: black;
+    padding: 5px;
+    margin: 5px;
+}
+
+input
+{
+    width: 90%;
+    align-self: center;
+}
+
+button
+{
+    width: 90%;
+    align-self: center;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius:5px;
+}
+
+@media (hover:hover)
+{
+    button:hover{
+        background-color: rgb(44, 44, 48);
+        color:gainsboro;
+    }
+
+    button:active{
+        background-color: rgb(75, 74, 74);
+    }
 }
 
 #shape-container {

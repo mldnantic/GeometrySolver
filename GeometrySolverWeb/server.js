@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 const app = express();
 const port = 3000;
@@ -8,6 +9,7 @@ mongoose.connect("mongodb://localhost:27017/GeometrySolver");
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const UserSchema = mongoose.Schema({
     username: String,
@@ -15,10 +17,19 @@ const UserSchema = mongoose.Schema({
 
 const UserModel = mongoose.model("user", UserSchema);
 
-app.get("/getUsers", async (req, res) => {
+
+app.get("/getUser", async (req, res) => {
     try {
-        const users = await UserModel.find({});
-        res.json(users);
+        const {username}=req.query;
+
+        const user = await UserModel.findOne({username});
+
+        if (!user)
+        {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(user);
     } catch (error) {
         console.log(error);
         res.status(500).send("Internal Server Error");
