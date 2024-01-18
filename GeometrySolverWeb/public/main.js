@@ -125,7 +125,7 @@ btnRegister.onclick =async (ev) =>{
             username: usernameInput.value
         };
 
-        await fetch(`/getUser?username=${usernameInput.value}`)
+        await fetch(`/getUserByUsername?username=${usernameInput.value}`)
         .then(response => response.json())
         .then(data => {
                 if(data.username==usernameInput.value)
@@ -166,7 +166,7 @@ btnLogin.onclick = async (ev) =>{
     {
     console.log(usernameInput.value);
 
-    await fetch(`/getUser?username=${usernameInput.value}`)
+    await fetch(`/getUserByUsername?username=${usernameInput.value}`)
         .then(response => response.json())
         .then(data => {
                 console.log(data);
