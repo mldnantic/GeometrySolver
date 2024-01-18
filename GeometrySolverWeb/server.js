@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 // import {FigureRepository} from "./FigureRepository.js"
 const UserRepository = require("./UserRepository.js")
 const UserModel = require("./UserModel.js");
+const BodyRepository = require("./BodyRepository.js");
 
 
 const app = express();
@@ -16,37 +17,35 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-app.get("/getUser", async (req, res) => {
-    try {
-        const {username}=req.query;
+// app.get("/getUser", async (req, res) => {
+//     try {
+//         const {username}=req.query;
 
-        const user = await UserModel.findOne({username});
+//         const user = await UserModel.findOne({username});
 
-        if (!user)
-        {
-            return res.status(404).json({ error: 'User not found' });
-        }
+//         if (!user)
+//         {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
 
-        res.json(user);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send("Internal Server Error");
-    }
+//         res.json(user);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send("Internal Server Error");
+//     }
+// });
+
+//user crud
+app.get('/getUserByUsername', async (req, res) => {
+  try {
+    const username = req.query;
+    const user = await UserRepository.getUserByUsername(username);
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
-
-  // Get user by ID
-  app.get('/getUserByUsername', async (req, res) => {
-    try {
-      const username = req.params.username;
-      const user = await UserRepository.getUserByUsername(username);
-      res.json(user);
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-
 
 app.post("/addUser", async (req, res) => {
     try {
@@ -66,7 +65,7 @@ app.post("/addUser", async (req, res) => {
     }
 });
 
-// Create user
+
 app.post('/createUser', async (req, res) => {
     try {
       const userData = req.body;
@@ -78,7 +77,7 @@ app.post('/createUser', async (req, res) => {
     }
   });
 
-  // Get user by ID
+
 app.get('/getUserById/:id', async (req, res) => {
     try {
       const userId = req.params.id;
@@ -90,6 +89,15 @@ app.get('/getUserById/:id', async (req, res) => {
     }
   });
 
-
+//body crud
+app.get('/getAllBodies', async (req, res) => {
+  try {
+    const bodies = await BodyRepository.getAllBodies();
+    res.json(bodies);
+  } catch (error) {
+    console.error('Error fetching bodies:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.listen(port);

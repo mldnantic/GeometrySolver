@@ -2,6 +2,10 @@ const connectionString = 'mongodb://localhost:27017';
 
 let host = document.body;
 
+let naziv = document.createElement("h1");
+naziv.innerHTML="GeometrySolver";
+host.appendChild(naziv);
+
 let tempEl = document.createElement("div");
 tempEl.className="glavniDiv";
 tempEl.id = "glavniDiv";
@@ -14,38 +18,52 @@ host.appendChild(userInteraction);
 
 var btnKomentar = document.createElement("button");
 btnKomentar.innerHTML="Posalji";
-btnKomentar.onclick = (ev) =>{
-    console.log("poslat komentar + username + userID")
-    //todo post comment
-    if(!komentar.value=="")
-    {
-        // const newUser = {
-        //     username: usernameInput.value
-        // };
+btnKomentar.onclick =async (ev) =>{
+    
+    await fetch("getAllBodies")
+        .then(response => response.json())
+        .then(data => {
+                data.forEach(item =>{
+                    console.log(item)
+                })
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+        //todo post comment
+    // if(!komentar.value=="")
+    // {
+    //     const newUser = {
+    //         username: usernameInput.value
+    //     };
 
-        // fetch("http://localhost:3000/addUser", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify(newUser),
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     console.log("User registered successfully:", data);
-        //     // You can update your WebGL rendering here if needed
-        // })
-        // .catch(error => {
-        //     console.error("Error adding figure:", error);
-        // });
+    //     fetch("http://localhost:3000/addUser", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify(newUser),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log("User registered successfully:", data);
+    //         // You can update your WebGL rendering here if needed
+    //     })
+    //     .catch(error => {
+    //         console.error("Error adding figure:", error);
+    //     });
+    // }
     }
-}
 userInteraction.appendChild(btnKomentar);
 
 var komentar = document.createElement("input");
 komentar.placeholder = "Unesite komentar...";
 komentar.id = "commentText";
 userInteraction.appendChild(komentar);
+
+var commentList = document.createElement("textarea");
+commentList.id="commentList";
+userInteraction.appendChild(commentList);
 
 let glavniDiv = document.getElementById("glavniDiv");
 
@@ -89,19 +107,18 @@ var colorData = [
     // 0.0, 0.0, 1.0,
 ];
 
-let poprecni = document.createElement("canvas");
-poprecni.className="poprecniPresek";
-poprecni.id="poprecniPresek";
-glavniDiv.appendChild(poprecni);
+function drawPocetni()
+{
+    let poprecni = document.createElement("canvas");
+    poprecni.className="poprecniPresek";
+    poprecni.id="poprecniPresek";
+    glavniDiv.appendChild(poprecni);
+}
 
 var menu = document.createElement("div");
 menu.className="menuDiv";
 menu.id="menuDiv";
 glavniDiv.appendChild(menu);
-
-let naziv = document.createElement("h1");
-naziv.innerHTML="GeometrySolver";
-menu.appendChild(naziv);
 
 let userLabel = document.createElement("label");
 userLabel.innerHTML = "Prijavi se ili registruj: ";
@@ -175,7 +192,6 @@ btnLogin.onclick = async (ev) =>{
         });
     }
 }
-
 registerLoginDiv.appendChild(btnLogin);
 
  // Create label element

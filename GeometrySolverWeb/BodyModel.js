@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const BodyModel = new mongoose.Schema({
+const bodySchema = new mongoose.Schema({
   projectname:String,
   creatorID:String,
   length:Number, 
@@ -15,6 +15,6 @@ const BodyModel = new mongoose.Schema({
   },
 },{ versionKey: false });
 
-const bodyModel = mongoose.model("body", BodyModel);
+const bodyModel = mongoose.model("body", bodySchema);
 
 module.exports = bodyModel;
