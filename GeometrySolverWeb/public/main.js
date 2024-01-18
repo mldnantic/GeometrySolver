@@ -128,7 +128,7 @@ btnRegister.onclick =async (ev) =>{
         await fetch(`/getUserByUsername?username=${usernameInput.value}`)
         .then(response => response.json())
         .then(data => {
-                if(data.username==usernameInput.value)
+                if(data!=null && data.username==usernameInput.value)
                 {
                     console.log("korisnik sa tim imenom vec postoji")
                 }
@@ -164,7 +164,6 @@ btnLogin.innerHTML="Prijava";
 btnLogin.onclick = async (ev) =>{
     if(!usernameInput.value=="")
     {
-    console.log(usernameInput.value);
 
     await fetch(`/getUserByUsername?username=${usernameInput.value}`)
         .then(response => response.json())

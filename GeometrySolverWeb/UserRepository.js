@@ -1,4 +1,4 @@
-const UserModel = require('./UserModel.js'); // Update with your actual path
+const UserModel = require('./UserModel.js');
 
 class UserRepository {
   constructor() {}

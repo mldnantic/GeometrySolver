@@ -15,12 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// const UserSchema = mongoose.Schema({
-//     username: String,
-// },{ versionKey: false });
-
-// const UserModel = mongoose.model("user", UserSchema);
-
 
 app.get("/getUser", async (req, res) => {
     try {
@@ -43,8 +37,8 @@ app.get("/getUser", async (req, res) => {
   // Get user by ID
   app.get('/getUserByUsername', async (req, res) => {
     try {
-      const userId = req.params.id;
-      const user = await UserRepository.getUserById(userId);
+      const username = req.params.username;
+      const user = await UserRepository.getUserByUsername(username);
       res.json(user);
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -98,4 +92,4 @@ app.get('/getUserById/:id', async (req, res) => {
 
 
 
-app.listen(3000);
+app.listen(port);
