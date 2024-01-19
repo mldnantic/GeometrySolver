@@ -19,17 +19,6 @@ host.appendChild(userInteraction);
 var btnKomentar = document.createElement("button");
 btnKomentar.innerHTML="Posalji";
 btnKomentar.onclick =async (ev) =>{
-    
-    await fetch("getAllBodies")
-        .then(response => response.json())
-        .then(data => {
-                data.forEach(item =>{
-                    console.log(item)
-                })
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
         //todo post comment
     // if(!komentar.value=="")
     // {
@@ -63,6 +52,7 @@ userInteraction.appendChild(komentar);
 
 var commentList = document.createElement("textarea");
 commentList.id="commentList";
+commentList.readOnly = true;
 userInteraction.appendChild(commentList);
 
 let glavniDiv = document.getElementById("glavniDiv");
@@ -107,7 +97,7 @@ var colorData = [
     // 0.0, 0.0, 1.0,
 ];
 
-function drawPocetni()
+function drawPoprecni()
 {
     let poprecni = document.createElement("canvas");
     poprecni.className="poprecniPresek";
@@ -269,7 +259,7 @@ menu.appendChild(hDiv);
 var aa,be,ha;
 
 
-let range = document.createElement("input");
+var range = document.createElement("input");
 range.setAttribute("type","range");
 range.setAttribute("min",3);
 range.setAttribute("max",24);
@@ -315,18 +305,14 @@ range.oninput=(ev)=>
 }
 menu.appendChild(range);
 
- // Get the select element
  var select = document.getElementById("shapes");
 
- // Attach an onchange event listener
  select.onchange = (ev) => {
-   // Get the selected value
+
    let izabrano = select.value;
 
-   // Get the input element with id "a"
    var a = document.getElementById("aInput");
 
-   // Disable or enable the input based on the selected value
    if (izabrano == "triangle") {
      b.disabled = true;
      b.value = '';
@@ -340,6 +326,31 @@ menu.appendChild(range);
     h.disabled = false;
   }
 };
+
+var renderBtn = document.createElement("button");
+renderBtn.innerHTML="Prikazi model";
+renderBtn.onclick = async (ev) =>{
+
+    await fetch("getAllBodies")
+        .then(response => response.json())
+        .then(data => {
+                data.forEach(item =>{
+                    console.log(item.figures[1])
+                    let fig = item.figures[1];
+                    if(fig.tip == "trapezoid")
+                    {
+                        vertexData=[];
+                        colorData=[];
+                        drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
+                    }
+                    
+                })
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+menu.appendChild(renderBtn);
 
 // Data to be inserted
 // const dataToInsert = {
@@ -416,21 +427,10 @@ menu.appendChild(range);
 //     document.getElementById(selectedShape).style.display = "block";
 // }
 
-
-
-function randomColor()
+function modelColor()
 {
-    return [Math.random(),Math.random(),Math.random()];
+    return [0.6,0.6,0.6];
 }
-
-// for(let face=0;face<2;face++)
-// {
-//     let faceColor = randomColor();
-//     for(let vertex=0;vertex<2;vertex++)
-//     {
-//         colorData.push(...faceColor);
-//     }
-// }
 
 function drawGrid(rotating)
 {
@@ -487,14 +487,14 @@ function drawCircle(dense,r)
     circleVertex = [size,0.0,0.0];
     vertexData.push(...circleVertex);
     circleColor = [0.8,0.8,0.8];
-    colorData.push(...randomColor());
+    colorData.push(...modelColor());
     for(i=0;i<density;i++)
     {
         circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
         vertexData.push(...circleVertex);
         vertexData.push(...circleVertex);
-        colorData.push(...randomColor());
-        colorData.push(...randomColor());
+        colorData.push(...modelColor());
+        colorData.push(...modelColor());
     }
     webgl(gl.TRIANGLE_FAN,false);
 }
@@ -512,7 +512,7 @@ function drawCone(a,h,dense)
         coneTipVertex = [0.0,h,0.0];
         vertexData.push(...coneTipVertex);
         coneColor = [0.8,0.8,0.8];
-        colorData.push(...randomColor());
+        colorData.push(...modelColor());
         drawCircle(dense,a);
     }
         
@@ -533,23 +533,24 @@ function drawCylinder(a,b,dense)
         let radius = a;
         let height = b;
 
-        wrapVertexBottom = [radius,0.0,0.0];
+        
         wrapVertexTop = [radius,height,0.0];
-        vertexData.push(...wrapVertexBottom);
+        wrapVertexBottom = [radius,0.0,0.0];
         vertexData.push(...wrapVertexTop);
+        vertexData.push(...wrapVertexBottom);
 
         cylinderColor = [0.8,0.8,0.8];
-        colorData.push(...randomColor());
-        colorData.push(...randomColor());
+        colorData.push(...modelColor());
+        colorData.push(...modelColor());
 
         for(i=0;i<dense;i++)
         {
             wrapVertexTop = [cosine*wrapVertexTop[0]+sine*wrapVertexTop[2],height,-sine*wrapVertexTop[0]+cosine*wrapVertexTop[2]];
             wrapVertexBottom = [cosine*wrapVertexBottom[0]+sine*wrapVertexBottom[2],0.0,-sine*wrapVertexBottom[0]+cosine*wrapVertexBottom[2]];
-            vertexData.push(...wrapVertexBottom);
             vertexData.push(...wrapVertexTop);
-            colorData.push(...randomColor());
-            colorData.push(...randomColor());
+            vertexData.push(...wrapVertexBottom);
+            colorData.push(...modelColor());
+            colorData.push(...modelColor());
         }
         webgl(gl.TRIANGLE_STRIP,false);
     }
@@ -570,23 +571,23 @@ function drawTruncatedCone(a,b,h,dense)
         let outer = a;
         let inner = b;
 
-        wrapVertexOuter = [outer,0.0,0.0];
         wrapVertexInner = [inner,h,0.0];
-        vertexData.push(...wrapVertexOuter);
+        wrapVertexOuter = [outer,0.0,0.0];
         vertexData.push(...wrapVertexInner);
+        vertexData.push(...wrapVertexOuter);
 
         cylinderColor = [0.8,0.8,0.8];
-        colorData.push(...randomColor());
-        colorData.push(...randomColor());
+        colorData.push(...modelColor());
+        colorData.push(...modelColor());
 
         for(i=0;i<dense;i++)
         {
-            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
             wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],h,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
-            vertexData.push(...wrapVertexOuter);
+            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
             vertexData.push(...wrapVertexInner);
-            colorData.push(...randomColor());
-            colorData.push(...randomColor());
+            vertexData.push(...wrapVertexOuter);
+            colorData.push(...modelColor());
+            colorData.push(...modelColor());
         }
         webgl(gl.TRIANGLE_STRIP,false);
     }
@@ -598,32 +599,6 @@ function repeat(n, pattern) {
 
 function webgl(glDrawMode,animacija)
 {
-    const uvData = repeat(6, [
-        1, 1, // top right
-        1, 0, // bottom right
-        0, 1, // top left
-
-        0, 1, // top left
-        1, 0, // bottom right
-        0, 0  // bottom left
-    ]);
-
-
-function loadTexture(url) {
-    const texture = gl.createTexture();
-    const image = new Image();
-
-    image.onload = e => {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-
-        gl.generateMipmap(gl.TEXTURE_2D);
-    };
-
-    image.src = url;
-    return texture;
-}
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -684,6 +659,8 @@ gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
 
 gl.useProgram(program);
 gl.enable(gl.DEPTH_TEST);
+gl.enable(gl.CULL_FACE);
+gl.cullFace(gl.BACK);
 
 const uniformLocations = {
     matrix: gl.getUniformLocation(program,`matrix`),
@@ -734,7 +711,4 @@ else
 {
     animate();
 }
-
-
-
 }
