@@ -105,6 +105,20 @@ function drawPoprecni()
     glavniDiv.appendChild(poprecni);
 }
 
+function redraw(componentID,componentClassName)
+{
+    var component = document.getElementById(componentID);
+    var parent = component.parentNode;
+    parent.removeChild(component);
+
+    component = document.createElement("div");
+    component.className=componentClassName;
+    component.id=componentID;
+    parent.appendChild(component);
+
+    return component;
+}
+
 var menu = document.createElement("div");
 menu.className="menuDiv";
 menu.id="menuDiv";
