@@ -1,59 +1,74 @@
 const connectionString = 'mongodb://localhost:27017';
+var userID = "";
 
 let host = document.body;
 
+let notificationsDiv = document.createElement("div");
+notificationsDiv.className="notificationsDiv";
+notificationsDiv.id="notificationsDiv";
+host.appendChild(notificationsDiv);
+
 let naziv = document.createElement("h1");
 naziv.innerHTML="GeometrySolver";
-host.appendChild(naziv);
+notificationsDiv.appendChild(naziv);
+
+let notification = document.createElement("div");
+notification.className = "notification";
+notification.id = "notification";
+notificationsDiv.appendChild(notification);
+
 
 let glavniDiv = document.createElement("div");
 glavniDiv.className="glavniDiv";
 glavniDiv.id = "glavniDiv";
 host.appendChild(glavniDiv);
 
-// let userInteraction = document.createElement("div");
-// userInteraction.className = "userInteraction";
-// userInteraction.id = "userInteraction";
-// host.appendChild(userInteraction);
-
-// var btnKomentar = document.createElement("button");
-// btnKomentar.innerHTML="Posalji";
-// btnKomentar.onclick =async (ev) =>{
-//         //todo post comment
-//     // if(!komentar.value=="")
-//     // {
-//     //     const newUser = {
-//     //         username: usernameInput.value
-//     //     };
-
-//     //     fetch("http://localhost:3000/addUser", {
-//     //         method: "POST",
-//     //         headers: {
-//     //             "Content-Type": "application/json",
-//     //         },
-//     //         body: JSON.stringify(newUser),
-//     //     })
-//     //     .then(response => response.json())
-//     //     .then(data => {
-//     //         console.log("User registered successfully:", data);
-//     //         // You can update your WebGL rendering here if needed
-//     //     })
-//     //     .catch(error => {
-//     //         console.error("Error adding figure:", error);
-//     //     });
-//     // }
-//     }
-// userInteraction.appendChild(btnKomentar);
-
-// var komentar = document.createElement("input");
-// komentar.placeholder = "Unesite komentar...";
-// komentar.id = "commentText";
-// userInteraction.appendChild(komentar);
-
-// var commentList = document.createElement("textarea");
-// commentList.id="commentList";
-// commentList.readOnly = true;
-// userInteraction.appendChild(commentList);
+function commentSection()
+{
+    let userInteraction = document.createElement("div");
+    userInteraction.className = "userInteraction";
+    userInteraction.id = "userInteraction";
+    host.appendChild(userInteraction);
+    
+    var btnKomentar = document.createElement("button");
+    btnKomentar.innerHTML="Posalji";
+    btnKomentar.onclick =async (ev) =>{
+            //todo post comment
+        // if(!komentar.value=="")
+        // {
+        //     const newUser = {
+        //         username: usernameInput.value
+        //     };
+    
+        //     fetch("http://localhost:3000/addUser", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify(newUser),
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log("User registered successfully:", data);
+        //         // You can update your WebGL rendering here if needed
+        //     })
+        //     .catch(error => {
+        //         console.error("Error adding figure:", error);
+        //     });
+        // }
+        }
+    userInteraction.appendChild(btnKomentar);
+    
+    var komentar = document.createElement("input");
+    komentar.placeholder = "Unesite komentar...";
+    komentar.id = "commentText";
+    userInteraction.appendChild(komentar);
+    
+    var commentList = document.createElement("textarea");
+    commentList.id="commentList";
+    commentList.readOnly = true;
+    userInteraction.appendChild(commentList);    
+}
 
 
 let canvas = document.createElement("canvas");
@@ -154,7 +169,9 @@ btnRegister.onclick =async (ev) =>{
         .then(data => {
                 if(data!=null && data.username==usernameInput.value)
                 {
-                    console.log("korisnik sa tim imenom vec postoji")
+                    let notification = document.getElementById("notification");
+                    notification.style.backgroundColor = "rgb(180, 138, 32)";
+                    notification.innerHTML = "korisnik sa tim imenom vec postoji";
                 }
                 else
                 {
@@ -173,6 +190,7 @@ btnRegister.onclick =async (ev) =>{
                         console.error("Error registering user:", error);
                     });
                 }
+                setTimeout(resetNotification, 2000);
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -188,23 +206,39 @@ btnLogin.innerHTML="Prijava";
 btnLogin.onclick = async (ev) =>{
     if(!usernameInput.value=="")
     {
-
+    let notification = document.getElementById("notification");
     await fetch(`/getUserByUsername?username=${usernameInput.value}`)
         .then(response => response.json())
         .then(data => {
-                console.log(data);
+            if(data!=null)
+            {
+                userID = data._id;
+                notification.style.backgroundColor = "rgb(20, 150, 20)";
+                notification.innerHTML = `Dobrodosli, ${data.username}`;
+                
+                redraw("registerLoginDiv","registerLoginDiv");
+            }
+            else
+            {
+                notification.style.backgroundColor = "rgb(192, 64, 64)";
+                notification.innerHTML = `Korisnik sa username ${usernameInput.value} ne postoji`;
+            }
+            setTimeout(resetNotification, 2000);
         })
         .catch(error => {
             console.error('Error fetching data:', error);
         });
     }
-    else
-    {
-        redraw("registerLoginDiv","registerLoginDiv");
-    }
 }
 divTmp.appendChild(btnLogin);
 registerLoginDiv.appendChild(divTmp);
+
+function resetNotification()
+{
+    let notification = document.getElementById("notification");
+    notification.style.backgroundColor = "rgb(90, 90, 95)";
+    notification.innerHTML = "";
+}
 
  // Create label element
  var label = document.createElement("label");
