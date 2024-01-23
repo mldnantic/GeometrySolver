@@ -69,11 +69,10 @@ if(!gl)
 {
     throw new Error("WEBGL NOT SUPPORTED");
 }
-
 // alert("Dobrodosli u GeometrySolver :D");
 
+//unloadovanje struktura za matrice jer drugacije ne radi
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
-
 
 var vertexData= [
     //koordinatne ose
@@ -122,17 +121,23 @@ menu.className="menuDiv";
 menu.id="menuDiv";
 glavniDiv.appendChild(menu);
 
+let registerLoginDiv = document.createElement("div");
+registerLoginDiv.className = "registerLoginDiv";
+registerLoginDiv.id = "registerLoginDiv";
+menu.appendChild(registerLoginDiv);
+
+let divTmp = document.createElement("div");
+
 let userLabel = document.createElement("label");
-userLabel.innerHTML = "Prijavi se ili registruj: ";
-menu.appendChild(userLabel);
+userLabel.innerHTML = "Username: ";
+divTmp.appendChild(userLabel);
 
 var usernameInput = document.createElement("input");
 usernameInput.id = "usernameInput";
-menu.appendChild(usernameInput);
+divTmp.appendChild(usernameInput);
 
-let registerLoginDiv = document.createElement("div");
-registerLoginDiv.className = "registerLoginDiv";
-menu.appendChild(registerLoginDiv);
+registerLoginDiv.appendChild(divTmp);
+divTmp = document.createElement("div");
 
 let btnRegister = document.createElement("button");
 btnRegister.innerHTML="Registracija";
@@ -176,7 +181,7 @@ btnRegister.onclick =async (ev) =>{
         
     }
 }
-registerLoginDiv.appendChild(btnRegister);
+divTmp.appendChild(btnRegister);
 
 let btnLogin = document.createElement("button");
 btnLogin.innerHTML="Prijava";
@@ -193,8 +198,13 @@ btnLogin.onclick = async (ev) =>{
             console.error('Error fetching data:', error);
         });
     }
+    else
+    {
+        redraw("registerLoginDiv","registerLoginDiv");
+    }
 }
-registerLoginDiv.appendChild(btnLogin);
+divTmp.appendChild(btnLogin);
+registerLoginDiv.appendChild(divTmp);
 
  // Create label element
  var label = document.createElement("label");
