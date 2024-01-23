@@ -1,9 +1,13 @@
 body
 {
     background-color: black;
-    display: flex;
-    flex-direction: column;
+    font-family: "Century Gothic";
     font-size: large;
+}
+
+@font-face {
+    font-family: "Century Gothic";
+    src: url('CenturyGothic.ttf');
 }
 
 canvas
@@ -14,6 +18,8 @@ canvas
     flex:2 0;
     justify-content:flex-start;
     background-color: rgb(105,105,105);
+    margin: 4px;
+    margin-right: 2px;
 }
 
 h1
@@ -21,6 +27,11 @@ h1
     background-color: rgb(90, 90, 95);
     color:gainsboro;
     padding: 10px;
+    border-radius: 10px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    margin: 5%;
+    margin-bottom: 0%;
 }
 
 .glavniDiv
@@ -28,15 +39,8 @@ h1
     display: flex;
     flex-direction: row;
     min-height: 35%;
-}
-
-.userInteraction
-{
-    display: flex;
-    flex-direction: column-reverse;
-    min-height: 200px;
-    background-color: rgb(44, 44, 48);
-    padding: 5px;
+    margin: 5%;
+    margin-top: 0%;
 }
 
 textarea
@@ -66,6 +70,8 @@ textarea
     flex-flow: column wrap;
     justify-content: space-evenly;
     background-color: darkgray;
+    margin: 4px;
+    margin-left: 2px;
 }
 
 .registerLoginDiv
@@ -75,8 +81,13 @@ textarea
 
 label
 {
-    color: black;
-    margin: 5px;
+    color: black;   
+    padding: 5px;
+}
+
+select
+{
+    font-family: "Century Gothic";
 }
 
 input
@@ -85,7 +96,6 @@ input
     align-self: center;
     border-radius: 5px;
     border:1px solid rgb(90, 90, 95);
-    background-color: inherit;
 }
 
 button
@@ -95,6 +105,16 @@ button
     margin: 5px;
     border: 1px solid black;
     border-radius:5px;
+    font-family: "Century Gothic";
+}
+
+.userInteraction
+{
+    display: flex;
+    flex-direction: column-reverse;
+    min-height: 200px;
+    background-color: rgb(44, 44, 48);
+    padding: 5px;
 }
 
 @media (hover:hover)

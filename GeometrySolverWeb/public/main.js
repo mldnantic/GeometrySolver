@@ -6,66 +6,64 @@ let naziv = document.createElement("h1");
 naziv.innerHTML="GeometrySolver";
 host.appendChild(naziv);
 
-let tempEl = document.createElement("div");
-tempEl.className="glavniDiv";
-tempEl.id = "glavniDiv";
-host.appendChild(tempEl);
+let glavniDiv = document.createElement("div");
+glavniDiv.className="glavniDiv";
+glavniDiv.id = "glavniDiv";
+host.appendChild(glavniDiv);
 
-let userInteraction = document.createElement("div");
-userInteraction.className = "userInteraction";
-userInteraction.id = "userInteraction";
-host.appendChild(userInteraction);
+// let userInteraction = document.createElement("div");
+// userInteraction.className = "userInteraction";
+// userInteraction.id = "userInteraction";
+// host.appendChild(userInteraction);
 
-var btnKomentar = document.createElement("button");
-btnKomentar.innerHTML="Posalji";
-btnKomentar.onclick =async (ev) =>{
-        //todo post comment
-    // if(!komentar.value=="")
-    // {
-    //     const newUser = {
-    //         username: usernameInput.value
-    //     };
+// var btnKomentar = document.createElement("button");
+// btnKomentar.innerHTML="Posalji";
+// btnKomentar.onclick =async (ev) =>{
+//         //todo post comment
+//     // if(!komentar.value=="")
+//     // {
+//     //     const newUser = {
+//     //         username: usernameInput.value
+//     //     };
 
-    //     fetch("http://localhost:3000/addUser", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify(newUser),
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log("User registered successfully:", data);
-    //         // You can update your WebGL rendering here if needed
-    //     })
-    //     .catch(error => {
-    //         console.error("Error adding figure:", error);
-    //     });
-    // }
-    }
-userInteraction.appendChild(btnKomentar);
+//     //     fetch("http://localhost:3000/addUser", {
+//     //         method: "POST",
+//     //         headers: {
+//     //             "Content-Type": "application/json",
+//     //         },
+//     //         body: JSON.stringify(newUser),
+//     //     })
+//     //     .then(response => response.json())
+//     //     .then(data => {
+//     //         console.log("User registered successfully:", data);
+//     //         // You can update your WebGL rendering here if needed
+//     //     })
+//     //     .catch(error => {
+//     //         console.error("Error adding figure:", error);
+//     //     });
+//     // }
+//     }
+// userInteraction.appendChild(btnKomentar);
 
-var komentar = document.createElement("input");
-komentar.placeholder = "Unesite komentar...";
-komentar.id = "commentText";
-userInteraction.appendChild(komentar);
+// var komentar = document.createElement("input");
+// komentar.placeholder = "Unesite komentar...";
+// komentar.id = "commentText";
+// userInteraction.appendChild(komentar);
 
-var commentList = document.createElement("textarea");
-commentList.id="commentList";
-commentList.readOnly = true;
-userInteraction.appendChild(commentList);
+// var commentList = document.createElement("textarea");
+// commentList.id="commentList";
+// commentList.readOnly = true;
+// userInteraction.appendChild(commentList);
 
-let glavniDiv = document.getElementById("glavniDiv");
 
-tempEl = document.createElement("canvas");
-glavniDiv.appendChild(tempEl);
+let canvas = document.createElement("canvas");
+glavniDiv.appendChild(canvas);
 const _c = document.getElementsByTagName('canvas')[0];
 _c.width = window.innerWidth;
 _c.height = window.innerHeight;
 
-const canvas = document.querySelector("canvas");
+canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
-
 
 if(!gl)
 {
