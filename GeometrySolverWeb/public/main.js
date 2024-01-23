@@ -343,8 +343,31 @@ menu.appendChild(range);
 
 var renderBtn = document.createElement("button");
 renderBtn.innerHTML="Prikazi model";
-renderBtn.onclick = async (ev) =>{
+// renderBtn.onclick = async (ev) =>{
 
+//     await fetch("getAllBodies")
+//         .then(response => response.json())
+//         .then(data => {
+//                 data.forEach(item =>{
+//                     console.log(item.figures[1])
+//                     let fig = item.figures[1];
+//                     if(fig.tip == "trapezoid")
+//                     {
+//                         vertexData=[];
+//                         colorData=[];
+//                         drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
+//                     }
+                    
+//                 })
+//         })
+//         .catch(error => {
+//             console.error('Error fetching data:', error);
+//         });
+// }
+menu.appendChild(renderBtn);
+
+async function drawModel()
+{
     await fetch("getAllBodies")
         .then(response => response.json())
         .then(data => {
@@ -364,7 +387,6 @@ renderBtn.onclick = async (ev) =>{
             console.error('Error fetching data:', error);
         });
 }
-menu.appendChild(renderBtn);
 
 // Data to be inserted
 // const dataToInsert = {
