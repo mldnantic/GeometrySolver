@@ -244,7 +244,11 @@ function resetNotification()
     notification.innerHTML = "";
 }
 
- // Create label element
+let figureInput = document.createElement("div");
+figureInput.className = "menuDiv";
+figureInput.id="figureInput";
+menu.appendChild(figureInput);
+
  var label = document.createElement("label");
  label.setAttribute("for", "shapes");
  label.textContent = "Select a shape:";
@@ -252,12 +256,8 @@ function resetNotification()
  // Create select element
  var select = document.createElement("select");
  select.id = "shapes";
- menu.appendChild(select);
-//  select.onchange=(ev)=>drawShape(select.value);
-
-//  btnRacuni.onclick=(ev)=>this.vidiRacune(this.id);
-
- // Create option elements and append them to the select element
+ figureInput.appendChild(select);
+ figureInput.appendChild(label);
 
  var option2 = document.createElement("option");
  option2.value = "trapezoid";
@@ -276,10 +276,7 @@ function resetNotification()
  option1.textContent = "Triangle";
  select.appendChild(option1);
 
-
- // Append label and select elements to the body
-menu.appendChild(label);
-menu.appendChild(select);
+figureInput.appendChild(select);
 
 ///  a
 var aDiv = document.createElement("div");
@@ -292,7 +289,7 @@ a.id = "aInput"
 a.type = "number";
 aDiv.appendChild(a);
 
-menu.appendChild(aDiv);
+figureInput.appendChild(aDiv);
 
 /// b
 var bDiv = document.createElement("div");
@@ -304,7 +301,7 @@ var b = document.createElement("input");
 b.id = "bInput"
 b.type = "number";
 bDiv.appendChild(b);
-menu.appendChild(bDiv);
+figureInput.appendChild(bDiv);
 
 var hDiv = document.createElement("div");
 let hLabel = document.createElement("label");
@@ -315,10 +312,9 @@ var h = document.createElement("input");
 h.id = "hInput"
 h.type = "number";
 hDiv.appendChild(h);
-menu.appendChild(hDiv);
+figureInput.appendChild(hDiv);
+
 var aa,be,ha;
-
-
 var range = document.createElement("input");
 range.setAttribute("type","range");
 range.setAttribute("min",3);
@@ -364,11 +360,11 @@ range.oninput=(ev)=>
     }
     
 }
-menu.appendChild(range);
+figureInput.appendChild(range);
 
- var select = document.getElementById("shapes");
+var select = document.getElementById("shapes");
 
- select.onchange = (ev) => {
+select.onchange = (ev) => {
 
    let izabrano = select.value;
 
@@ -412,7 +408,7 @@ renderBtn.onclick = async (ev) =>{
             console.error('Error fetching data:', error);
         });
 }
-menu.appendChild(renderBtn);
+figureInput.appendChild(renderBtn);
 
 async function drawModel()
 {
@@ -656,8 +652,9 @@ function drawTruncatedCone(a,b,h,dense)
 
         let outer = a;
         let inner = b;
+        let height = h;
 
-        wrapVertexInner = [inner,h,0.0];
+        wrapVertexInner = [inner,height,0.0];
         wrapVertexOuter = [outer,0.0,0.0];
         vertexData.push(...wrapVertexInner);
         vertexData.push(...wrapVertexOuter);
@@ -667,7 +664,7 @@ function drawTruncatedCone(a,b,h,dense)
 
         for(i=0;i<dense;i++)
         {
-            wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],h,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
+            wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],height,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
             wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
             vertexData.push(...wrapVertexInner);
             vertexData.push(...wrapVertexOuter);
