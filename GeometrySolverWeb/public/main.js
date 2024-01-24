@@ -612,27 +612,45 @@ function drawCylinder(a,b,dense)
         let radius = a;
         let height = b;
 
-
-        wrapVertexTop = [radius,height,0.0];
-        wrapVertexBottom = [radius,0.0,0.0];
-        vertexData.push(...wrapVertexTop);
-        vertexData.push(...wrapVertexBottom);
-
-        normalVector = [0.0,0.0,-1.0];
-        normalData.push(normalVector);
-
-        colorData.push(...modelColor());
-        colorData.push(...modelColor());
-
         for(i=0;i<dense;i++)
         {
+            if(i==0)
+            {
+                //prvo teme trouglica
+                wrapVertexTop = [radius,height,0.0];
+                //drugo teme trouglica
+                wrapVertexBottom = [radius,0.0,0.0];
+            }
+            
+            //prvi vektor za cross product: U = p2-p1
+            vector1=[wrapVertexBottom[0]-wrapVertexTop[0],wrapVertexBottom[1]-wrapVertexTop[1],wrapVertexBottom[2]-wrapVertexTop[2]];
+            
+            vertexData.push(...wrapVertexTop);
+            vertexData.push(...wrapVertexBottom);
+            colorData.push(...modelColor());
+            colorData.push(...modelColor());
+
+            wrapVertexTopOld = wrapVertexTop;
+
+            //trece teme trouglica
             wrapVertexTop = [cosine*wrapVertexTop[0]+sine*wrapVertexTop[2],height,-sine*wrapVertexTop[0]+cosine*wrapVertexTop[2]];
+
+            //drugi vektor za cross product: V = p3-p1
+            vector2 = [wrapVertexTop[0]-wrapVertexTopOld[0],wrapVertexTop[1]-wrapVertexTopOld[1],wrapVertexTop[2]-wrapVertexTopOld[2]];
+
+            // U-vector1, V-vector2
+            // Nx = UyVz - UzVy
+            // Ny = UzVx - UxVz
+            // Nz = UxVy - UyVx
+            normalVector = [vector1[1]*vector2[2]-vector1[2]*vector2[1],vector1[2]*vector2[0]-vector1[0]*vector2[2],vector1[0]*vector2[1]-vector1[1]*vector2[0]];
+            console.log(Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]));
+            normalData.push(normalVector);
+
             wrapVertexBottom = [cosine*wrapVertexBottom[0]+sine*wrapVertexBottom[2],0.0,-sine*wrapVertexBottom[0]+cosine*wrapVertexBottom[2]];
             vertexData.push(...wrapVertexTop);
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
             colorData.push(...modelColor());
-            normalData.push(normalVector);
         }
         webgl(gl.TRIANGLE_STRIP,false);
     }
@@ -686,9 +704,9 @@ const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
 
-// const normalBuffer = gl.createBuffer();
-// gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
+const normalBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
 
 const colorBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -698,16 +716,23 @@ const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, `
 precision mediump float;
 
-
+const vec3 lightDirection = normalize(vec3(0, 1.0, 1.0));
+const float ambient = 0.2;
 
 attribute vec3 position;
+attribute vec3 normal;
 attribute vec3 color;
 varying vec3 vColor;
+varying float vBrightness;
 
 uniform mat4 matrix;
+uniform mat4 normalMatrix;
 
 void main(){
-    vColor = color;
+    vec3 worldNormal = (normalMatrix * vec4(normal, 1)).xyz;
+    float diffuse = max(0.0, dot(worldNormal, lightDirection));
+    vBrightness = ambient + diffuse;
+    vColor = color*vBrightness;
 
     gl_Position = matrix * vec4(position, 1);
 }
@@ -718,6 +743,7 @@ const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 gl.shaderSource(fragmentShader,`
 precision mediump float;
 
+varying float vBrightness;
 varying vec3 vColor;
 
 void main(){
@@ -741,10 +767,10 @@ gl.enableVertexAttribArray(positionLocation);
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
-// const normalLocation = gl.getAttribLocation(program, `normal`);
-// gl.enableVertexAttribArray(normalLocation);
-// gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-// gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+const normalLocation = gl.getAttribLocation(program, `normal`);
+gl.enableVertexAttribArray(normalLocation);
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
 
 const colorLocation = gl.getAttribLocation(program, `color`);
 gl.enableVertexAttribArray(colorLocation);
@@ -758,7 +784,7 @@ gl.cullFace(gl.BACK);
 
 const uniformLocations = {
     matrix: gl.getUniformLocation(program,`matrix`),
-    // normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
+    normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
 };
 
 
@@ -799,6 +825,7 @@ if(!animacija)
     mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+    
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
     gl.drawArrays(glDrawMode, 0, vertexData.length/3);
 }
