@@ -1,20 +1,30 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-// import {FigureRepository} from "./FigureRepository.js"
+const path = require("path");
+const http = require("http");
+const socketio = require("socket.io");
 const UserRepository = require("./UserRepository.js")
 const UserModel = require("./UserModel.js");
 const BodyRepository = require("./BodyRepository.js");
 
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+const botName = "GeometrySolverBot";
 const port = 3000;
+
 mongoose.connect("mongodb://localhost:27017/GeometrySolver");
 
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+io.on("connection", socket =>{
+  socket.emit("message",`Dobrodosli u GeometrySolver`);
+});
 
 
 // app.get("/getUser", async (req, res) => {
@@ -100,4 +110,4 @@ app.get('/getAllBodies', async (req, res) => {
   }
 });
 
-app.listen(port);
+server.listen(port, () => console.log(`Server running on port ${port}`));

@@ -1,4 +1,5 @@
 const connectionString = 'mongodb://localhost:27017';
+const socket = io();
 var userID = "";
 
 let host = document.body;
@@ -167,13 +168,12 @@ btnRegister.onclick =async (ev) =>{
         const newUser = {
             username: usernameInput.value
         };
-
+        let notification = document.getElementById("notification");
         await fetch(`/getUserByUsername?username=${usernameInput.value}`)
         .then(response => response.json())
         .then(data => {
                 if(data!=null && data.username==usernameInput.value)
                 {
-                    let notification = document.getElementById("notification");
                     notification.style.backgroundColor = "rgb(180, 138, 32)";
                     notification.innerHTML = "korisnik sa tim imenom vec postoji";
                 }
@@ -188,7 +188,8 @@ btnRegister.onclick =async (ev) =>{
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log("User registered successfully:", data);
+                        notification.style.backgroundColor = "rgb(20, 150, 20)";
+                        notification.innerHTML = `Korisnik ${newUser.username} je uspesno registrovan`;
                     })
                     .catch(error => {
                         console.error("Error registering user:", error);
@@ -251,7 +252,7 @@ menu.appendChild(figureInput);
 
  var label = document.createElement("label");
  label.setAttribute("for", "shapes");
- label.textContent = "Select a shape:";
+ label.textContent = "Izaberite figuru:";
 
  // Create select element
  var select = document.createElement("select");
@@ -432,6 +433,13 @@ async function drawModel()
             console.error('Error fetching data:', error);
         });
 }
+
+socket.on("message", message =>{
+    let notification = document.getElementById("notification");
+    notification.style.backgroundColor = "rgb(224, 164, 224)";
+    notification.innerHTML = message;
+    setTimeout(resetNotification,2000);
+});
 
 // Data to be inserted
 // const dataToInsert = {
