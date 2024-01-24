@@ -217,6 +217,7 @@ btnLogin.onclick = async (ev) =>{
         .then(data => {
             if(data!=null)
             {
+                console.log(data);
                 userID = data._id;
                 notification.style.backgroundColor = "rgb(20, 150, 20)";
                 notification.innerHTML = `Dobrodosli, ${data.username}`;

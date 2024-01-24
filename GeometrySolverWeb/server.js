@@ -26,25 +26,6 @@ io.on("connection", socket =>{
   socket.emit("message",`Dobrodosli u GeometrySolver`);
 });
 
-
-// app.get("/getUser", async (req, res) => {
-//     try {
-//         const {username}=req.query;
-
-//         const user = await UserModel.findOne({username});
-
-//         if (!user)
-//         {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         res.json(user);
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).send("Internal Server Error");
-//     }
-// });
-
 //user crud
 app.get('/getUserByUsername', async (req, res) => {
   try {
