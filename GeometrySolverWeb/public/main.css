@@ -108,6 +108,7 @@ textarea
     display: flex;
     flex-direction: column;
     padding: 5px;
+    margin-top: 5%;
     background-color: gainsboro;
     border-radius: 5px;
 }
