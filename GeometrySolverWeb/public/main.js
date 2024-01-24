@@ -109,6 +109,10 @@ var colorData = [
     // 0.0, 0.0, 1.0,
 ];
 
+var normalData = [
+    //normalizovan vektor za svaku stranu 3D modela
+];
+
 function drawPoprecni()
 {
     let poprecni = document.createElement("canvas");
@@ -344,6 +348,7 @@ range.oninput=(ev)=>
     let oblik = document.getElementById("shapes").value;
     vertexData=[];
     colorData=[];
+    normalData=[];
     range.innerText = this.value;
     switch(oblik)
     {
@@ -385,27 +390,28 @@ menu.appendChild(range);
 
 var renderBtn = document.createElement("button");
 renderBtn.innerHTML="Prikazi model";
-// renderBtn.onclick = async (ev) =>{
+renderBtn.onclick = async (ev) =>{
 
-//     await fetch("getAllBodies")
-//         .then(response => response.json())
-//         .then(data => {
-//                 data.forEach(item =>{
-//                     console.log(item.figures[1])
-//                     let fig = item.figures[1];
-//                     if(fig.tip == "trapezoid")
-//                     {
-//                         vertexData=[];
-//                         colorData=[];
-//                         drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
-//                     }
+    await fetch("getAllBodies")
+        .then(response => response.json())
+        .then(data => {
+                data.forEach(item =>{
+                    console.log(item.figures[1])
+                    let fig = item.figures[1];
+                    if(fig.tip == "trapezoid")
+                    {
+                        vertexData=[];
+                        colorData=[];
+                        normalData=[];
+                        drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
+                    }
                     
-//                 })
-//         })
-//         .catch(error => {
-//             console.error('Error fetching data:', error);
-//         });
-// }
+                })
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
 menu.appendChild(renderBtn);
 
 async function drawModel()
@@ -420,6 +426,7 @@ async function drawModel()
                     {
                         vertexData=[];
                         colorData=[];
+                        normalData=[];
                         drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
                     }
                     
@@ -507,7 +514,7 @@ async function drawModel()
 
 function modelColor()
 {
-    return [0.6,0.6,0.6];
+    return [0.8,0.8,0.8];
 }
 
 function drawGrid(rotating)
@@ -564,7 +571,6 @@ function drawCircle(dense,r)
     let sine = Math.sin(theta);
     circleVertex = [size,0.0,0.0];
     vertexData.push(...circleVertex);
-    circleColor = [0.8,0.8,0.8];
     colorData.push(...modelColor());
     for(i=0;i<density;i++)
     {
@@ -589,7 +595,6 @@ function drawCone(a,h,dense)
         let height = h;
         coneTipVertex = [0.0,h,0.0];
         vertexData.push(...coneTipVertex);
-        coneColor = [0.8,0.8,0.8];
         colorData.push(...modelColor());
         drawCircle(dense,a);
     }
@@ -611,13 +616,15 @@ function drawCylinder(a,b,dense)
         let radius = a;
         let height = b;
 
-        
+
         wrapVertexTop = [radius,height,0.0];
         wrapVertexBottom = [radius,0.0,0.0];
         vertexData.push(...wrapVertexTop);
         vertexData.push(...wrapVertexBottom);
 
-        cylinderColor = [0.8,0.8,0.8];
+        normalVector = [0.0,0.0,-1.0];
+        normalData.push(normalVector);
+
         colorData.push(...modelColor());
         colorData.push(...modelColor());
 
@@ -629,6 +636,7 @@ function drawCylinder(a,b,dense)
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
             colorData.push(...modelColor());
+            normalData.push(normalVector);
         }
         webgl(gl.TRIANGLE_STRIP,false);
     }
@@ -654,7 +662,6 @@ function drawTruncatedCone(a,b,h,dense)
         vertexData.push(...wrapVertexInner);
         vertexData.push(...wrapVertexOuter);
 
-        cylinderColor = [0.8,0.8,0.8];
         colorData.push(...modelColor());
         colorData.push(...modelColor());
 
@@ -682,6 +689,10 @@ const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
 
+const normalBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
+
 const colorBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
@@ -690,14 +701,23 @@ const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, `
 precision mediump float;
 
+const vec3 lightDirection = normalize(vec3(0, 1.0, 1.0));
+const float ambient = 0.2;
+
 attribute vec3 position;
+attribute vec3 normal;
 attribute vec3 color;
 varying vec3 vColor;
+varying float vBrightness;
 
 uniform mat4 matrix;
+uniform mat4 normalMatrix;
 
 void main(){
-    vColor = color;
+    vec3 worldNormal = (normalMatrix * vec4(normal, 1)).xyz;
+    float diffuse = max(0.0, dot(worldNormal, lightDirection));
+    vBrightness = ambient + diffuse;
+    vColor = color*vBrightness;
     gl_Position = matrix * vec4(position, 1);
 }
 `);
@@ -707,10 +727,11 @@ const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 gl.shaderSource(fragmentShader,`
 precision mediump float;
 
+varying float vBrightness;
 varying vec3 vColor;
 
 void main(){
-    gl_FragColor = vec4(vColor, 1);
+    gl_FragColor = vec4(vColor, 1.0);
 }
 `);
 gl.compileShader(fragmentShader);
@@ -730,6 +751,11 @@ gl.enableVertexAttribArray(positionLocation);
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
+const normalLocation = gl.getAttribLocation(program, `normal`);
+gl.enableVertexAttribArray(normalLocation);
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+
 const colorLocation = gl.getAttribLocation(program, `color`);
 gl.enableVertexAttribArray(colorLocation);
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -742,6 +768,7 @@ gl.cullFace(gl.BACK);
 
 const uniformLocations = {
     matrix: gl.getUniformLocation(program,`matrix`),
+    normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
 };
 
 

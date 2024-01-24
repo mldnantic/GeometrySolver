@@ -231,7 +231,7 @@ let uniformLocations;
     precision mediump float;
 
     const vec3 lightDirection = normalize(vec3(0, 1.0, 1.0));
-    const float ambient = 0.5;
+    const float ambient = 0.2;
 
     attribute vec3 position;
     attribute vec3 normal;
