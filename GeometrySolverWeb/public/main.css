@@ -126,6 +126,7 @@ label
 select
 {
     font-family: "Century Gothic";
+    margin: 5px;
 }
 
 input

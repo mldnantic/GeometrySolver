@@ -1,5 +1,7 @@
 const connectionString = 'mongodb://localhost:27017';
 const socket = io();
+const moment = require("moment");
+moment.locale('sr');
 var userID = "";
 
 let host = document.body;
@@ -394,16 +396,7 @@ renderBtn.onclick = async (ev) =>{
         .then(response => response.json())
         .then(data => {
                 data.forEach(item =>{
-                    console.log(item.figures[1])
-                    let fig = item.figures[1];
-                    if(fig.tip == "trapezoid")
-                    {
-                        vertexData=[];
-                        colorData=[];
-                        normalData=[];
-                        drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
-                    }
-                    
+                    console.log(item);
                 })
         })
         .catch(error => {
