@@ -4,6 +4,9 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
+const moment = require("moment");
+moment.locale('sr');
+
 const UserRepository = require("./UserRepository.js")
 const UserModel = require("./UserModel.js");
 const BodyRepository = require("./BodyRepository.js");
@@ -23,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 io.on("connection", socket =>{
-  socket.emit("message",`Dobrodosli u GeometrySolver`);
+  socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
 });
 
 //user crud

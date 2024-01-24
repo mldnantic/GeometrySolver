@@ -1,7 +1,5 @@
 const connectionString = 'mongodb://localhost:27017';
 const socket = io();
-const moment = require("moment");
-moment.locale('sr');
 var userID = "";
 
 let host = document.body;
