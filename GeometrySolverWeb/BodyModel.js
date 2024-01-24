@@ -13,6 +13,13 @@ const bodySchema = new mongoose.Schema({
       izvrnuta:Boolean,
       }],
   },
+  comments:{
+    type:[{
+      user:String,
+      time:String,
+      content:String
+    }]
+  }
 },{ versionKey: false });
 
 const bodyModel = mongoose.model("body", bodySchema);
