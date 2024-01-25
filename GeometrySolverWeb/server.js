@@ -26,7 +26,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 io.on("connection", socket =>{
+
   socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
+
+  socket.on("comment",msg=>{
+        const user = socket.id;
+        io.emit("comment",`${user} `+msg);
+    });
+
+  socket.on("disconnect",()=>{
+    const user = socket.id;
+    if(user){
+        io.emit("comment",`#${botName}: "${user} has left the chat"`);
+        console.log(`#${socket.id}# has left comment section`)
+    }
+  })
+
 });
 
 //user crud

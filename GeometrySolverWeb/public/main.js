@@ -34,29 +34,10 @@ function commentSection()
     var btnKomentar = document.createElement("button");
     btnKomentar.innerHTML="Posalji";
     btnKomentar.onclick =async (ev) =>{
-            //todo post comment
-        // if(!komentar.value=="")
-        // {
-        //     const newUser = {
-        //         username: usernameInput.value
-        //     };
-    
-        //     fetch("http://localhost:3000/addUser", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //         },
-        //         body: JSON.stringify(newUser),
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log("User registered successfully:", data);
-        //         // You can update your WebGL rendering here if needed
-        //     })
-        //     .catch(error => {
-        //         console.error("Error adding figure:", error);
-        //     });
-        // }
+        let komentar = document.getElementById("commentText");
+        socket.emit("comment",komentar.value);
+        komentar.value="";
+        komentar.focus();
         }
     userInteraction.appendChild(btnKomentar);
     
@@ -70,7 +51,7 @@ function commentSection()
     commentList.readOnly = true;
     userInteraction.appendChild(commentList);    
 }
-
+commentSection();
 
 let canvas = document.createElement("canvas");
 glavniDiv.appendChild(canvas);
@@ -431,6 +412,11 @@ socket.on("message", message =>{
     notification.style.backgroundColor = "rgb(224, 164, 224)";
     notification.innerHTML = message;
     setTimeout(resetNotification,2000);
+});
+
+socket.on("comment",comment=>{
+    let listaKomentara = document.getElementById("commentList");
+    listaKomentara.value+=comment+"\n";
 });
 
 // Data to be inserted
