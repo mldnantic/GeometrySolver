@@ -510,7 +510,7 @@ socket.on("message", message =>{
 
 function modelColor()
 {
-    return [0.8,0.8,0.8];
+    return [0.6,0.6,0.6];
 }
 
 function drawGrid(rotating)
@@ -587,12 +587,34 @@ function drawCone(a,h,dense)
     }
     else
     {
-        let base = a;
-        let height = h;
         coneTipVertex = [0.0,h,0.0];
         vertexData.push(...coneTipVertex);
         colorData.push(...modelColor());
-        drawCircle(dense,a);
+        
+        let density = dense;
+        let size = a;
+        
+        let theta = (Math.PI*2)/density;
+        let cosine = Math.cos(theta);
+        let sine = Math.sin(theta);
+        circleVertex = [size,0.0,0.0];
+        vertexData.push(...circleVertex);
+        colorData.push(...modelColor());
+        for(i=0;i<density;i++)
+        {
+            if(i==0)
+            {
+                circleVertex = [size,0.0,0.0];
+                vertexData.push(...circleVertex);
+                colorData.push(...modelColor());
+            }
+            circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
+            vertexData.push(...circleVertex);
+            vertexData.push(...circleVertex);
+            colorData.push(...modelColor());
+            colorData.push(...modelColor());
+        }
+        webgl(gl.TRIANGLE_FAN,false);
     }
         
 }
@@ -612,28 +634,37 @@ function drawCylinder(a,b,dense)
         let radius = a;
         let height = b;
 
-        for(i=0;i<dense;i++)
+        for(i=0;i<=dense;i++)
         {
             if(i==0)
             {
                 //prvo teme trouglica
                 wrapVertexTop = [radius,height,0.0];
+                vertexData.push(...wrapVertexTop);
+                colorData.push(...modelColor());
+        
                 //drugo teme trouglica
                 wrapVertexBottom = [radius,0.0,0.0];
+                vertexData.push(...wrapVertexBottom);
+                colorData.push(...modelColor());
             }
-            
+            else
+            {
+                vertexData.push(...wrapVertexTop);
+                colorData.push(...modelColor());
+                vertexData.push(...wrapVertexBottom);
+                colorData.push(...modelColor());
+            }
+
             //prvi vektor za cross product: U = p2-p1
             vector1=[wrapVertexBottom[0]-wrapVertexTop[0],wrapVertexBottom[1]-wrapVertexTop[1],wrapVertexBottom[2]-wrapVertexTop[2]];
-            
-            vertexData.push(...wrapVertexTop);
-            vertexData.push(...wrapVertexBottom);
-            colorData.push(...modelColor());
-            colorData.push(...modelColor());
-
+        
             wrapVertexTopOld = wrapVertexTop;
 
             //trece teme trouglica
             wrapVertexTop = [cosine*wrapVertexTop[0]+sine*wrapVertexTop[2],height,-sine*wrapVertexTop[0]+cosine*wrapVertexTop[2]];
+            vertexData.push(...wrapVertexTop);
+            colorData.push(...modelColor());
 
             //drugi vektor za cross product: V = p3-p1
             vector2 = [wrapVertexTop[0]-wrapVertexTopOld[0],wrapVertexTop[1]-wrapVertexTopOld[1],wrapVertexTop[2]-wrapVertexTopOld[2]];
@@ -643,16 +674,21 @@ function drawCylinder(a,b,dense)
             // Ny = UzVx - UxVz
             // Nz = UxVy - UyVx
             normalVector = [vector1[1]*vector2[2]-vector1[2]*vector2[1],vector1[2]*vector2[0]-vector1[0]*vector2[2],vector1[0]*vector2[1]-vector1[1]*vector2[0]];
-            console.log(Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]));
-            normalData.push(normalVector);
-
+            let normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
+            normalVector = [normalVector[0]/normalMagnitude,normalVector[1]/normalMagnitude,normalVector[2]/normalMagnitude];
+            normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
+            console.log(normalMagnitude);
+            //cetiri normale jer pushujemo 4 vertexa po ciklusu petlje
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+            
             wrapVertexBottom = [cosine*wrapVertexBottom[0]+sine*wrapVertexBottom[2],0.0,-sine*wrapVertexBottom[0]+cosine*wrapVertexBottom[2]];
-            vertexData.push(...wrapVertexTop);
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
-            colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false);
+        webgl(gl.TRIANGLE_STRIP,true);
     }
 }
 
@@ -716,7 +752,7 @@ const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, `
 precision mediump float;
 
-const vec3 lightDirection = normalize(vec3(0, 1.0, 1.0));
+const vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));
 const float ambient = 0.2;
 
 attribute vec3 position;
@@ -801,19 +837,25 @@ mat4.perspective(projectionMatrix,
 const mvMatrix =mat4.create();
 const mvpMatrix = mat4.create();
 
-
-mat4.translate(modelMatrix,modelMatrix,[0.0,0.0,0.0]);
 mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
+const normalMatrix = mat4.create();
+
 function animate() {
-    gl.clearColor(0.4, 0.4, 0.4, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // gl.clearColor(0.412, 0.412, 0.412, 1.0);
+    // gl.clear(gl.COLOR_BUFFER_BIT);
     requestAnimationFrame(animate);
-    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
+    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+    
+    mat4.invert(normalMatrix, mvMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
+
+    gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+    
     gl.drawArrays(glDrawMode, 0, vertexData.length/3);
 }
 
@@ -822,10 +864,10 @@ if(!animacija)
 {
     gl.clearColor(0.412, 0.412, 0.412, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/400);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
-    
+
+    gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
     gl.drawArrays(glDrawMode, 0, vertexData.length/3);
 }
