@@ -92,6 +92,8 @@ textarea
     flex-flow:row wrap;
     flex:1 0;
     justify-content:flex-start;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .menuDiv{

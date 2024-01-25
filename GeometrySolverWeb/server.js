@@ -28,6 +28,8 @@ app.use(bodyParser.json());
 io.on("connection", socket =>{
 
   socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
+  // io.emit("comment",`#${botName}#: "${socket.id} has entered comment section"`);
+  console.log(`"#${socket.id}# has entered comment section"`);
 
   socket.on("comment",msg=>{
         const user = socket.id;
@@ -37,8 +39,8 @@ io.on("connection", socket =>{
   socket.on("disconnect",()=>{
     const user = socket.id;
     if(user){
-        io.emit("comment",`#${botName}: "${user} has left the chat"`);
-        console.log(`#${socket.id}# has left comment section`)
+        io.emit("comment",`#${botName}#: "${user} has left comment section"`);
+        console.log(`"#${socket.id}# has left comment section"`)
     }
   })
 

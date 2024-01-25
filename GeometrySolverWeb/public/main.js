@@ -101,7 +101,48 @@ function drawPoprecni()
     poprecni.className="poprecniPresek";
     poprecni.id="poprecniPresek";
     glavniDiv.appendChild(poprecni);
+
+    poprecni.width = 312;
+    poprecni.height = 448;
+    var c = document.getElementById("poprecniPresek");
+    var ctx = c.getContext("2d");
+
+    let offset = 4;
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffffff';
+    ctx.moveTo(c.width/10,c.height-10);
+    ctx.lineTo(c.width/2,c.height-10);
+    ctx.stroke();
+
+    ctx.beginPath();
+    // ctx.strokeStyle = '#0000ff';
+    ctx.strokeStyle = '#ffffff';
+    ctx.moveTo(c.width/10,c.height-10);
+    ctx.lineTo(c.width/10,3*c.height/4);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffffff';
+    ctx.moveTo(c.width/10,3*c.height/4);
+    ctx.lineTo(c.width/10,c.height/2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffffff';
+    ctx.moveTo(c.width/10,c.height/2);
+    ctx.lineTo(c.width/2,c.height-10);
+    ctx.stroke();
+
+    ctx.font = "14px Calibri";
+    ctx.fillStyle = "#ffffff"
+    ctx.fillText("2.38", c.width/4, c.height-10-offset);
+    ctx.fillText("10.44", c.width/10+offset, (c.height-c.height/4));
+    ctx.fillText("10.71", c.width/3+offset, (c.height-c.height/4));
+
+    
 }
+drawPoprecni();
 
 function redraw(componentID,componentClassName)
 {
@@ -236,7 +277,6 @@ menu.appendChild(figureInput);
  label.setAttribute("for", "shapes");
  label.textContent = "Izaberite figuru:";
 
- // Create select element
  var select = document.createElement("select");
  select.id = "shapes";
  figureInput.appendChild(select);
@@ -416,7 +456,9 @@ socket.on("message", message =>{
 
 socket.on("comment",comment=>{
     let listaKomentara = document.getElementById("commentList");
-    listaKomentara.value+=comment+"\n";
+    listaKomentara.value+=comment+"\n\n";
+    listaKomentara.scrollTop = listaKomentara.scrollHeight;
+
 });
 
 // Data to be inserted
@@ -521,8 +563,18 @@ function drawGrid(rotating)
         0.0, 0.0, 1.0,
     ];
 
-    let density = 4;
-    let size = 2.0;
+    normalData = [
+        //vektor normale
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+    ];
+
+    let density = 8;
+    let size = 4.0;
     let factor = size/density;
     
     for (i = 0; i <= density*2; i++)
@@ -534,15 +586,20 @@ function drawGrid(rotating)
             gridColor = [0.6,0.6,0.6];
             colorData.push(...gridColor);
             colorData.push(...gridColor);
+            normalData.push(...[0.0,1.0,0.0]);
+            normalData.push(...[0.0,1.0,0.0]);
             gridVertex3 = [size-factor*i,-0.01,size];
             gridVertex4 = [size-factor*i,-0.01,-size];
             vertexData.push(...gridVertex3);
             vertexData.push(...gridVertex4);
             colorData.push(...gridColor);
             colorData.push(...gridColor);
+            normalData.push(...[0.0,1.0,0.0]);
+            normalData.push(...[0.0,1.0,0.0]);
         }
     webgl(gl.LINES,rotating);
 }
+// drawGrid(false);
 
 function drawCircle(dense,r)
 {
@@ -659,11 +716,16 @@ function drawCylinder(a,b,dense)
             // Nx = UyVz - UzVy
             // Ny = UzVx - UxVz
             // Nz = UxVy - UyVx
-            normalVector = [vector1[1]*vector2[2]-vector1[2]*vector2[1],vector1[2]*vector2[0]-vector1[0]*vector2[2],vector1[0]*vector2[1]-vector1[1]*vector2[0]];
+            normalVector = [vector1[1]*vector2[2]-vector1[2]*vector2[1],
+            vector1[2]*vector2[0]-vector1[0]*vector2[2],
+            vector1[0]*vector2[1]-vector1[1]*vector2[0]];
             let normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
             normalVector = [normalVector[0]/normalMagnitude,normalVector[1]/normalMagnitude,normalVector[2]/normalMagnitude];
-            normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
-            console.log(normalMagnitude);
+            
+            //provera da li su normalni vektori jedinicni
+            // normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
+            // console.log(normalMagnitude);
+
             //cetiri normale jer pushujemo 4 vertexa po ciklusu petlje
             normalData.push(...normalVector);
             normalData.push(...normalVector);
@@ -803,12 +865,13 @@ gl.useProgram(program);
 gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.CULL_FACE);
 gl.cullFace(gl.BACK);
+gl.clearColor(0.412, 0.412, 0.412, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
 
 const uniformLocations = {
     matrix: gl.getUniformLocation(program,`matrix`),
     normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
 };
-
 
 const modelMatrix = mat4.create();
 const viewMatrix = mat4.create();
@@ -823,15 +886,14 @@ mat4.perspective(projectionMatrix,
 const mvMatrix =mat4.create();
 const mvpMatrix = mat4.create();
 
-mat4.translate(viewMatrix,viewMatrix,[0.0,2.0,5.0]);
+mat4.translate(viewMatrix,viewMatrix,[0.0,1.0,8.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
 const normalMatrix = mat4.create();
 
 function animate() {
-    // gl.clearColor(0.412, 0.412, 0.412, 1.0);
-    // gl.clear(gl.COLOR_BUFFER_BIT);
     requestAnimationFrame(animate);
+
     mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
@@ -848,13 +910,15 @@ function animate() {
 // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
 if(!animacija)
 {
-    gl.clearColor(0.412, 0.412, 0.412, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
 
+    mat4.invert(normalMatrix, mvMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
+
     gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+
     gl.drawArrays(glDrawMode, 0, vertexData.length/3);
 }
 else
