@@ -381,6 +381,7 @@ async function drawModel()
         .then(response => response.json())
         .then(data => {
                 data.forEach(item =>{
+                    console.log(item);
                     let fig = item.figures[0];
                     if(fig.tip == "rectangle")
                     {
