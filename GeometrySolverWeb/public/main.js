@@ -1,6 +1,7 @@
 const connectionString = 'mongodb://localhost:27017';
 const socket = io();
 var userID = "";
+var userName = "";
 
 let host = document.body;
 
@@ -36,8 +37,29 @@ function commentSection()
     btnKomentar.onclick =async (ev) =>{
         let komentar = document.getElementById("commentText");
         socket.emit("comment",komentar.value);
+        let sadrzaj = komentar.value;
         komentar.value="";
         komentar.focus();
+        var newCmt = {
+            user: userName,
+            time: "",
+            content: sadrzaj
+        };
+        fetch("/addComment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newCmt),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error registering user:", error);
+        });
+
         }
     userInteraction.appendChild(btnKomentar);
     
@@ -147,7 +169,7 @@ btnRegister.onclick =async (ev) =>{
     
     if(!usernameInput.value=="")
     {
-        const newUser = {
+        var newUser = {
             username: usernameInput.value
         };
         let notification = document.getElementById("notification");
@@ -201,10 +223,13 @@ btnLogin.onclick = async (ev) =>{
             {
                 console.log(data);
                 userID = data._id;
+                userName = data.username;
                 notification.style.backgroundColor = "rgb(20, 150, 20)";
-                notification.innerHTML = `Dobrodosli, ${data.username}`;
+                notification.innerHTML = `Dobrodosli, ${userName}`;
                 
-                redraw("registerLoginDiv","registerLoginDiv");
+                redraw("registerLoginDiv","div");
+                modelSelect();
+
             }
             else
             {
@@ -226,6 +251,34 @@ function resetNotification()
     let notification = document.getElementById("notification");
     notification.style.backgroundColor = "rgb(90, 90, 95)";
     notification.innerHTML = "";
+}
+
+async function modelSelect()
+{
+    let lbl = document.createElement("label");
+    lbl.innerHTML = "Izaberite model:"
+    menu.appendChild(lbl);
+    let selectModel = document.createElement("select");
+    menu.appendChild(selectModel);
+    let renderBtn = document.createElement("button");
+    renderBtn.innerHTML="Prikazi model";
+    renderBtn.onclick = (ev) =>{
+        drawModel();
+    }
+    menu.appendChild(renderBtn);
+    await fetch("/getAllBodies")
+        .then(response => response.json())
+        .then(data => {
+                data.forEach(item =>{
+                        let bodyOption = document.createElement("option");
+                        bodyOption.value = item.projectname;
+                        bodyOption.textContent = item.projectname;
+                        selectModel.appendChild(bodyOption);
+                })
+            })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }
 
 let figureInput = document.createElement("div");
@@ -302,33 +355,38 @@ var range = document.createElement("input");
 range.setAttribute("type","range");
 range.setAttribute("min",3);
 range.setAttribute("max",24);
-range.oninput=(ev)=>
-{
-    if(document.getElementById("shapes").value === "rectangle")
+figureInput.appendChild(range);
+
+let btnAddFigure = document.createElement("button");
+btnAddFigure.innerHTML = "Ubaci figuru";
+btnAddFigure.onclick = async (ev) => {
+
+    let oblik = document.getElementById("shapes").value;
+
+
+    if(oblik === "rectangle")
     {
         aa = document.getElementById("aInput").value;
         be = document.getElementById("bInput").value;
         ha = -1;
     }
 
-    if(document.getElementById("shapes").value === "triangle")
+    if(oblik === "triangle")
     {
         aa = document.getElementById("aInput").value;
         be = -1;
         ha = document.getElementById("hInput").value;
     }
 
-    if(document.getElementById("shapes").value === "trapezoid")
+    if(oblik === "trapezoid")
     {
         aa = document.getElementById("aInput").value;
         be = document.getElementById("bInput").value;
         ha = document.getElementById("hInput").value;
     }
-    let oblik = document.getElementById("shapes").value;
     vertexData=[];
     colorData=[];
     normalData=[];
-    range.innerText = this.value;
     switch(oblik)
     {
         case "triangle":
@@ -341,11 +399,36 @@ range.oninput=(ev)=>
             drawTruncatedCone(aa,be,ha,range.value);
             break;
     }
-}
-figureInput.appendChild(range);
+
+    //fetch za dodavanje figure u listu
+    var newFigure = {
+        a:aa,
+        b:be,
+        h:ha,
+        tip:oblik,
+        izvrnuta:false
+    }
+    // await fetch("/updateBody", {
+    //     method: "PUT",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(newFigure),
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //         data.forEach(item =>{
+    //                 console.log(item);
+    //         })
+    //     })
+    // .catch(error => {
+    //     console.error('Error fetching data:', error);
+    // });
+
+};
+figureInput.appendChild(btnAddFigure);
 
 var select = document.getElementById("shapes");
-
 select.onchange = (ev) => {
 
    let izabrano = select.value;
@@ -366,13 +449,6 @@ select.onchange = (ev) => {
   }
   drawShape();
 };
-
-var renderBtn = document.createElement("button");
-renderBtn.innerHTML="Prikazi model";
-renderBtn.onclick = (ev) =>{
-    drawModel();
-}
-figureInput.appendChild(renderBtn);
 
 async function drawModel()
 {

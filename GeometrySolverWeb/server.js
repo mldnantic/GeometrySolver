@@ -97,4 +97,17 @@ app.get('/getAllBodies', async (req, res) => {
   }
 });
 
+app.post("/addComment", async(req,res)=>{
+  try{
+    const comment = req.body;
+    comment.time = moment().format('LT');
+    const cmt = await BodyRepository.addComment("65a962650f101b44801a77e6",comment);
+    res.json(comment);
+  }
+  catch (error) {
+    console.error('Error commenting:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
 server.listen(port, () => console.log(`Server running on port ${port}`));

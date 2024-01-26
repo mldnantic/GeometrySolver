@@ -13,10 +13,20 @@ class BodyRepository {
   }
 
   //update project name, figures list, comments list
-  async updateBody(id, updateData) {
+  async addComment(id, comment) {
     try {
-      const body = await BodyModel.findByIdAndUpdate(id, updateData, { new: true });
-      return body;
+      const filter = {_id: id};
+      const update = { $push: { comments: comment } };
+      const result = await BodyModel.updateOne(filter, update);
+
+      if(result.modifiedCount === 1)
+      {
+        return comment;
+      }
+      else
+      {
+        console.log("nothing happened...");
+      }
     } catch (error) {
       throw error;
     }
