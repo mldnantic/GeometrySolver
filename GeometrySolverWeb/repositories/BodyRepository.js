@@ -12,6 +12,7 @@ class BodyRepository {
     }
   }
 
+  //update project name, figures list, comments list
   async updateBody(id, updateData) {
     try {
       const body = await BodyModel.findByIdAndUpdate(id, updateData, { new: true });

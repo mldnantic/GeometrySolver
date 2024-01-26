@@ -30,6 +30,10 @@ class UserRepository {
     }
   }
 
+  //add to/update projects list
+
+  //remove from projects list
+
 }
 
 module.exports = new UserRepository();

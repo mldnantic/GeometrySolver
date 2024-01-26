@@ -161,7 +161,7 @@ btnRegister.onclick =async (ev) =>{
                 }
                 else
                 {
-                    fetch("http://localhost:3000/addUser", {
+                    fetch("/createUser", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

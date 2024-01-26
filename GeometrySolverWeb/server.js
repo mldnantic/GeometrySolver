@@ -28,6 +28,7 @@ io.on("connection", socket =>{
 
   socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
   // io.emit("comment",`#${botName}#: "${socket.id} has entered comment section"`);
+  
   if(logUserSessions == true)
   {
     console.log(`"#${socket.id}# has entered comment section"`);
@@ -63,25 +64,6 @@ app.get('/getUserByUsername', async (req, res) => {
   }
 });
 
-app.post("/addUser", async (req, res) => {
-    try {
-        const { username } = req.body;
-
-        // Create a new figure instance using the Mongoose model
-        const newUser = new UserModel({ username });
-
-        // Save the figure to the database
-        const savedUser = await newUser.save();
-
-        // Respond with the saved figure
-        res.json(savedUser);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send("Internal Server Error");
-    }
-});
-
-
 app.post('/createUser', async (req, res) => {
     try {
       const userData = req.body;
@@ -91,8 +73,7 @@ app.post('/createUser', async (req, res) => {
       console.error('Error creating user:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
-
+});
 
 app.get('/getUserById/:id', async (req, res) => {
     try {
@@ -103,7 +84,7 @@ app.get('/getUserById/:id', async (req, res) => {
       console.error('Error fetching user:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+});
 
 //body crud
 app.get('/getAllBodies', async (req, res) => {
