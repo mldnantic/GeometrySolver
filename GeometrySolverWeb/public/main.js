@@ -226,7 +226,6 @@ function resetNotification()
     let notification = document.getElementById("notification");
     notification.style.backgroundColor = "rgb(90, 90, 95)";
     notification.innerHTML = "";
-    notification.style.color = "white";
 }
 
 let figureInput = document.createElement("div");
@@ -399,9 +398,8 @@ async function drawModel()
 
 socket.on("message", message =>{
     let notification = document.getElementById("notification");
-    notification.style.backgroundColor = "rgb(224, 164, 224)";
+    notification.style.backgroundColor = "rgb(20, 150, 20)";
     notification.innerHTML = message;
-    notification.style.color = "black";
     setTimeout(resetNotification,2000);
 });
 
