@@ -101,46 +101,6 @@ function drawPoprecni()
     poprecni.className="poprecniPresek";
     poprecni.id="poprecniPresek";
     glavniDiv.appendChild(poprecni);
-
-    poprecni.width = 312;
-    poprecni.height = 448;
-    var c = document.getElementById("poprecniPresek");
-    var ctx = c.getContext("2d");
-
-    let offset = 4;
-
-    ctx.beginPath();
-    ctx.strokeStyle = '#ffffff';
-    ctx.moveTo(c.width/10,c.height-10);
-    ctx.lineTo(c.width/2,c.height-10);
-    ctx.stroke();
-
-    ctx.beginPath();
-    // ctx.strokeStyle = '#0000ff';
-    ctx.strokeStyle = '#ffffff';
-    ctx.moveTo(c.width/10,c.height-10);
-    ctx.lineTo(c.width/10,3*c.height/4);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.strokeStyle = '#ffffff';
-    ctx.moveTo(c.width/10,3*c.height/4);
-    ctx.lineTo(c.width/10,c.height/2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.strokeStyle = '#ffffff';
-    ctx.moveTo(c.width/10,c.height/2);
-    ctx.lineTo(c.width/2,c.height-10);
-    ctx.stroke();
-
-    ctx.font = "14px Calibri";
-    ctx.fillStyle = "#ffffff"
-    ctx.fillText("2.38", c.width/4, c.height-10-offset);
-    ctx.fillText("10.44", c.width/10+offset, (c.height-c.height/4));
-    ctx.fillText("10.71", c.width/3+offset, (c.height-c.height/4));
-
-    
 }
 drawPoprecni();
 
@@ -382,7 +342,6 @@ range.oninput=(ev)=>
             drawTruncatedCone(aa,be,ha,range.value);
             break;
     }
-    
 }
 figureInput.appendChild(range);
 
@@ -406,6 +365,7 @@ select.onchange = (ev) => {
   } else {
     h.disabled = false;
   }
+  drawShape();
 };
 
 var renderBtn = document.createElement("button");
@@ -450,70 +410,70 @@ socket.on("comment",comment=>{
     listaKomentara.scrollTop = listaKomentara.scrollHeight;
 });
 
-// Data to be inserted
-// const dataToInsert = {
-//     a: 3,
-//     b: 4,
-//     h: 5
-//   };
+function drawShape()
+{
+    var selectedValue = document.getElementById("shapes").value;
 
-// // Function to insert data
-// async function insertData() {
-//     const client = new MongoClient(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
-  
-//     try {
-//       await client.connect();
-//       console.log('Connected to the database');
-  
-//       const database = client.db('AIPS_Baza');
-//       const collection = database.collection('geometries');
-  
-//       // Insert the document
-//       const result = await collection.insertOne(dataToInsert);
-//       console.log(`Document inserted with ID: ${result.insertedId}`);
-//     } finally {
-//       await client.close();
-//       console.log('Connection closed');
-//     }
-//   }
-  
-//   // Execute the insertData function
-//   insertData();
+    var canvas = document.getElementById("poprecniPresek");
+    var ctx = canvas.getContext("2d");
+    // canvas.width = window.innerHeight/2;
+    // canvas.height = window.innerWidth/2;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#ffffff";
+    
+    if (selectedValue === "triangle") 
+    {
+        // ctx.beginPath();
+        // ctx.moveTo(10, 190);
+        // ctx.lineTo(10, 10);
+        // ctx.lineTo(290, 190);
+        // ctx.closePath();
+        // ctx.stroke();
 
-// function drawShape() {
-//     // Get the selected value
-//     var selectedValue = document.getElementById("shapes").value;
+        let offset = 4;
 
-//     // Get the canvas and its context
-//     var canvas = document.querySelector("canvas");
-//     var ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,canvas.height-10);
+        ctx.lineTo(canvas.width/2,canvas.height-10);
+        ctx.stroke();
 
-//     // Clear the canvas
-//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,canvas.height-10);
+        ctx.lineTo(canvas.width/10,3*canvas.height/4);
+        ctx.stroke();
 
-//     // Draw the selected shape
-//     if (selectedValue === "triangle") {
-//       // Draw a triangle
-//       ctx.beginPath();
-//       ctx.moveTo(10, 190);
-//       ctx.lineTo(150, 10);
-//       ctx.lineTo(290, 190);
-//       ctx.closePath();
-//       ctx.stroke();
-//     } else if (selectedValue === "trapezoid") {
-//       // Draw a trapezoid
-//       ctx.beginPath();
-//       ctx.moveTo(50, 190);
-//       ctx.lineTo(250, 190);
-//       ctx.lineTo(200, 10);
-//       ctx.lineTo(100, 10);
-//       ctx.closePath();
-//       ctx.stroke();
-//     } else if (selectedValue === "rectangle") {
-//       // Draw a rectangle
-//       ctx.strokeRect(50, 50, 200, 100);
-//     }
-//   }
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,3*canvas.height/4);
+        ctx.lineTo(canvas.width/10,canvas.height/2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,canvas.height/2);
+        ctx.lineTo(canvas.width/2,canvas.height-10);
+        ctx.stroke();
+
+        ctx.font = `${canvas.width/24}px Calibri`;
+        ctx.fillText("2.38", canvas.width/4, canvas.height-10-offset);
+        ctx.fillText("10.44", canvas.width/10+offset, (canvas.height-canvas.height/4));
+        ctx.fillText("10.71", canvas.width/3+offset, (canvas.height-canvas.height/4));
+    
+    }
+    else if (selectedValue === "trapezoid") 
+    {
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10, canvas.height-10);
+        ctx.lineTo(canvas.width/2, canvas.height-10);
+        ctx.lineTo(canvas.width/4, canvas.height/2);
+        ctx.lineTo(canvas.width/10, canvas.height/2);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    else if (selectedValue === "rectangle") 
+    {
+        ctx.strokeRect(canvas.width/10, canvas.height/2, canvas.width/2-canvas.width/10, canvas.height/2-10);
+    }
+}
 
 // function changeShape() {
 //     var selectedShape = document.getElementById("shape").value;
@@ -530,89 +490,89 @@ function modelColor()
     return [0.6,0.6,0.6];
 }
 
-function drawGrid(rotating)
-{
-    vertexData= [
-        //koordinatne ose
-        1.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0
-    ];
+// function drawGrid(rotating)
+// {
+//     vertexData= [
+//         //koordinatne ose
+//         1.0, 0.0, 0.0,
+//         0.0, 0.0, 0.0,
+//         0.0, 1.0, 0.0,
+//         0.0, 0.0, 0.0,
+//         0.0, 0.0, 1.0,
+//         0.0, 0.0, 0.0
+//     ];
     
-    colorData = [
-        //boje x,y,z ose
-        1.0, 0.0, 0.0,
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 0.0, 1.0,
-    ];
+//     colorData = [
+//         //boje x,y,z ose
+//         1.0, 0.0, 0.0,
+//         1.0, 0.0, 0.0,
+//         0.0, 1.0, 0.0,
+//         0.0, 1.0, 0.0,
+//         0.0, 0.0, 1.0,
+//         0.0, 0.0, 1.0,
+//     ];
 
-    normalData = [
-        //vektor normale
-        0.0,1.0,0.0,
-        0.0,1.0,0.0,
-        0.0,1.0,0.0,
-        0.0,1.0,0.0,
-        0.0,1.0,0.0,
-        0.0,1.0,0.0,
-    ];
+//     normalData = [
+//         //vektor normale
+//         0.0,1.0,0.0,
+//         0.0,1.0,0.0,
+//         0.0,1.0,0.0,
+//         0.0,1.0,0.0,
+//         0.0,1.0,0.0,
+//         0.0,1.0,0.0,
+//     ];
 
-    let density = 8;
-    let size = 4.0;
-    let factor = size/density;
+//     let density = 8;
+//     let size = 4.0;
+//     let factor = size/density;
     
-    for (i = 0; i <= density*2; i++)
-        {
-            gridVertex1 = [size,-0.01,-size+factor*i];
-            gridVertex2 = [-size,-0.01,-size+factor*i];
-            vertexData.push(...gridVertex1);
-            vertexData.push(...gridVertex2);
-            gridColor = [0.6,0.6,0.6];
-            colorData.push(...gridColor);
-            colorData.push(...gridColor);
-            normalData.push(...[0.0,1.0,0.0]);
-            normalData.push(...[0.0,1.0,0.0]);
-            gridVertex3 = [size-factor*i,-0.01,size];
-            gridVertex4 = [size-factor*i,-0.01,-size];
-            vertexData.push(...gridVertex3);
-            vertexData.push(...gridVertex4);
-            colorData.push(...gridColor);
-            colorData.push(...gridColor);
-            normalData.push(...[0.0,1.0,0.0]);
-            normalData.push(...[0.0,1.0,0.0]);
-        }
-    webgl(gl.LINES,rotating);
-}
-// drawGrid(false);
+//     for (i = 0; i <= density*2; i++)
+//         {
+//             gridVertex1 = [size,-0.01,-size+factor*i];
+//             gridVertex2 = [-size,-0.01,-size+factor*i];
+//             vertexData.push(...gridVertex1);
+//             vertexData.push(...gridVertex2);
+//             gridColor = [0.6,0.6,0.6];
+//             colorData.push(...gridColor);
+//             colorData.push(...gridColor);
+//             normalData.push(...[0.0,1.0,0.0]);
+//             normalData.push(...[0.0,1.0,0.0]);
+//             gridVertex3 = [size-factor*i,-0.01,size];
+//             gridVertex4 = [size-factor*i,-0.01,-size];
+//             vertexData.push(...gridVertex3);
+//             vertexData.push(...gridVertex4);
+//             colorData.push(...gridColor);
+//             colorData.push(...gridColor);
+//             normalData.push(...[0.0,1.0,0.0]);
+//             normalData.push(...[0.0,1.0,0.0]);
+//         }
+//     webgl(gl.LINES,rotating);
+// }
+// drawGrid(true);
 
-function drawCircle(dense,r)
-{
-    let density = dense;
-    let size = r;
-    let theta = (Math.PI*2)/density;
-    let cosine = Math.cos(theta);
-    let sine = Math.sin(theta);
-    circleVertex = [size,0.0,0.0];
-    vertexData.push(...circleVertex);
-    colorData.push(...modelColor());
-    normalData.push(...[0.0,1.0,0.0]);
-    for(i=0;i<density;i++)
-    {
-        circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
-        vertexData.push(...circleVertex);
-        vertexData.push(...circleVertex);
-        colorData.push(...modelColor());
-        colorData.push(...modelColor());
-        normalData.push(...[0.0,1.0,0.0]);
-        normalData.push(...[0.0,1.0,0.0]);
-    }
-    webgl(gl.LINE_STRIP,true);
-}
+// function drawCircle(dense,r)
+// {
+//     let density = dense;
+//     let size = r;
+//     let theta = (Math.PI*2)/density;
+//     let cosine = Math.cos(theta);
+//     let sine = Math.sin(theta);
+//     circleVertex = [size,0.0,0.0];
+//     vertexData.push(...circleVertex);
+//     colorData.push(...modelColor());
+//     normalData.push(...[0.0,1.0,0.0]);
+//     for(i=0;i<density;i++)
+//     {
+//         circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
+//         vertexData.push(...circleVertex);
+//         vertexData.push(...circleVertex);
+//         colorData.push(...modelColor());
+//         colorData.push(...modelColor());
+//         normalData.push(...[0.0,1.0,0.0]);
+//         normalData.push(...[0.0,1.0,0.0]);
+//     }
+//     webgl(gl.LINE_STRIP,true);
+// }
 // drawCircle(10,2.0);
 
 function drawCone(a,h,dense)
@@ -765,177 +725,204 @@ function drawTruncatedCone(a,b,h,dense)
         let inner = b;
         let height = h;
 
-        wrapVertexInner = [inner,height,0.0];
-        wrapVertexOuter = [outer,0.0,0.0];
-        vertexData.push(...wrapVertexInner);
-        vertexData.push(...wrapVertexOuter);
-
-        colorData.push(...modelColor());
-        colorData.push(...modelColor());
-
         for(i=0;i<dense;i++)
         {
+            if(i==0)
+            {
+                wrapVertexInner = [inner,height,0.0];
+                wrapVertexOuter = [outer,0.0,0.0];
+                vertexData.push(...wrapVertexInner);
+                vertexData.push(...wrapVertexOuter);
+                colorData.push(...modelColor());
+                colorData.push(...modelColor());
+            }
+            else
+            {
+                vertexData.push(...wrapVertexInner);
+                vertexData.push(...wrapVertexOuter);
+                colorData.push(...modelColor());
+                colorData.push(...modelColor());
+            }
+
+            vector1=[wrapVertexOuter[0]-wrapVertexInner[0],wrapVertexOuter[1]-wrapVertexInner[1],wrapVertexOuter[2]-wrapVertexInner[2]];
+
+            wrapVertexInnerOld = wrapVertexInner;
+
             wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],height,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
-            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
             vertexData.push(...wrapVertexInner);
-            vertexData.push(...wrapVertexOuter);
             colorData.push(...modelColor());
+
+            vector2 = [wrapVertexInner[0]-wrapVertexInnerOld[0],wrapVertexInner[1]-wrapVertexInnerOld[1],wrapVertexInner[2]-wrapVertexInnerOld[2]];
+
+            // U-vector1, V-vector2
+            // Nx = UyVz - UzVy
+            // Ny = UzVx - UxVz
+            // Nz = UxVy - UyVx
+            normalVector = [vector1[1]*vector2[2]-vector1[2]*vector2[1],
+            vector1[2]*vector2[0]-vector1[0]*vector2[2],
+            vector1[0]*vector2[1]-vector1[1]*vector2[0]];
+            let normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
+            normalVector = [normalVector[0]/normalMagnitude,normalVector[1]/normalMagnitude,normalVector[2]/normalMagnitude];
+
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+
+            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
+            vertexData.push(...wrapVertexOuter);
             colorData.push(...modelColor());
         }
         webgl(gl.TRIANGLE_STRIP,false);
     }
 }
-// Construct an Array by repeating `pattern` n times
-function repeat(n, pattern) {
-    return [...Array(n)].reduce(sum => sum.concat(pattern), []);
-}
 
 function webgl(glDrawMode,animacija)
 {
 
-const positionBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
 
-const normalBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
+    const normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
 
-const colorBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
+    const colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
 
-const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-gl.shaderSource(vertexShader, `
-precision mediump float;
+    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, `
+    precision mediump float;
 
-const vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));
-const float ambient = 0.2;
+    const vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));
+    const float ambient = 0.2;
 
-attribute vec3 position;
-attribute vec3 normal;
-attribute vec3 color;
-varying vec3 vColor;
-varying float vBrightness;
+    attribute vec3 position;
+    attribute vec3 normal;
+    attribute vec3 color;
+    varying vec3 vColor;
+    varying float vBrightness;
 
-uniform mat4 matrix;
-uniform mat4 normalMatrix;
+    uniform mat4 matrix;
+    uniform mat4 normalMatrix;
 
-void main(){
-    vec3 worldNormal = (normalMatrix * vec4(normal, 1)).xyz;
-    float diffuse = max(0.0, dot(worldNormal, lightDirection));
-    vBrightness = ambient + diffuse;
-    vColor = color*vBrightness;
+    void main(){
+        vec3 worldNormal = (normalMatrix * vec4(normal, 1)).xyz;
+        float diffuse = max(0.0, dot(worldNormal, lightDirection));
+        vBrightness = ambient + diffuse;
+        vColor = color*vBrightness;
 
-    gl_Position = matrix * vec4(position, 1);
-}
-`);
-gl.compileShader(vertexShader);
+        gl_Position = matrix * vec4(position, 1);
+    }
+    `);
+    gl.compileShader(vertexShader);
 
-const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-gl.shaderSource(fragmentShader,`
-precision mediump float;
+    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader,`
+    precision mediump float;
 
-varying float vBrightness;
-varying vec3 vColor;
+    varying float vBrightness;
+    varying vec3 vColor;
 
-void main(){
-    gl_FragColor = vec4(vColor, 1.0);
-}
-`);
-gl.compileShader(fragmentShader);
+    void main(){
+        gl_FragColor = vec4(vColor, 1.0);
+    }
+    `);
+    gl.compileShader(fragmentShader);
 
-const program = gl.createProgram();
-gl.attachShader(program, vertexShader);
-gl.attachShader(program, fragmentShader);
-gl.linkProgram(program);
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
 
-if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const info = gl.getProgramInfoLog(program);
-    throw new Error (`Could not compile WebGL program. \n\n${info}`);
-}
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        const info = gl.getProgramInfoLog(program);
+        throw new Error (`Could not compile WebGL program. \n\n${info}`);
+    }
 
-const positionLocation = gl.getAttribLocation(program, `position`);
-gl.enableVertexAttribArray(positionLocation);
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+    const positionLocation = gl.getAttribLocation(program, `position`);
+    gl.enableVertexAttribArray(positionLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
-const normalLocation = gl.getAttribLocation(program, `normal`);
-gl.enableVertexAttribArray(normalLocation);
-gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+    const normalLocation = gl.getAttribLocation(program, `normal`);
+    gl.enableVertexAttribArray(normalLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
 
-const colorLocation = gl.getAttribLocation(program, `color`);
-gl.enableVertexAttribArray(colorLocation);
-gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
+    const colorLocation = gl.getAttribLocation(program, `color`);
+    gl.enableVertexAttribArray(colorLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
 
-gl.useProgram(program);
-gl.enable(gl.DEPTH_TEST);
-gl.enable(gl.CULL_FACE);
-gl.cullFace(gl.BACK);
+    gl.useProgram(program);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
 
-const uniformLocations = {
-    matrix: gl.getUniformLocation(program,`matrix`),
-    normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
-};
+    const uniformLocations = {
+        matrix: gl.getUniformLocation(program,`matrix`),
+        normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
+    };
 
-const modelMatrix = mat4.create();
-const viewMatrix = mat4.create();
-const projectionMatrix = mat4.create();
+    const modelMatrix = mat4.create();
+    const viewMatrix = mat4.create();
+    const projectionMatrix = mat4.create();
 
-mat4.perspective(projectionMatrix,
-     75*Math.PI/180,
-     canvas.width/canvas.height,
-     1e-4,
-     1e2);
+    mat4.perspective(projectionMatrix,
+        75*Math.PI/180,
+        canvas.width/canvas.height,
+        1e-4,
+        1e2);
 
-const mvMatrix =mat4.create();
-const mvpMatrix = mat4.create();
+    const mvMatrix =mat4.create();
+    const mvpMatrix = mat4.create();
 
-mat4.translate(viewMatrix,viewMatrix,[0.0,3.0,8.0]);
-mat4.invert(viewMatrix,viewMatrix);
+    mat4.translate(viewMatrix,viewMatrix,[0.0,3.0,8.0]);
+    mat4.invert(viewMatrix,viewMatrix);
 
-const normalMatrix = mat4.create();
+    const normalMatrix = mat4.create();
 
-function animate() {
+    function animate() {
 
-    gl.clearColor(0.612, 0.929, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clearColor(0.612, 0.929, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-    mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
-    mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
-    mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
-    
-    mat4.invert(normalMatrix, mvMatrix);
-    mat4.transpose(normalMatrix, normalMatrix);
-    gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
-    gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
-    
-    gl.drawArrays(glDrawMode, 0, vertexData.length/3);
-    
-    requestAnimationFrame(animate);
-}
+        mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
+        mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+        mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+        
+        mat4.invert(normalMatrix, mvMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
+        gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
+        gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+        
+        gl.drawArrays(glDrawMode, 0, vertexData.length/3);
+        
+        requestAnimationFrame(animate);
+    }
 
-// mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
-if(!animacija)
-{
-    gl.clearColor(0.612, 0.929, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
+    if(!animacija)
+    {
+        gl.clearColor(0.612, 0.929, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-    mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
-    mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
+        mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
+        mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
 
-    mat4.invert(normalMatrix, mvMatrix);
-    mat4.transpose(normalMatrix, normalMatrix);
+        mat4.invert(normalMatrix, mvMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
 
-    gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
-    gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
+        gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
+        gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
 
-    gl.drawArrays(glDrawMode, 0, vertexData.length/3);
-}
-else
-{
-    animate();
-}
+        gl.drawArrays(glDrawMode, 0, vertexData.length/3);
+    }
+    else
+    {
+        animate();
+    }
 }

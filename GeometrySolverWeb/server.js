@@ -5,10 +5,10 @@ const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
 const moment = require("moment");
+moment.locale('sr');
 const UserRepository = require("./repositories/UserRepository.js")
 const UserModel = require("./repositories/UserModel.js");
 const BodyRepository = require("./repositories/BodyRepository.js");
-moment.locale('sr');
 
 const app = express();
 const server = http.createServer(app);
