@@ -630,9 +630,6 @@ function drawCone(a,h,dense)
     }
     else
     {
-        coneTipVertex = [0.0,h,0.0];
-        vertexData.push(...coneTipVertex);
-        colorData.push(...modelColor());
         
         let density = dense;
         let size = a;
@@ -640,24 +637,54 @@ function drawCone(a,h,dense)
         let theta = (Math.PI*2)/density;
         let cosine = Math.cos(theta);
         let sine = Math.sin(theta);
-        circleVertex = [size,0.0,0.0];
-        vertexData.push(...circleVertex);
-        colorData.push(...modelColor());
-        for(i=0;i<density;i++)
+
+        for(i=0;i<=density;i++)
         {
             if(i==0)
             {
+                coneTipVertex = [0.0,h,0.0];
+                vertexData.push(...coneTipVertex);
+                colorData.push(...modelColor());
+
                 circleVertex = [size,0.0,0.0];
                 vertexData.push(...circleVertex);
                 colorData.push(...modelColor());
             }
+            else
+            {
+                vertexData.push(...circleVertex);
+                colorData.push(...modelColor());
+            }
+            
+            vector1=[circleVertex[0]-coneTipVertex[0],circleVertex[1]-coneTipVertex[1],circleVertex[2]-coneTipVertex[2]];
+
+            circleVertexOld = circleVertex;
+
             circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
             vertexData.push(...circleVertex);
+            colorData.push(...modelColor());
+
+            vector2 = [circleVertex[0]-circleVertexOld[0],circleVertex[1]-circleVertexOld[1],circleVertex[2]-circleVertexOld[2]];
+            
+            // U-vector1, V-vector2
+            // Nx = UyVz - UzVy
+            // Ny = UzVx - UxVz
+            // Nz = UxVy - UyVx
+            normalVector = [vector1[1]*vector2[2]-vector1[2]*vector2[1],
+            vector1[2]*vector2[0]-vector1[0]*vector2[2],
+            vector1[0]*vector2[1]-vector1[1]*vector2[0]];
+            let normalMagnitude = Math.sqrt(normalVector[0]*normalVector[0]+normalVector[1]*normalVector[1]+normalVector[2]*normalVector[2]);
+            normalVector = [normalVector[0]/normalMagnitude,normalVector[1]/normalMagnitude,normalVector[2]/normalMagnitude];
+
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+            normalData.push(...normalVector);
+
+            circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
             vertexData.push(...circleVertex);
             colorData.push(...modelColor());
-            colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_FAN,false);
+        webgl(gl.TRIANGLE_FAN,true);
     }
         
 }
