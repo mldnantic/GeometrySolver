@@ -300,12 +300,10 @@ menu.appendChild(figureInput);
  option2.textContent = "Trapezoid";
  select.appendChild(option2);
 
-
  var option3 = document.createElement("option");
  option3.value = "rectangle";
  option3.textContent = "Rectangle";
  select.appendChild(option3);
-
 
  var option1 = document.createElement("option");
  option1.value = "triangle";
@@ -314,7 +312,6 @@ menu.appendChild(figureInput);
 
 figureInput.appendChild(select);
 
-///  a
 var aDiv = document.createElement("div");
 let aLabel = document.createElement("label");
 aLabel.innerHTML = "a: ";
@@ -327,7 +324,6 @@ aDiv.appendChild(a);
 
 figureInput.appendChild(aDiv);
 
-/// b
 var bDiv = document.createElement("div");
 let bLabel = document.createElement("label");
 bLabel.innerHTML = "b: ";
@@ -362,7 +358,6 @@ btnAddFigure.innerHTML = "Ubaci figuru";
 btnAddFigure.onclick = async (ev) => {
 
     let oblik = document.getElementById("shapes").value;
-
 
     if(oblik === "rectangle")
     {
