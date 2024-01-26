@@ -266,6 +266,7 @@ function resetNotification()
     let notification = document.getElementById("notification");
     notification.style.backgroundColor = "rgb(90, 90, 95)";
     notification.innerHTML = "";
+    notification.style.color = "white";
 }
 
 let figureInput = document.createElement("div");
@@ -451,6 +452,7 @@ socket.on("message", message =>{
     let notification = document.getElementById("notification");
     notification.style.backgroundColor = "rgb(224, 164, 224)";
     notification.innerHTML = message;
+    notification.style.color = "black";
     setTimeout(resetNotification,2000);
 });
 
@@ -458,7 +460,6 @@ socket.on("comment",comment=>{
     let listaKomentara = document.getElementById("commentList");
     listaKomentara.value+=comment+"\n\n";
     listaKomentara.scrollTop = listaKomentara.scrollHeight;
-
 });
 
 // Data to be inserted
@@ -611,6 +612,7 @@ function drawCircle(dense,r)
     circleVertex = [size,0.0,0.0];
     vertexData.push(...circleVertex);
     colorData.push(...modelColor());
+    normalData.push(...[0.0,1.0,0.0]);
     for(i=0;i<density;i++)
     {
         circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
@@ -618,8 +620,10 @@ function drawCircle(dense,r)
         vertexData.push(...circleVertex);
         colorData.push(...modelColor());
         colorData.push(...modelColor());
+        normalData.push(...[0.0,1.0,0.0]);
+        normalData.push(...[0.0,1.0,0.0]);
     }
-    webgl(gl.TRIANGLE_FAN,false);
+    webgl(gl.LINE_STRIP,false);
 }
 
 function drawCone(a,h,dense)
@@ -637,27 +641,17 @@ function drawCone(a,h,dense)
         let theta = (Math.PI*2)/density;
         let cosine = Math.cos(theta);
         let sine = Math.sin(theta);
+        circleVertex = [size,0.0,0.0];
 
         for(i=0;i<=density;i++)
         {
-            if(i==0)
-            {
-                coneTipVertex = [0.0,h,0.0];
-                vertexData.push(...coneTipVertex);
-                colorData.push(...modelColor());
-
-                normalData.push(...[0.0,1.0,0.0]);
-
-                circleVertex = [size,0.0,0.0];
-                vertexData.push(...circleVertex);
-                colorData.push(...modelColor());
-            }
-            else
-            {
-                vertexData.push(...circleVertex);
-                colorData.push(...modelColor());
-            }
+            coneTipVertex = [0.0,h,0.0];
+            vertexData.push(...coneTipVertex);
+            colorData.push(...modelColor());
             
+            vertexData.push(...circleVertex);
+            colorData.push(...modelColor());
+
             vector1=[circleVertex[0]-coneTipVertex[0],circleVertex[1]-coneTipVertex[1],circleVertex[2]-coneTipVertex[2]];
 
             circleVertexOld = circleVertex;
@@ -682,11 +676,8 @@ function drawCone(a,h,dense)
             normalData.push(...normalVector);
             normalData.push(...normalVector);
 
-            circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
-            vertexData.push(...circleVertex);
-            colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_FAN,true);
+        webgl(gl.TRIANGLES,false);
     }
         
 }
@@ -765,7 +756,7 @@ function drawCylinder(a,b,dense)
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,true);
+        webgl(gl.TRIANGLE_STRIP,false);
     }
 }
 

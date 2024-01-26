@@ -17,6 +17,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 const botName = "GeometrySolverBot";
 const port = 3000;
+var logUserSessions = false;
 
 mongoose.connect("mongodb://localhost:27017/GeometrySolver");
 
@@ -29,7 +30,10 @@ io.on("connection", socket =>{
 
   socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
   // io.emit("comment",`#${botName}#: "${socket.id} has entered comment section"`);
-  console.log(`"#${socket.id}# has entered comment section"`);
+  if(logUserSessions == true)
+  {
+    console.log(`"#${socket.id}# has entered comment section"`);
+  }
 
   socket.on("comment",msg=>{
         const user = socket.id;
@@ -40,7 +44,10 @@ io.on("connection", socket =>{
     const user = socket.id;
     if(user){
         io.emit("comment",`#${botName}#: "${user} has left comment section"`);
-        console.log(`"#${socket.id}# has left comment section"`)
+        if(logUserSessions == true)
+        {
+          console.log(`"#${socket.id}# has left comment section"`)
+        }
     }
   })
 
