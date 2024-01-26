@@ -410,39 +410,27 @@ select.onchange = (ev) => {
 
 var renderBtn = document.createElement("button");
 renderBtn.innerHTML="Prikazi model";
-renderBtn.onclick = async (ev) =>{
-
-    await fetch("getAllBodies")
-        .then(response => response.json())
-        .then(data => {
-                data.forEach(item =>{
-                    console.log(item);
-                })
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+renderBtn.onclick = (ev) =>{
+    drawModel();
 }
 figureInput.appendChild(renderBtn);
 
 async function drawModel()
 {
-    await fetch("getAllBodies")
+    await fetch("/getAllBodies")
         .then(response => response.json())
         .then(data => {
                 data.forEach(item =>{
-                    console.log(item.figures[1])
-                    let fig = item.figures[1];
-                    if(fig.tip == "trapezoid")
+                    let fig = item.figures[0];
+                    if(fig.tip == "rectangle")
                     {
                         vertexData=[];
                         colorData=[];
                         normalData=[];
-                        drawTruncatedCone(fig.a,fig.b,fig.h,range.value);
+                        drawCylinder(fig.a,fig.b,range.value);
                     }
-                    
                 })
-        })
+            })
         .catch(error => {
             console.error('Error fetching data:', error);
         });
@@ -623,8 +611,9 @@ function drawCircle(dense,r)
         normalData.push(...[0.0,1.0,0.0]);
         normalData.push(...[0.0,1.0,0.0]);
     }
-    webgl(gl.LINE_STRIP,false);
+    webgl(gl.LINE_STRIP,true);
 }
+// drawCircle(10,2.0);
 
 function drawCone(a,h,dense)
 {
@@ -885,8 +874,6 @@ gl.useProgram(program);
 gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.CULL_FACE);
 gl.cullFace(gl.BACK);
-gl.clearColor(0.412, 0.412, 0.412, 1.0);
-gl.clear(gl.COLOR_BUFFER_BIT);
 
 const uniformLocations = {
     matrix: gl.getUniformLocation(program,`matrix`),
@@ -906,13 +893,15 @@ mat4.perspective(projectionMatrix,
 const mvMatrix =mat4.create();
 const mvpMatrix = mat4.create();
 
-mat4.translate(viewMatrix,viewMatrix,[0.0,1.0,8.0]);
+mat4.translate(viewMatrix,viewMatrix,[0.0,3.0,8.0]);
 mat4.invert(viewMatrix,viewMatrix);
 
 const normalMatrix = mat4.create();
 
 function animate() {
-    requestAnimationFrame(animate);
+
+    gl.clearColor(0.612, 0.929, 1.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
     mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
@@ -920,16 +909,20 @@ function animate() {
     
     mat4.invert(normalMatrix, mvMatrix);
     mat4.transpose(normalMatrix, normalMatrix);
-
     gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
     
     gl.drawArrays(glDrawMode, 0, vertexData.length/3);
+    
+    requestAnimationFrame(animate);
 }
 
 // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
 if(!animacija)
 {
+    gl.clearColor(0.612, 0.929, 1.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
     mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
     mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
 
