@@ -21,7 +21,6 @@ const bodySchema = new mongoose.Schema({
     }]
   }
 },{ versionKey: false });
-
 const bodyModel = mongoose.model("body", bodySchema);
 
 module.exports = bodyModel;

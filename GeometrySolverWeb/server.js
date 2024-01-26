@@ -97,7 +97,7 @@ app.get('/getAllBodies', async (req, res) => {
   }
 });
 
-app.post("/addComment", async(req,res)=>{
+app.put("/addComment", async(req,res)=>{
   try{
     const comment = req.body;
     comment.time = moment().format('LT');

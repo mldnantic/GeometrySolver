@@ -46,7 +46,7 @@ function commentSection()
             content: sadrzaj
         };
         fetch("/addComment", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -60,7 +60,7 @@ function commentSection()
             console.error("Error registering user:", error);
         });
 
-        }
+    }
     userInteraction.appendChild(btnKomentar);
     
     var komentar = document.createElement("input");
