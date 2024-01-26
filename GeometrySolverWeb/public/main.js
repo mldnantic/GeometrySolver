@@ -646,6 +646,8 @@ function drawCone(a,h,dense)
                 vertexData.push(...coneTipVertex);
                 colorData.push(...modelColor());
 
+                normalData.push(...[0.0,1.0,0.0]);
+
                 circleVertex = [size,0.0,0.0];
                 vertexData.push(...circleVertex);
                 colorData.push(...modelColor());
