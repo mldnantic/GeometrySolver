@@ -36,7 +36,7 @@ io.on("connection", socket =>{
 
   socket.on("comment",msg=>{
         const user = socket.id;
-        io.emit("comment",`${user} `+msg);
+        io.emit("comment",`${user} ${moment().format('LT')} `+msg);
     });
 
   socket.on("disconnect",()=>{
@@ -99,9 +99,12 @@ app.get('/getAllBodies', async (req, res) => {
 
 app.put("/addComment", async(req,res)=>{
   try{
-    const comment = req.body;
-    comment.time = moment().format('LT');
-    const cmt = await BodyRepository.addComment("65a962650f101b44801a77e6",comment);
+    const comment = {
+      user: req.body.user,
+      time: moment().format('LT'),
+      content: req.body.content
+    }
+    const cmt = await BodyRepository.addComment(req.body.id,comment);
     res.json(comment);
   }
   catch (error) {

@@ -15,6 +15,7 @@ class BodyRepository {
   //update project name, figures list, comments list
   async addComment(id, comment) {
     try {
+
       const filter = {_id: id};
       const update = { $push: { comments: comment } };
       const result = await BodyModel.updateOne(filter, update);
@@ -27,6 +28,7 @@ class BodyRepository {
       {
         console.log("nothing happened...");
       }
+
     } catch (error) {
       throw error;
     }
@@ -59,5 +61,4 @@ class BodyRepository {
     }
   }
 }
-
 module.exports = new BodyRepository();

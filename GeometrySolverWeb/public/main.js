@@ -19,7 +19,6 @@ notification.className = "notification";
 notification.id = "notification";
 notificationsDiv.appendChild(notification);
 
-
 let glavniDiv = document.createElement("div");
 glavniDiv.className="glavniDiv";
 glavniDiv.id = "glavniDiv";
@@ -41,8 +40,8 @@ function commentSection()
         komentar.value="";
         komentar.focus();
         var newCmt = {
+            id: "65a962650f101b44801a77e6",
             user: userName,
-            time: "",
             content: sadrzaj
         };
         fetch("/addComment", {
@@ -59,7 +58,6 @@ function commentSection()
         .catch(error => {
             console.error("Error registering user:", error);
         });
-
     }
     userInteraction.appendChild(btnKomentar);
     
