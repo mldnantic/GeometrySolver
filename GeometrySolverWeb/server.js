@@ -111,6 +111,17 @@ app.put("/addComment", async(req,res)=>{
     console.error('Error commenting:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-})
+});
+
+app.post("/createBody", async(req,res)=>{
+  try{
+    const body = await BodyRepository.createBody(req.body);
+    res.json(body);
+  }
+  catch (error) {
+    console.error('Error creating body:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 server.listen(port, () => console.log(`Server running on port ${port}`));

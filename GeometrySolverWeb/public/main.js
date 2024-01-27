@@ -256,14 +256,35 @@ async function modelCreateAndSelect()
     lbl.innerHTML = "New project name:"
     menu.appendChild(lbl);
     let bodyNameInput = document.createElement("input");
+    bodyNameInput.id = "bodyName"
     menu.appendChild(bodyNameInput);
     let createBodyBtn = document.createElement("button");
     createBodyBtn.innerHTML="Create project";
-    createBodyBtn.onclick = (ev) =>{
+    createBodyBtn.onclick =async (ev) =>{
+
+        var newBody = {
+            projectname: document.getElementById("bodyName").value,
+            creatorID: userID
+        }
+
         if(document.getElementById("figureInput")==null)
         {
             figureInput();
         }
+            await fetch("/createBody", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newBody),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Error registering user:", error);
+            });
         // redraw(modelselektor,"nista");
     };
     menu.appendChild(createBodyBtn);
@@ -357,6 +378,18 @@ function figureInput()
     h.type = "number";
     hDiv.appendChild(h);
     figureInput.appendChild(hDiv);
+
+    let divTmp = document.createElement("div");
+
+    let izvrnutaLbl = document.createElement("label");
+    izvrnutaLbl.innerHTML = "Izvrnuta:";
+    divTmp.appendChild(izvrnutaLbl);
+    let izvrnutaCheck = document.createElement("input");
+    izvrnutaCheck.className="stiklirano";
+    izvrnutaCheck.type = "checkbox";
+    divTmp.appendChild(izvrnutaCheck);
+
+    figureInput.appendChild(divTmp);
     
     var aa,be,ha;
     let densityLbl = document.createElement("label");
