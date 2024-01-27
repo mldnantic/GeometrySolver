@@ -218,13 +218,12 @@ btnLogin.onclick = async (ev) =>{
         .then(data => {
             if(data!=null)
             {
-                console.log(data);
                 userID = data._id;
                 userName = data.username;
                 notification.style.backgroundColor = "rgb(20, 150, 20)";
-                notification.innerHTML = `Dobrodosli, ${userName}`;
-                modelSelect();
-                figureInput();
+                notification.innerHTML = `Welcome ${userName}`;
+                modelCreateAndSelect();
+                // figureInput();
                 redraw("registerLoginDiv","dugmezaodjavu");
                 commentSection();
 
@@ -251,18 +250,31 @@ function resetNotification()
     notification.innerHTML = "";
 }
 
-async function modelSelect()
+async function modelCreateAndSelect()
 {
     let lbl = document.createElement("label");
-    lbl.innerHTML = "Izaberite model:"
+    lbl.innerHTML = "New project name:"
     menu.appendChild(lbl);
+    let bodyNameInput = document.createElement("input");
+    menu.appendChild(bodyNameInput);
+    let createBodyBtn = document.createElement("button");
+    createBodyBtn.innerHTML="Create project";
+    createBodyBtn.onclick = (ev) =>{
+        if(document.getElementById("figureInput")==null)
+        {
+            figureInput();
+        }
+        // redraw(modelselektor,"nista");
+    };
+    menu.appendChild(createBodyBtn);
+
     let selectModel = document.createElement("select");
     menu.appendChild(selectModel);
     let renderBtn = document.createElement("button");
     renderBtn.innerHTML="Prikazi model";
     renderBtn.onclick = (ev) =>{
-        drawModel();
-    }
+        drawModel(64);
+    };
     menu.appendChild(renderBtn);
     await fetch("/getAllBodies")
         .then(response => response.json())
@@ -347,11 +359,15 @@ function figureInput()
     figureInput.appendChild(hDiv);
     
     var aa,be,ha;
+    let densityLbl = document.createElement("label");
+    densityLbl.innerHTML = "Detail quality:";
+    figureInput.appendChild(densityLbl);
     var range = document.createElement("input");
     range.id = "range";
     range.setAttribute("type","range");
     range.setAttribute("min",16);
     range.setAttribute("max",192);
+    range.value=192;
     figureInput.appendChild(range);
     
     let btnAddFigure = document.createElement("button");
@@ -449,7 +465,7 @@ function figureInput()
     };
 }
 
-async function drawModel()
+async function drawModel(dense)
 {
     await fetch("/getAllBodies")
         .then(response => response.json())
@@ -463,7 +479,7 @@ async function drawModel()
                         colorData=[];
                         normalData=[];
                         let listaKomentara = document.getElementById("commentList");
-                        drawCylinder(fig.a,fig.b,document.getElementById("range").value);
+                        drawCylinder(fig.a,fig.b,dense);
                         item.comments.forEach(cmt=>{
                             listaKomentara.value+=`${cmt.user} ${cmt.time} ${cmt.content}\n\n`;
                             listaKomentara.scrollTop = listaKomentara.scrollHeight;
