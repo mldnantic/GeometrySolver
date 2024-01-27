@@ -290,6 +290,7 @@ async function modelCreateAndSelect()
     menu.appendChild(createBodyBtn);
 
     let selectModel = document.createElement("select");
+    selectModel.id = "bodySelect"
     menu.appendChild(selectModel);
     let renderBtn = document.createElement("button");
     renderBtn.innerHTML="Prikazi model";
@@ -302,7 +303,7 @@ async function modelCreateAndSelect()
         .then(data => {
                 data.forEach(item =>{
                         let bodyOption = document.createElement("option");
-                        bodyOption.value = item.projectname;
+                        bodyOption.value = item._id;
                         bodyOption.textContent = item.projectname;
                         selectModel.appendChild(bodyOption);
                 })
@@ -385,6 +386,7 @@ function figureInput()
     izvrnutaLbl.innerHTML = "Izvrnuta:";
     divTmp.appendChild(izvrnutaLbl);
     let izvrnutaCheck = document.createElement("input");
+    izvrnutaCheck.id="izvrnuta";
     izvrnutaCheck.className="stiklirano";
     izvrnutaCheck.type = "checkbox";
     divTmp.appendChild(izvrnutaCheck);
@@ -500,25 +502,12 @@ function figureInput()
 
 async function drawModel(dense)
 {
-    await fetch("/getAllBodies")
+    let id =document.getElementById("bodySelect").value;
+    console.log(id);
+    await fetch(`/getBody?id=${id}`)
         .then(response => response.json())
         .then(data => {
-                data.forEach(item =>{
-                    console.log(item);
-                    let fig = item.figures[0];
-                    if(fig.tip == "rectangle")
-                    {
-                        vertexData=[];
-                        colorData=[];
-                        normalData=[];
-                        let listaKomentara = document.getElementById("commentList");
-                        drawCylinder(fig.a,fig.b,dense);
-                        item.comments.forEach(cmt=>{
-                            listaKomentara.value+=`${cmt.user} ${cmt.time} ${cmt.content}\n\n`;
-                            listaKomentara.scrollTop = listaKomentara.scrollHeight;
-                        });
-                    }
-                })
+                console.log(data);
             })
         .catch(error => {
             console.error('Error fetching data:', error);

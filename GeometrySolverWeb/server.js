@@ -97,6 +97,17 @@ app.get('/getAllBodies', async (req, res) => {
   }
 });
 
+app.get('/getBody', async (req, res) => {
+  try {
+    const id = req.query.id;
+    const body = await BodyRepository.getBodyById(id);
+    res.json(body);
+  } catch (error) {
+    console.error('Error fetching bodies:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.put("/addComment", async(req,res)=>{
   try{
     const comment = {
