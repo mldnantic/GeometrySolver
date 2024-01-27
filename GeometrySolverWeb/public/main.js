@@ -71,7 +71,6 @@ function commentSection()
     commentList.readOnly = true;
     userInteraction.appendChild(commentList);    
 }
-commentSection();
 
 let canvas = document.createElement("canvas");
 glavniDiv.appendChild(canvas);
@@ -122,7 +121,7 @@ function drawPoprecni()
     poprecni.id="poprecniPresek";
     glavniDiv.appendChild(poprecni);
 }
-drawPoprecni();
+// drawPoprecni();
 
 function redraw(componentID,componentClassName)
 {
@@ -224,9 +223,10 @@ btnLogin.onclick = async (ev) =>{
                 userName = data.username;
                 notification.style.backgroundColor = "rgb(20, 150, 20)";
                 notification.innerHTML = `Dobrodosli, ${userName}`;
-                
-                redraw("registerLoginDiv","div");
                 modelSelect();
+                figureInput();
+                redraw("registerLoginDiv","dugmezaodjavu");
+                commentSection();
 
             }
             else
@@ -279,169 +279,175 @@ async function modelSelect()
         });
 }
 
-let figureInput = document.createElement("div");
-figureInput.className = "menuDiv";
-figureInput.id="figureInput";
-menu.appendChild(figureInput);
+function figureInput()
+{
+    let figureInput = document.createElement("div");
+    figureInput.className = "menuDiv";
+    figureInput.id="figureInput";
+    menu.appendChild(figureInput);
+    
+    var label = document.createElement("label");
+    label.setAttribute("for", "shapes");
+    label.textContent = "Izaberite figuru:";
+    
+    var select = document.createElement("select");
+    select.id = "shapes";
+    figureInput.appendChild(select);
+    figureInput.appendChild(label);
+    
+    var option2 = document.createElement("option");
+    option2.value = "trapezoid";
+    option2.textContent = "Trapezoid";
+    select.appendChild(option2);
+    
+    var option3 = document.createElement("option");
+    option3.value = "rectangle";
+    option3.textContent = "Rectangle";
+    select.appendChild(option3);
+    
+    var option1 = document.createElement("option");
+    option1.value = "triangle";
+    option1.textContent = "Triangle";
+    select.appendChild(option1);
+    
+    figureInput.appendChild(select);
+    
+    var aDiv = document.createElement("div");
+    let aLabel = document.createElement("label");
+    aLabel.innerHTML = "a: ";
+    aDiv.appendChild(aLabel);
+    
+    var a = document.createElement("input");
+    a.id = "aInput"
+    a.type = "number";
+    aDiv.appendChild(a);
+    
+    figureInput.appendChild(aDiv);
+    
+    var bDiv = document.createElement("div");
+    let bLabel = document.createElement("label");
+    bLabel.innerHTML = "b: ";
+    bDiv.appendChild(bLabel);
+    
+    var b = document.createElement("input");
+    b.id = "bInput"
+    b.type = "number";
+    bDiv.appendChild(b);
+    figureInput.appendChild(bDiv);
+    
+    var hDiv = document.createElement("div");
+    let hLabel = document.createElement("label");
+    hLabel.innerHTML = "h: ";
+    hDiv.appendChild(hLabel);
+    
+    var h = document.createElement("input");
+    h.id = "hInput"
+    h.type = "number";
+    hDiv.appendChild(h);
+    figureInput.appendChild(hDiv);
+    
+    var aa,be,ha;
+    var range = document.createElement("input");
+    range.id = "range";
+    range.setAttribute("type","range");
+    range.setAttribute("min",16);
+    range.setAttribute("max",192);
+    figureInput.appendChild(range);
+    
+    let btnAddFigure = document.createElement("button");
+    btnAddFigure.innerHTML = "Ubaci figuru";
+    btnAddFigure.onclick = async (ev) => {
+    
+        let oblik = document.getElementById("shapes").value;
+    
+        if(oblik === "rectangle")
+        {
+            aa = document.getElementById("aInput").value;
+            be = document.getElementById("bInput").value;
+            ha = -1;
+        }
+    
+        if(oblik === "triangle")
+        {
+            aa = document.getElementById("aInput").value;
+            be = -1;
+            ha = document.getElementById("hInput").value;
+        }
+    
+        if(oblik === "trapezoid")
+        {
+            aa = document.getElementById("aInput").value;
+            be = document.getElementById("bInput").value;
+            ha = document.getElementById("hInput").value;
+        }
+        vertexData=[];
+        colorData=[];
+        normalData=[];
+        switch(oblik)
+        {
+            case "triangle":
+                drawCone(aa,ha,range.value);
+                break;
+            case "rectangle":
+                drawCylinder(aa,be,range.value);
+                break;
+            case "trapezoid":
+                drawTruncatedCone(aa,be,ha,range.value);
+                break;
+        }
+    
+        //fetch za dodavanje figure u listu
+        var newFigure = {
+            a:aa,
+            b:be,
+            h:ha,
+            tip:oblik,
+            izvrnuta:false
+        }
+        // await fetch("/updateBody", {
+        //     method: "PUT",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify(newFigure),
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //         data.forEach(item =>{
+        //                 console.log(item);
+        //         })
+        //     })
+        // .catch(error => {
+        //     console.error('Error fetching data:', error);
+        // });
+    };
+    figureInput.appendChild(btnAddFigure);
 
- var label = document.createElement("label");
- label.setAttribute("for", "shapes");
- label.textContent = "Izaberite figuru:";
+    var select = document.getElementById("shapes");
+    select.onchange = (ev) => {
 
- var select = document.createElement("select");
- select.id = "shapes";
- figureInput.appendChild(select);
- figureInput.appendChild(label);
+    let izabrano = select.value;
 
- var option2 = document.createElement("option");
- option2.value = "trapezoid";
- option2.textContent = "Trapezoid";
- select.appendChild(option2);
+    var a = document.getElementById("aInput");
 
- var option3 = document.createElement("option");
- option3.value = "rectangle";
- option3.textContent = "Rectangle";
- select.appendChild(option3);
-
- var option1 = document.createElement("option");
- option1.value = "triangle";
- option1.textContent = "Triangle";
- select.appendChild(option1);
-
-figureInput.appendChild(select);
-
-var aDiv = document.createElement("div");
-let aLabel = document.createElement("label");
-aLabel.innerHTML = "a: ";
-aDiv.appendChild(aLabel);
-
-var a = document.createElement("input");
-a.id = "aInput"
-a.type = "number";
-aDiv.appendChild(a);
-
-figureInput.appendChild(aDiv);
-
-var bDiv = document.createElement("div");
-let bLabel = document.createElement("label");
-bLabel.innerHTML = "b: ";
-bDiv.appendChild(bLabel);
-
-var b = document.createElement("input");
-b.id = "bInput"
-b.type = "number";
-bDiv.appendChild(b);
-figureInput.appendChild(bDiv);
-
-var hDiv = document.createElement("div");
-let hLabel = document.createElement("label");
-hLabel.innerHTML = "h: ";
-hDiv.appendChild(hLabel);
-
-var h = document.createElement("input");
-h.id = "hInput"
-h.type = "number";
-hDiv.appendChild(h);
-figureInput.appendChild(hDiv);
-
-var aa,be,ha;
-var range = document.createElement("input");
-range.setAttribute("type","range");
-range.setAttribute("min",3);
-range.setAttribute("max",24);
-figureInput.appendChild(range);
-
-let btnAddFigure = document.createElement("button");
-btnAddFigure.innerHTML = "Ubaci figuru";
-btnAddFigure.onclick = async (ev) => {
-
-    let oblik = document.getElementById("shapes").value;
-
-    if(oblik === "rectangle")
+    if (izabrano == "triangle") {
+        b.disabled = true;
+        b.value = '';
+    } else {
+        b.disabled = false;
+    }
+    if (izabrano == "rectangle") {
+        h.disabled = true;
+        h.value = '';
+    } else {
+        h.disabled = false;
+    }
+    if(document.getElementById("poprecniPresek"))
     {
-        aa = document.getElementById("aInput").value;
-        be = document.getElementById("bInput").value;
-        ha = -1;
+        drawShape();
     }
-
-    if(oblik === "triangle")
-    {
-        aa = document.getElementById("aInput").value;
-        be = -1;
-        ha = document.getElementById("hInput").value;
-    }
-
-    if(oblik === "trapezoid")
-    {
-        aa = document.getElementById("aInput").value;
-        be = document.getElementById("bInput").value;
-        ha = document.getElementById("hInput").value;
-    }
-    vertexData=[];
-    colorData=[];
-    normalData=[];
-    switch(oblik)
-    {
-        case "triangle":
-            drawCone(aa,ha,range.value);
-            break;
-        case "rectangle":
-            drawCylinder(aa,be,range.value);
-            break;
-        case "trapezoid":
-            drawTruncatedCone(aa,be,ha,range.value);
-            break;
-    }
-
-    //fetch za dodavanje figure u listu
-    var newFigure = {
-        a:aa,
-        b:be,
-        h:ha,
-        tip:oblik,
-        izvrnuta:false
-    }
-    // await fetch("/updateBody", {
-    //     method: "PUT",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(newFigure),
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //         data.forEach(item =>{
-    //                 console.log(item);
-    //         })
-    //     })
-    // .catch(error => {
-    //     console.error('Error fetching data:', error);
-    // });
-
-};
-figureInput.appendChild(btnAddFigure);
-
-var select = document.getElementById("shapes");
-select.onchange = (ev) => {
-
-   let izabrano = select.value;
-
-   var a = document.getElementById("aInput");
-
-   if (izabrano == "triangle") {
-     b.disabled = true;
-     b.value = '';
-   } else {
-     b.disabled = false;
-   }
-   if (izabrano == "rectangle") {
-    h.disabled = true;
-    h.value = '';
-  } else {
-    h.disabled = false;
-  }
-  drawShape();
-};
+    };
+}
 
 async function drawModel()
 {
@@ -456,7 +462,12 @@ async function drawModel()
                         vertexData=[];
                         colorData=[];
                         normalData=[];
-                        drawCylinder(fig.a,fig.b,range.value);
+                        let listaKomentara = document.getElementById("commentList");
+                        drawCylinder(fig.a,fig.b,document.getElementById("range").value);
+                        item.comments.forEach(cmt=>{
+                            listaKomentara.value+=`${cmt.user} ${cmt.time} ${cmt.content}\n\n`;
+                            listaKomentara.scrollTop = listaKomentara.scrollHeight;
+                        });
                     }
                 })
             })
