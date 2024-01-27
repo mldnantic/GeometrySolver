@@ -486,8 +486,6 @@ function drawShape()
 
     var canvas = document.getElementById("poprecniPresek");
     var ctx = canvas.getContext("2d");
-    // canvas.width = window.innerHeight/2;
-    // canvas.height = window.innerWidth/2;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#ffffff";
     ctx.strokeStyle = "#ffffff";
