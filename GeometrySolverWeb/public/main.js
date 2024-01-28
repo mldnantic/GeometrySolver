@@ -121,7 +121,7 @@ function drawPoprecni()
     poprecni.id="poprecniPresek";
     glavniDiv.appendChild(poprecni);
 }
-// drawPoprecni();
+drawPoprecni();
 
 function redraw(componentID,componentClassName)
 {
@@ -547,57 +547,73 @@ function drawShape()
     ctx.fillStyle = "#ffffff";
     ctx.strokeStyle = "#ffffff";
     
-    if (selectedValue === "triangle") 
-    {
-        // ctx.beginPath();
-        // ctx.moveTo(10, 190);
-        // ctx.lineTo(10, 10);
-        // ctx.lineTo(290, 190);
-        // ctx.closePath();
-        // ctx.stroke();
-
-        let offset = 4;
-
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/10,canvas.height-10);
-        ctx.lineTo(canvas.width/2,canvas.height-10);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/10,canvas.height-10);
-        ctx.lineTo(canvas.width/10,3*canvas.height/4);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/10,3*canvas.height/4);
-        ctx.lineTo(canvas.width/10,canvas.height/2);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/10,canvas.height/2);
-        ctx.lineTo(canvas.width/2,canvas.height-10);
-        ctx.stroke();
-
-        ctx.font = `${canvas.width/24}px Calibri`;
-        ctx.fillText("2.38", canvas.width/4, canvas.height-10-offset);
-        ctx.fillText("10.44", canvas.width/10+offset, (canvas.height-canvas.height/4));
-        ctx.fillText("10.71", canvas.width/3+offset, (canvas.height-canvas.height/4));
+    let density = 10;
+    let factor = canvas.width/20;
     
-    }
-    else if (selectedValue === "trapezoid") 
-    {
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/10, canvas.height-10);
-        ctx.lineTo(canvas.width/2, canvas.height-10);
-        ctx.lineTo(canvas.width/4, canvas.height/2);
-        ctx.lineTo(canvas.width/10, canvas.height/2);
-        ctx.closePath();
-        ctx.stroke();
-    }
-    else if (selectedValue === "rectangle") 
-    {
-        ctx.strokeRect(canvas.width/10, canvas.height/2, canvas.width/2-canvas.width/10, canvas.height/2-10);
-    }
+    for (i = 0; i <= density*2; i++)
+        {
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/20,canvas.height/20+factor*i);
+            ctx.lineTo(19*canvas.width/20,canvas.height/20+factor*i);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/20+factor*i,canvas.height/20);
+            ctx.lineTo(canvas.width/20+factor*i,19*canvas.height/20);
+            ctx.stroke();
+        }
+
+    // if (selectedValue === "triangle") 
+    // {
+    //     // ctx.beginPath();
+    //     // ctx.moveTo(10, 190);
+    //     // ctx.lineTo(10, 10);
+    //     // ctx.lineTo(290, 190);
+    //     // ctx.closePath();
+    //     // ctx.stroke();
+
+    //     let offset = 4;
+
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/10,canvas.height-10);
+    //     ctx.lineTo(canvas.width/2,canvas.height-10);
+    //     ctx.stroke();
+
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/10,canvas.height-10);
+    //     ctx.lineTo(canvas.width/10,3*canvas.height/4);
+    //     ctx.stroke();
+
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/10,3*canvas.height/4);
+    //     ctx.lineTo(canvas.width/10,canvas.height/2);
+    //     ctx.stroke();
+
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/10,canvas.height/2);
+    //     ctx.lineTo(canvas.width/2,canvas.height-10);
+    //     ctx.stroke();
+
+    //     ctx.font = `${canvas.width/24}px Calibri`;
+    //     ctx.fillText("2.38", canvas.width/4, canvas.height-10-offset);
+    //     ctx.fillText("10.44", canvas.width/10+offset, (canvas.height-canvas.height/4));
+    //     ctx.fillText("10.71", canvas.width/3+offset, (canvas.height-canvas.height/4));
+    
+    // }
+    // else if (selectedValue === "trapezoid") 
+    // {
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/10, canvas.height-10);
+    //     ctx.lineTo(canvas.width/2, canvas.height-10);
+    //     ctx.lineTo(canvas.width/4, canvas.height/2);
+    //     ctx.lineTo(canvas.width/10, canvas.height/2);
+    //     ctx.closePath();
+    //     ctx.stroke();
+    // }
+    // else if (selectedValue === "rectangle") 
+    // {
+    //     ctx.strokeRect(canvas.width/10, canvas.height/2, canvas.width/2-canvas.width/10, canvas.height/2-10);
+    // }
 }
 
 // function changeShape() {
