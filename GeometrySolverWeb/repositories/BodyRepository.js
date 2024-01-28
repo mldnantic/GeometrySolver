@@ -12,7 +12,7 @@ class BodyRepository {
     }
   }
 
-  //update project name, figures list, comments list
+  //update project name, figures list
   async addComment(id, comment) {
     try {
 
@@ -23,6 +23,27 @@ class BodyRepository {
       if(result.modifiedCount === 1)
       {
         return comment;
+      }
+      else
+      {
+        console.log("nothing happened...");
+      }
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addFigure(id, figure) {
+    try {
+
+      const filter = {_id: id};
+      const update = { $push: { figures: figure } };
+      const result = await BodyModel.updateOne(filter, update);
+
+      if(result.modifiedCount === 1)
+      {
+        return figure;
       }
       else
       {

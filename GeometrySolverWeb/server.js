@@ -27,10 +27,10 @@ app.use(bodyParser.json());
 io.on("connection", socket =>{
 
   socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
-  // io.emit("comment",`#${botName}#: "${socket.id} has entered comment section"`);
   
   if(logUserSessions == true)
   {
+    // io.emit("comment",`#${botName}#: "${socket.id} has entered comment section"`);
     console.log(`"#${socket.id}# has entered comment section"`);
   }
 
@@ -42,9 +42,9 @@ io.on("connection", socket =>{
   socket.on("disconnect",()=>{
     const user = socket.id;
     if(user){
-        io.emit("comment",`#${botName}#: "${user} has left comment section"`);
         if(logUserSessions == true)
         {
+          // io.emit("comment",`#${botName}#: "${user} has left comment section"`);
           console.log(`"#${socket.id}# has left comment section"`)
         }
     }
@@ -108,6 +108,17 @@ app.get('/getBody', async (req, res) => {
   }
 });
 
+app.post("/createBody", async(req,res)=>{
+  try{
+    const body = await BodyRepository.createBody(req.body);
+    res.json(body);
+  }
+  catch (error) {
+    console.error('Error creating body:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.put("/addComment", async(req,res)=>{
   try{
     const comment = {
@@ -124,13 +135,14 @@ app.put("/addComment", async(req,res)=>{
   }
 });
 
-app.post("/createBody", async(req,res)=>{
+app.put("/addFigure", async(req,res)=>{
   try{
-    const body = await BodyRepository.createBody(req.body);
-    res.json(body);
+    const bodyID = req.query.id;
+    const fig = await BodyRepository.addFigure(bodyID,req.body);
+    res.json(req.body);
   }
   catch (error) {
-    console.error('Error creating body:', error);
+    console.error('Error commenting:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

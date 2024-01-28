@@ -24,7 +24,7 @@ glavniDiv.className="glavniDiv";
 glavniDiv.id = "glavniDiv";
 host.appendChild(glavniDiv);
 
-function commentSection()
+function commentSection(bodyID)
 {
     let userInteraction = document.createElement("div");
     userInteraction.className = "userInteraction";
@@ -35,12 +35,12 @@ function commentSection()
     btnKomentar.innerHTML="Posalji";
     btnKomentar.onclick =async (ev) =>{
         let komentar = document.getElementById("commentText");
-        socket.emit("comment",komentar.value);
+        socket.emit("comment",(userName,komentar.value));
         let sadrzaj = komentar.value;
         komentar.value="";
         komentar.focus();
         var newCmt = {
-            id: "65a962650f101b44801a77e6",
+            id: bodyID,
             user: userName,
             content: sadrzaj
         };
@@ -225,8 +225,6 @@ btnLogin.onclick = async (ev) =>{
                 modelCreateAndSelect();
                 // figureInput();
                 redraw("registerLoginDiv","dugmezaodjavu");
-                commentSection();
-
             }
             else
             {
@@ -280,7 +278,8 @@ async function modelCreateAndSelect()
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                console.log(data._id);
+                commentSection(data._id);
             })
             .catch(error => {
                 console.error("Error registering user:", error);
@@ -294,7 +293,7 @@ async function modelCreateAndSelect()
     menu.appendChild(selectModel);
     let renderBtn = document.createElement("button");
     renderBtn.innerHTML="Prikazi model";
-    renderBtn.onclick = (ev) =>{
+    renderBtn.onclick = async (ev) =>{
         drawModel(64);
     };
     menu.appendChild(renderBtn);
@@ -313,7 +312,7 @@ async function modelCreateAndSelect()
         });
 }
 
-function figureInput()
+function figureInput(bodyID)
 {
     let figureInput = document.createElement("div");
     figureInput.className = "menuDiv";
@@ -446,31 +445,38 @@ function figureInput()
                 drawTruncatedCone(aa,be,ha,range.value);
                 break;
         }
-    
-        //fetch za dodavanje figure u listu
+
+        let inverted;
+        if(document.getElementById("izvrnuta").checked == true)
+        {
+            inverted = true;
+        }
+        else
+        {
+            inverted = false;
+        }
+
         var newFigure = {
             a:aa,
             b:be,
             h:ha,
             tip:oblik,
-            izvrnuta:false
+            izvrnuta:inverted
         }
-        // await fetch("/updateBody", {
-        //     method: "PUT",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify(newFigure),
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //         data.forEach(item =>{
-        //                 console.log(item);
-        //         })
-        //     })
-        // .catch(error => {
-        //     console.error('Error fetching data:', error);
-        // });
+        await fetch(`/addFigure?id=${bodyID}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newFigure),
+        })
+        .then(response => response.json())
+        .then(data => {
+                console.log(data);
+            })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
     };
     figureInput.appendChild(btnAddFigure);
 
@@ -503,11 +509,15 @@ function figureInput()
 async function drawModel(dense)
 {
     let id =document.getElementById("bodySelect").value;
-    console.log(id);
     await fetch(`/getBody?id=${id}`)
         .then(response => response.json())
         .then(data => {
-                console.log(data);
+            console.log(data);
+            if(document.getElementById("figureInput")==null)
+            {
+                figureInput(id);
+            }
+            commentSection(id);
             })
         .catch(error => {
             console.error('Error fetching data:', error);
