@@ -279,7 +279,10 @@ async function modelCreateAndSelect()
             .then(response => response.json())
             .then(data => {
                 console.log(data._id);
-                commentSection(data._id);
+                if(document.getElementById("userInteraction")==null)
+                {
+                    commentSection(data._id);
+                }
             })
             .catch(error => {
                 console.error("Error registering user:", error);
@@ -517,7 +520,10 @@ async function drawModel(dense)
             {
                 figureInput(id);
             }
-            commentSection(id);
+            if(document.getElementById("userInteraction")==null)
+            {
+                commentSection(id);
+            }
             })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -548,20 +554,20 @@ function drawShape()
     ctx.strokeStyle = "#ffffff";
     
     let density = 10;
-    let factor = canvas.width/20;
+    let factor = canvas.width/density;
     
-    for (i = 0; i <= density*2; i++)
-        {
-            ctx.beginPath();
-            ctx.moveTo(canvas.width/20,canvas.height/20+factor*i);
-            ctx.lineTo(19*canvas.width/20,canvas.height/20+factor*i);
-            ctx.stroke();
+    for (i = 0; i <= density; i++)
+    {
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/density,canvas.height/density+factor*i);
+        ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factor*i);
+        ctx.stroke();
 
-            ctx.beginPath();
-            ctx.moveTo(canvas.width/20+factor*i,canvas.height/20);
-            ctx.lineTo(canvas.width/20+factor*i,19*canvas.height/20);
-            ctx.stroke();
-        }
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/density+factor*i,canvas.height/density);
+        ctx.lineTo(canvas.width/density+factor*i,(density-1)*canvas.height/density);
+        ctx.stroke();
+    }
 
     // if (selectedValue === "triangle") 
     // {
