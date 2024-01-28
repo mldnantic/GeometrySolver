@@ -32,7 +32,7 @@ function commentSection(bodyID)
     host.appendChild(userInteraction);
     
     var btnKomentar = document.createElement("button");
-    btnKomentar.innerHTML="Posalji";
+    btnKomentar.innerHTML="Send";
     btnKomentar.onclick =async (ev) =>{
         let komentar = document.getElementById("commentText");
         socket.emit("comment",komentar.value);
@@ -62,7 +62,7 @@ function commentSection(bodyID)
     userInteraction.appendChild(btnKomentar);
     
     var komentar = document.createElement("input");
-    komentar.placeholder = "Unesite komentar...";
+    komentar.placeholder = "Type your comment here...";
     komentar.id = "commentText";
     userInteraction.appendChild(komentar);
     
@@ -123,6 +123,7 @@ function drawPoprecni()
 }
 drawPoprecni();
 
+//brisemo postojecu komponentu i pravimo prazan div
 function redraw(componentID,componentClassName)
 {
     var component = document.getElementById(componentID);
@@ -150,7 +151,7 @@ menu.appendChild(registerLoginDiv);
 let divTmp = document.createElement("div");
 
 let userLabel = document.createElement("label");
-userLabel.innerHTML = "Username: ";
+userLabel.innerHTML = "Username:";
 divTmp.appendChild(userLabel);
 
 var usernameInput = document.createElement("input");
@@ -161,7 +162,7 @@ registerLoginDiv.appendChild(divTmp);
 divTmp = document.createElement("div");
 
 let btnRegister = document.createElement("button");
-btnRegister.innerHTML="Registracija";
+btnRegister.innerHTML="Register";
 btnRegister.onclick =async (ev) =>{
     
     if(!usernameInput.value=="")
@@ -176,7 +177,7 @@ btnRegister.onclick =async (ev) =>{
                 if(data!=null && data.username==usernameInput.value)
                 {
                     notification.style.backgroundColor = "rgb(180, 138, 32)";
-                    notification.innerHTML = "korisnik sa tim imenom vec postoji";
+                    notification.innerHTML = "Account with this username is already registered";
                 }
                 else
                 {
@@ -190,7 +191,7 @@ btnRegister.onclick =async (ev) =>{
                     .then(response => response.json())
                     .then(data => {
                         notification.style.backgroundColor = "rgb(20, 150, 20)";
-                        notification.innerHTML = `Korisnik ${newUser.username} je uspesno registrovan`;
+                        notification.innerHTML = `Account ${newUser.username} registered successfully`;
                     })
                     .catch(error => {
                         console.error("Error registering user:", error);
@@ -201,14 +202,12 @@ btnRegister.onclick =async (ev) =>{
         .catch(error => {
             console.error('Error fetching data:', error);
         });
-
-        
     }
 }
 divTmp.appendChild(btnRegister);
 
 let btnLogin = document.createElement("button");
-btnLogin.innerHTML="Prijava";
+btnLogin.innerHTML="Login";
 btnLogin.onclick = async (ev) =>{
     if(!usernameInput.value=="")
     {
@@ -224,12 +223,16 @@ btnLogin.onclick = async (ev) =>{
                 notification.innerHTML = `Welcome ${userName}`;
                 modelCreateAndSelect();
                 // figureInput();
-                redraw("registerLoginDiv","dugmezaodjavu");
+                redraw("registerLoginDiv","menuDiv");
+                let logoffBtn = document.createElement("button");
+                logoffBtn.innerHTML = "Log off";
+                document.getElementById("registerLoginDiv").appendChild(logoffBtn);
+
             }
             else
             {
                 notification.style.backgroundColor = "rgb(192, 64, 64)";
-                notification.innerHTML = `Korisnik sa username ${usernameInput.value} ne postoji`;
+                notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
             }
             setTimeout(resetNotification, 2000);
         })
@@ -266,10 +269,12 @@ async function modelCreateAndSelect()
             length: 0
         }
 
-        if(document.getElementById("figureInput")==null)
+        if(document.getElementById("bodyName").value!="")
         {
-            figureInput();
-        }
+            if(document.getElementById("figureInput")==null)
+            {
+                figureInput();
+            }
             await fetch("/createBody", {
                 method: "POST",
                 headers: {
@@ -289,6 +294,7 @@ async function modelCreateAndSelect()
                 console.error("Error registering user:", error);
             });
         // redraw(modelselektor,"nista");
+        }
     };
     menu.appendChild(createBodyBtn);
 
@@ -296,7 +302,7 @@ async function modelCreateAndSelect()
     selectModel.id = "bodySelect"
     menu.appendChild(selectModel);
     let renderBtn = document.createElement("button");
-    renderBtn.innerHTML="Prikazi model";
+    renderBtn.innerHTML="Open project";
     renderBtn.onclick = async (ev) =>{
         drawModel();
     };
@@ -325,7 +331,7 @@ function figureInput(bodyID)
     
     var label = document.createElement("label");
     label.setAttribute("for", "shapes");
-    label.textContent = "Izaberite figuru:";
+    label.textContent = "Select figure:";
     
     var select = document.createElement("select");
     select.id = "shapes";
@@ -386,7 +392,7 @@ function figureInput(bodyID)
     let divTmp = document.createElement("div");
 
     let izvrnutaLbl = document.createElement("label");
-    izvrnutaLbl.innerHTML = "Izvrnuta:";
+    izvrnutaLbl.innerHTML = "Inverted:";
     divTmp.appendChild(izvrnutaLbl);
     let izvrnutaCheck = document.createElement("input");
     izvrnutaCheck.id="izvrnuta";
@@ -409,7 +415,7 @@ function figureInput(bodyID)
     figureInput.appendChild(range);
     
     let btnAddFigure = document.createElement("button");
-    btnAddFigure.innerHTML = "Ubaci figuru";
+    btnAddFigure.innerHTML = "Insert figure";
     btnAddFigure.onclick = async (ev) => {
     
         let oblik = document.getElementById("shapes").value;
