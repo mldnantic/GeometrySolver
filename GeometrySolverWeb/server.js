@@ -110,7 +110,12 @@ app.get('/getBody', async (req, res) => {
 
 app.post("/createBody", async(req,res)=>{
   try{
+    
     const body = await BodyRepository.createBody(req.body);
+    const project = {
+      projectid: body._id
+    }
+    await UserRepository.addProject(req.body.creatorID,project);
     res.json(body);
   }
   catch (error) {

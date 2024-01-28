@@ -39,6 +39,7 @@ class BodyRepository {
 
       const filter = {_id: id};
       const update = { $push: { figures: figure } };
+      //TODO increment length attribute by 1
       const result = await BodyModel.updateOne(filter, update);
 
       if(result.modifiedCount === 1)

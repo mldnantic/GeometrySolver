@@ -262,7 +262,8 @@ async function modelCreateAndSelect()
 
         var newBody = {
             projectname: document.getElementById("bodyName").value,
-            creatorID: userID
+            creatorID: userID,
+            length: 0
         }
 
         if(document.getElementById("figureInput")==null)
@@ -297,7 +298,7 @@ async function modelCreateAndSelect()
     let renderBtn = document.createElement("button");
     renderBtn.innerHTML="Prikazi model";
     renderBtn.onclick = async (ev) =>{
-        drawModel(64);
+        drawModel();
     };
     menu.appendChild(renderBtn);
     await fetch("/getAllBodies")
@@ -509,7 +510,7 @@ function figureInput(bodyID)
     };
 }
 
-async function drawModel(dense)
+async function drawModel()
 {
     let id =document.getElementById("bodySelect").value;
     await fetch(`/getBody?id=${id}`)

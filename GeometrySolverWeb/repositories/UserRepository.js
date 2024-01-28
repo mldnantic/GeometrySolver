@@ -31,7 +31,26 @@ class UserRepository {
   }
 
   //add to/update projects list
+  async addProject(id, bodyID) {
+    try {
 
+      const filter = {_id: id};
+      const update = { $push: { myProjects: bodyID } };
+      const result = await UserModel.updateOne(filter, update);
+
+      if(result.modifiedCount === 1)
+      {
+        return bodyID;
+      }
+      else
+      {
+        console.log("nothing happened...");
+      }
+
+    } catch (error) {
+      throw error;
+    }
+  }
   //remove from projects list
 
 }
