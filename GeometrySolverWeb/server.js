@@ -35,8 +35,7 @@ io.on("connection", socket =>{
   }
 
   socket.on("comment",msg=>{
-        const user = socket.id;
-        io.emit("comment",`${user} ${moment().format('LT')} `+msg);
+        io.emit("comment",`${moment().format('LT')} `+msg);
     });
 
   socket.on("disconnect",()=>{

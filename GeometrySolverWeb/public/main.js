@@ -35,7 +35,7 @@ function commentSection(bodyID)
     btnKomentar.innerHTML="Posalji";
     btnKomentar.onclick =async (ev) =>{
         let komentar = document.getElementById("commentText");
-        socket.emit("comment",(userName,komentar.value));
+        socket.emit("comment",komentar.value);
         let sadrzaj = komentar.value;
         komentar.value="";
         komentar.focus();
@@ -540,7 +540,7 @@ socket.on("message", message =>{
 
 socket.on("comment",comment=>{
     let listaKomentara = document.getElementById("commentList");
-    listaKomentara.value+=comment+"\n\n";
+    listaKomentara.value+=userName+": "+comment+"\n\n";
     listaKomentara.scrollTop = listaKomentara.scrollHeight;
 });
 
