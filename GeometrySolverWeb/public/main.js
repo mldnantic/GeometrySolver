@@ -271,10 +271,6 @@ async function modelCreateAndSelect()
 
         if(document.getElementById("bodyName").value!="")
         {
-            if(document.getElementById("figureInput")==null)
-            {
-                figureInput();
-            }
             await fetch("/createBody", {
                 method: "POST",
                 headers: {
@@ -284,7 +280,10 @@ async function modelCreateAndSelect()
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data._id);
+                if(document.getElementById("figureInput")==null)
+                {
+                    figureInput(data._id);
+                }
                 if(document.getElementById("userInteraction")==null)
                 {
                     commentSection(data._id);
@@ -293,7 +292,6 @@ async function modelCreateAndSelect()
             .catch(error => {
                 console.error("Error registering user:", error);
             });
-        // redraw(modelselektor,"nista");
         }
     };
     menu.appendChild(createBodyBtn);
@@ -304,7 +302,7 @@ async function modelCreateAndSelect()
     let renderBtn = document.createElement("button");
     renderBtn.innerHTML="Open project";
     renderBtn.onclick = async (ev) =>{
-        drawModel();
+        drawModel(document.getElementById("bodySelect").value);
     };
     menu.appendChild(renderBtn);
     await fetch("/getAllBodies")
@@ -516,13 +514,23 @@ function figureInput(bodyID)
     };
 }
 
-async function drawModel()
+async function drawModel(projectID)
 {
-    let id =document.getElementById("bodySelect").value;
+    let id = projectID;
     await fetch(`/getBody?id=${id}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            let listaKomentara = document.getElementById("commentList");
+            if(listaKomentara==null)
+            {
+                commentSection(projectID);
+                listaKomentara = document.getElementById("commentList");
+                data.comments.forEach(cmt=>{
+                        listaKomentara.value+=cmt.user+": "+cmt.content+"\n\n";
+                        listaKomentara.scrollTop = listaKomentara.scrollHeight;
+                    });
+            }
             if(document.getElementById("figureInput")==null)
             {
                 figureInput(id);
