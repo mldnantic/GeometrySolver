@@ -1,7 +1,10 @@
 const connectionString = 'mongodb://localhost:27017';
 const socket = io();
+const camheight = 3;
 var userID = "";
 var userName = "";
+
+
 
 let host = document.body;
 
@@ -538,7 +541,33 @@ async function drawModel(projectID)
     await fetch(`/getBody?id=${id}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            let range_vrednost = 64;
+            let cam_height = camheight;
+            let base_height = 0;
+            data.figures.forEach(f=>{
+            console.log(cam_height,base_height);
+            vertexData=[];
+            colorData=[];
+            normalData=[];
+            switch(f.tip)
+            {
+                case "triangle":
+                    drawCone(f.a,f.h,range_vrednost,cam_height,base_height);
+                    cam_height+=f.h;
+                    base_height+=f.h;
+                    break;
+                case "rectangle":
+                    drawCylinder(f.a,f.b,range_vrednost,cam_height,base_height);
+                    cam_height+=f.b;
+                    base_height+=f.b;
+                    break;
+                case "trapezoid":
+                    drawTruncatedCone(f.a,f.b,f.h,range_vrednost,cam_height,base_height);
+                    cam_height+=f.h;
+                    base_height+=f.h;
+                    break;
+            }
+            });
             let listaKomentara = document.getElementById("commentList");
             if(listaKomentara==null)
             {
@@ -755,8 +784,9 @@ function modelColor()
 // }
 // drawCircle(10,2.0);
 
-function drawCone(a,h,dense)
+function drawCone(a,h,dense,cam_height,base_height)
 {
+    console.log(cam_height,base_height);
     if(a==0 || h==0)
     {
         console.log("nepopunjene dimenzije");
@@ -770,11 +800,11 @@ function drawCone(a,h,dense)
         let theta = (Math.PI*2)/density;
         let cosine = Math.cos(theta);
         let sine = Math.sin(theta);
-        circleVertex = [size,0.0,0.0];
+        circleVertex = [size,base_height,0.0];
 
         for(i=0;i<=density;i++)
         {
-            coneTipVertex = [0.0,h,0.0];
+            coneTipVertex = [0.0,h+base_height,0.0];
             vertexData.push(...coneTipVertex);
             colorData.push(...modelColor());
             
@@ -785,7 +815,7 @@ function drawCone(a,h,dense)
 
             circleVertexOld = circleVertex;
 
-            circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
+            circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],base_height,-sine*circleVertex[0]+cosine*circleVertex[2]];
             vertexData.push(...circleVertex);
             colorData.push(...modelColor());
 
@@ -806,12 +836,12 @@ function drawCone(a,h,dense)
             normalData.push(...normalVector);
 
         }
-        webgl(gl.TRIANGLES,false);
+        webgl(gl.TRIANGLES,false,cam_height);
     }
         
 }
 
-function drawCylinder(a,b,dense)
+function drawCylinder(a,b,dense,cam_height,base_height)
 {
     if(a==0 || b==0)
     {
@@ -831,12 +861,12 @@ function drawCylinder(a,b,dense)
             if(i==0)
             {
                 //prvo teme trouglica
-                wrapVertexTop = [radius,height,0.0];
+                wrapVertexTop = [radius,height+base_height,0.0];
                 vertexData.push(...wrapVertexTop);
                 colorData.push(...modelColor());
         
                 //drugo teme trouglica
-                wrapVertexBottom = [radius,0.0,0.0];
+                wrapVertexBottom = [radius,base_height,0.0];
                 vertexData.push(...wrapVertexBottom);
                 colorData.push(...modelColor());
             }
@@ -854,7 +884,7 @@ function drawCylinder(a,b,dense)
             wrapVertexTopOld = wrapVertexTop;
 
             //trece teme trouglica
-            wrapVertexTop = [cosine*wrapVertexTop[0]+sine*wrapVertexTop[2],height,-sine*wrapVertexTop[0]+cosine*wrapVertexTop[2]];
+            wrapVertexTop = [cosine*wrapVertexTop[0]+sine*wrapVertexTop[2],height+base_height,-sine*wrapVertexTop[0]+cosine*wrapVertexTop[2]];
             vertexData.push(...wrapVertexTop);
             colorData.push(...modelColor());
 
@@ -881,15 +911,15 @@ function drawCylinder(a,b,dense)
             normalData.push(...normalVector);
             normalData.push(...normalVector);
             
-            wrapVertexBottom = [cosine*wrapVertexBottom[0]+sine*wrapVertexBottom[2],0.0,-sine*wrapVertexBottom[0]+cosine*wrapVertexBottom[2]];
+            wrapVertexBottom = [cosine*wrapVertexBottom[0]+sine*wrapVertexBottom[2],base_height,-sine*wrapVertexBottom[0]+cosine*wrapVertexBottom[2]];
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false);
+        webgl(gl.TRIANGLE_STRIP,false,cam_height);
     }
 }
 
-function drawTruncatedCone(a,b,h,dense)
+function drawTruncatedCone(a,b,h,dense,cam_height,base_height)
 {
     if(a==0 || b==0 || h==0)
     {
@@ -909,8 +939,8 @@ function drawTruncatedCone(a,b,h,dense)
         {
             if(i==0)
             {
-                wrapVertexInner = [inner,height,0.0];
-                wrapVertexOuter = [outer,0.0,0.0];
+                wrapVertexInner = [inner,height+base_height,0.0];
+                wrapVertexOuter = [outer,base_height,0.0];
                 vertexData.push(...wrapVertexInner);
                 vertexData.push(...wrapVertexOuter);
                 colorData.push(...modelColor());
@@ -928,7 +958,7 @@ function drawTruncatedCone(a,b,h,dense)
 
             wrapVertexInnerOld = wrapVertexInner;
 
-            wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],height,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
+            wrapVertexInner = [cosine*wrapVertexInner[0]+sine*wrapVertexInner[2],height+base_height,-sine*wrapVertexInner[0]+cosine*wrapVertexInner[2]];
             vertexData.push(...wrapVertexInner);
             colorData.push(...modelColor());
 
@@ -949,16 +979,17 @@ function drawTruncatedCone(a,b,h,dense)
             normalData.push(...normalVector);
             normalData.push(...normalVector);
 
-            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],0.0,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
+            wrapVertexOuter = [cosine*wrapVertexOuter[0]+sine*wrapVertexOuter[2],base_height,-sine*wrapVertexOuter[0]+cosine*wrapVertexOuter[2]];
             vertexData.push(...wrapVertexOuter);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false);
+        webgl(gl.TRIANGLE_STRIP,false,cam_height);
     }
 }
 
-function webgl(glDrawMode,animacija)
+function webgl(glDrawMode,animacija,height)
 {
+
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -1060,15 +1091,20 @@ function webgl(glDrawMode,animacija)
     const mvMatrix =mat4.create();
     const mvpMatrix = mat4.create();
 
-    mat4.translate(viewMatrix,viewMatrix,[0.0,3.0,8.0]);
+
+    
+    mat4.translate(viewMatrix,viewMatrix,[0.0,10.0,18.0]);
     mat4.invert(viewMatrix,viewMatrix);
 
     const normalMatrix = mat4.create();
 
     function animate() {
+        // if(height==camheight)
+        // {
+        //     gl.clearColor(0.612, 0.929, 1.0, 1.0);
+        //     gl.clear(gl.COLOR_BUFFER_BIT);
+        // }
 
-        gl.clearColor(0.612, 0.929, 1.0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
 
         mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
         mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
@@ -1087,9 +1123,11 @@ function webgl(glDrawMode,animacija)
     // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
     if(!animacija)
     {
-        gl.clearColor(0.612, 0.929, 1.0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
+        if(height==camheight)
+        {
+            gl.clearColor(0.612, 0.929, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+        }
         mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
         mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
 
