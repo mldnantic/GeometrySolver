@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 
 io.on("connection", socket =>{
 
-  socket.emit("message",`${moment().format('LT')}: Dobrodosli u GeometrySolver`);
+  socket.emit("message",`${moment().format('LT')}: Welcome to GeometrySolver`);
   
   if(logUserSessions == true)
   {
@@ -34,8 +34,8 @@ io.on("connection", socket =>{
     console.log(`"#${socket.id}# has entered comment section"`);
   }
 
-  socket.on("comment",msg=>{
-        io.emit("comment",`${moment().format('LT')} `+msg);
+  socket.on("comment",comment=>{
+        io.emit("comment",`${comment.user} ${moment().format('LT')} ${comment.content}`);
     });
 
   socket.on("disconnect",()=>{

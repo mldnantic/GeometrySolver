@@ -35,29 +35,40 @@ function commentSection(bodyID)
     btnKomentar.innerHTML="Send";
     btnKomentar.onclick =async (ev) =>{
         let komentar = document.getElementById("commentText");
-        socket.emit("comment",komentar.value);
-        let sadrzaj = komentar.value;
-        komentar.value="";
-        komentar.focus();
-        var newCmt = {
-            id: bodyID,
-            user: userName,
-            content: sadrzaj
-        };
-        fetch("/addComment", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newCmt),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error("Error registering user:", error);
-        });
+        
+        if(komentar.value!="")
+        {
+            let comment = {
+                user: userName,
+                content: komentar.value
+            }
+    
+            socket.emit("comment",comment);
+            
+            let sadrzaj = komentar.value;
+            komentar.value="";
+            komentar.focus();
+            var newCmt = {
+                id: bodyID,
+                user: userName,
+                content: sadrzaj
+            };
+            fetch("/addComment", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newCmt),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Error registering user:", error);
+            });
+        }
+
     }
     userInteraction.appendChild(btnKomentar);
     
@@ -464,27 +475,34 @@ function figureInput(bodyID)
             inverted = false;
         }
 
-        var newFigure = {
-            a:aa,
-            b:be,
-            h:ha,
-            tip:oblik,
-            izvrnuta:inverted
+        if(aa==0 || be==0 || ha==0)
+        {
+            console.log("nepopunjene dimenzije");
         }
-        await fetch(`/addFigure?id=${bodyID}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newFigure),
-        })
-        .then(response => response.json())
-        .then(data => {
-                console.log(data);
+        else
+        {
+            var newFigure = {
+                a:aa,
+                b:be,
+                h:ha,
+                tip:oblik,
+                izvrnuta:inverted
+            }
+            await fetch(`/addFigure?id=${bodyID}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newFigure),
             })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                    console.log(data);
+                })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+        }
     };
     figureInput.appendChild(btnAddFigure);
 
@@ -527,7 +545,7 @@ async function drawModel(projectID)
                 commentSection(projectID);
                 listaKomentara = document.getElementById("commentList");
                 data.comments.forEach(cmt=>{
-                        listaKomentara.value+=cmt.user+": "+cmt.content+"\n\n";
+                        listaKomentara.value+=cmt.user+" "+cmt.time+" "+cmt.content+"\n\n";
                         listaKomentara.scrollTop = listaKomentara.scrollHeight;
                     });
             }
@@ -554,7 +572,7 @@ socket.on("message", message =>{
 
 socket.on("comment",comment=>{
     let listaKomentara = document.getElementById("commentList");
-    listaKomentara.value+=userName+": "+comment+"\n\n";
+    listaKomentara.value+=comment+"\n\n";
     listaKomentara.scrollTop = listaKomentara.scrollHeight;
 });
 
