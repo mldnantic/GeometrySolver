@@ -1,4 +1,5 @@
 const BodyModel = require('./BodyModel');
+const userModel = require('./UserModel');
 
 class BodyRepository {
   constructor() {}

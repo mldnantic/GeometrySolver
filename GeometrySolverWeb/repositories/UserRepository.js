@@ -51,7 +51,21 @@ class UserRepository {
       throw error;
     }
   }
-  //remove from projects list
+  
+  //remove from projects list NE RADI
+  // async removeProject(id, bodyID) {
+  //   try {
+
+  //     const filter = {_id: id};
+  //     const update = { $pull: { "myProjects": bodyID}};
+  //     const result = await UserModel.updateOne(filter, update);
+
+  //     return result;
+
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
 }
 

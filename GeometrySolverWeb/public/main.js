@@ -1,6 +1,5 @@
 const connectionString = 'mongodb://localhost:27017';
 const socket = io();
-const camheight = 3;
 var userID = "";
 var userName = "";
 
@@ -297,6 +296,7 @@ async function modelCreateAndSelect()
                 if(document.getElementById("figureInput")==null)
                 {
                     figureInput(data._id);
+                    drawModel(data._id);
                 }
                 if(document.getElementById("userInteraction")==null)
                 {
@@ -309,6 +309,32 @@ async function modelCreateAndSelect()
         }
     };
     menu.appendChild(createBodyBtn);
+
+    let deleteBodyBtn = document.createElement("button");
+    deleteBodyBtn.innerHTML="Delete project";
+    deleteBodyBtn.onclick = async (ev) => {
+
+        let bodyToDelete = 
+        {
+            id: document.getElementById("bodySelect").value,
+            userID: userID
+        }
+        await fetch("/deleteBody", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(bodyToDelete),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error registering user:", error);
+        });
+    }
+    menu.appendChild(deleteBodyBtn);
 
     let selectModel = document.createElement("select");
     selectModel.id = "bodySelect"
@@ -502,6 +528,7 @@ function figureInput(bodyID)
             .then(response => response.json())
             .then(data => {
                     console.log(data);
+                    drawModel(bodyID);
                 })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -543,32 +570,74 @@ async function drawModel(projectID)
         .then(response => response.json())
         .then(data => {
             let range_vrednost = 192;
-            let cam_height = camheight;
+            let cam_height = 0;
+            let cam_distance = 0;
             let base_height = 0;
+            let normaldir = -1.0;
+            data.figures.forEach(f=>
+                {
+                    switch(f.tip)
+                    {
+                        case "triangle":
+                            cam_height+=f.h;
+                            cam_distance+=f.a;
+                            break;
+                        case "rectangle":
+                            cam_height+=f.b;
+                            cam_distance+=f.a;
+                            break;
+                        case "trapezoid":
+                            cam_height+=f.h;
+                            if(f.a>f.b)
+                            {
+                                cam_distance+=f.a;
+                            }
+                            if(f.a<=f.b)
+                            {
+                                cam_distance+=f.b;
+                            }
+                            break;
+                    }
+                })
             data.figures.forEach(f=>{
-            console.log(cam_height,base_height);
+            vertexData=[];
+            colorData=[];
+            normalData=[];
+            drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance);
+            //calculate circle surface
+            normaldir = -normaldir;
             vertexData=[];
             colorData=[];
             normalData=[];
             switch(f.tip)
             {
                 case "triangle":
-                    drawCone(f.a,f.h,range_vrednost,cam_height,base_height);
-                    cam_height+=f.h;
+                    drawCone(f.a,f.h,range_vrednost,cam_height,base_height,cam_distance);
+                    //calculate cone surface and volume
                     base_height+=f.h;
                     break;
                 case "rectangle":
-                    drawCylinder(f.a,f.b,range_vrednost,cam_height,base_height);
-                    cam_height+=f.b;
+                    drawCylinder(f.a,f.b,range_vrednost,cam_height,base_height,cam_distance);
+                    //calculate cylinder surface and volume
                     base_height+=f.b;
                     break;
                 case "trapezoid":
-                    drawTruncatedCone(f.a,f.b,f.h,range_vrednost,cam_height,base_height);
-                    cam_height+=f.h;
+                    drawTruncatedCone(f.a,f.b,f.h,range_vrednost,cam_height,base_height,cam_distance);
+                    //calculate surface and volume
                     base_height+=f.h;
                     break;
             }
+            vertexData=[];
+            colorData=[];
+            normalData=[];
+            drawCircle(range_vrednost,f.a,normaldir,base_height);
+            //calculate circle surface
+            normaldir = -normaldir;
+
             });
+            
+            //sum of surface and volumes is shown
+
             let listaKomentara = document.getElementById("commentList");
             if(listaKomentara==null)
             {
@@ -760,34 +829,38 @@ function modelColor()
 // }
 // drawGrid(true);
 
-// function drawCircle(dense,r)
-// {
-//     let density = dense;
-//     let size = r;
-//     let theta = (Math.PI*2)/density;
-//     let cosine = Math.cos(theta);
-//     let sine = Math.sin(theta);
-//     circleVertex = [size,0.0,0.0];
-//     vertexData.push(...circleVertex);
-//     colorData.push(...modelColor());
-//     normalData.push(...[0.0,1.0,0.0]);
-//     for(i=0;i<density;i++)
-//     {
-//         circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],0.0,-sine*circleVertex[0]+cosine*circleVertex[2]];
-//         vertexData.push(...circleVertex);
-//         vertexData.push(...circleVertex);
-//         colorData.push(...modelColor());
-//         colorData.push(...modelColor());
-//         normalData.push(...[0.0,1.0,0.0]);
-//         normalData.push(...[0.0,1.0,0.0]);
-//     }
-//     webgl(gl.LINE_STRIP,true);
-// }
-// drawCircle(10,2.0);
-
-function drawCone(a,h,dense,cam_height,base_height)
+function drawCircle(dense,r,normalDir,camheight,height,cam_distance)
 {
-    console.log(cam_height,base_height);
+    let density = dense;
+    let size = r;
+    let theta = (Math.PI*2)/density;
+    let cosine = Math.cos(theta);
+    let sine = Math.sin(theta);
+
+    circleCenter = [0.0,height,0.0];
+    vertexData.push(...circleCenter);
+    colorData.push(...modelColor());
+    normalData.push(...[0.0,normalDir,0.0]);
+
+    circleVertex = [size,height,0.0];
+    vertexData.push(...circleVertex);
+    colorData.push(...modelColor());
+    normalData.push(...[0.0,normalDir,0.0]);
+    for(i=0;i<density;i++)
+    {
+        circleVertex = [cosine*circleVertex[0]+sine*circleVertex[2],height,-sine*circleVertex[0]+cosine*circleVertex[2]];
+        vertexData.push(...circleVertex);
+        vertexData.push(...circleVertex);
+        colorData.push(...modelColor());
+        colorData.push(...modelColor());
+        normalData.push(...[0.0,normalDir,0.0]);
+        normalData.push(...[0.0,normalDir,0.0]);
+    }
+    webgl(gl.TRIANGLE_FAN,false,camheight,cam_distance);
+}
+
+function drawCone(a,h,dense,cam_height,base_height,cam_distance)
+{
     if(a==0 || h==0)
     {
         console.log("nepopunjene dimenzije");
@@ -837,14 +910,13 @@ function drawCone(a,h,dense,cam_height,base_height)
             normalData.push(...normalVector);
 
         }
-        webgl(gl.TRIANGLES,false,cam_height);
+        webgl(gl.TRIANGLES,false,cam_height,cam_distance);
     }
         
 }
 
-function drawCylinder(a,b,dense,cam_height,base_height)
+function drawCylinder(a,b,dense,cam_height,base_height,cam_distance)
 {
-    console.log(cam_height,base_height);
     if(a==0 || b==0)
     {
         console.log("nepopunjene dimenzije");
@@ -917,13 +989,12 @@ function drawCylinder(a,b,dense,cam_height,base_height)
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false,cam_height);
+        webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance);
     }
 }
 
-function drawTruncatedCone(a,b,h,dense,cam_height,base_height)
+function drawTruncatedCone(a,b,h,dense,cam_height,base_height,cam_distance)
 {
-    console.log(cam_height,base_height);
     if(a==0 || b==0 || h==0)
     {
         console.log("nepopunjene dimenzije");
@@ -986,11 +1057,11 @@ function drawTruncatedCone(a,b,h,dense,cam_height,base_height)
             vertexData.push(...wrapVertexOuter);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false,cam_height);
+        webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance);
     }
 }
 
-function webgl(glDrawMode,animacija,height)
+function webgl(glDrawMode,animacija,height,distance)
 {
 
 
@@ -1096,12 +1167,13 @@ function webgl(glDrawMode,animacija,height)
 
 
     
-    mat4.translate(viewMatrix,viewMatrix,[0.0,8.0,16.0]);
+    mat4.translate(viewMatrix,viewMatrix,[0.0,1.0+height,8.0+distance]);
     mat4.invert(viewMatrix,viewMatrix);
 
     const normalMatrix = mat4.create();
 
     function animate() {
+
         // if(height==camheight)
         // {
         //     gl.clearColor(0.612, 0.929, 1.0, 1.0);
@@ -1126,11 +1198,12 @@ function webgl(glDrawMode,animacija,height)
     // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
     if(!animacija)
     {
-        if(height==camheight)
-        {
-            gl.clearColor(0.612, 0.929, 1.0, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-        }
+        // if(height==camheight)
+        // {
+        //     gl.clearColor(0.612, 0.929, 1.0, 1.0);
+        //     gl.clear(gl.COLOR_BUFFER_BIT);
+        // }
+
         mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
         mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
 

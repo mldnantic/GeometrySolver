@@ -123,6 +123,18 @@ app.post("/createBody", async(req,res)=>{
   }
 });
 
+app.delete("/deleteBody", async(req,res)=>{
+  try{
+    const result = await BodyRepository.deleteBody(req.body.id);
+    // await UserRepository.removeProject(req.body.userID,req.body.id);
+    res.json(result);
+  }
+  catch (error) {
+    console.error('Error deleting body:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
 app.put("/addComment", async(req,res)=>{
   try{
     const comment = {
