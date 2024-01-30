@@ -452,21 +452,22 @@ function figureInput(bodyID)
             be = document.getElementById("bInput").value;
             ha = document.getElementById("hInput").value;
         }
-        vertexData=[];
-        colorData=[];
-        normalData=[];
-        switch(oblik)
-        {
-            case "triangle":
-                drawCone(aa,ha,range.value);
-                break;
-            case "rectangle":
-                drawCylinder(aa,be,range.value);
-                break;
-            case "trapezoid":
-                drawTruncatedCone(aa,be,ha,range.value);
-                break;
-        }
+
+        // vertexData=[];
+        // colorData=[];
+        // normalData=[];
+        // switch(oblik)
+        // {
+        //     case "triangle":
+        //         drawCone(aa,ha,range.value);
+        //         break;
+        //     case "rectangle":
+        //         drawCylinder(aa,be,range.value);
+        //         break;
+        //     case "trapezoid":
+        //         drawTruncatedCone(aa,be,ha,range.value);
+        //         break;
+        // }
 
         let inverted;
         if(document.getElementById("izvrnuta").checked == true)
@@ -541,7 +542,7 @@ async function drawModel(projectID)
     await fetch(`/getBody?id=${id}`)
         .then(response => response.json())
         .then(data => {
-            let range_vrednost = 64;
+            let range_vrednost = 192;
             let cam_height = camheight;
             let base_height = 0;
             data.figures.forEach(f=>{
@@ -843,6 +844,7 @@ function drawCone(a,h,dense,cam_height,base_height)
 
 function drawCylinder(a,b,dense,cam_height,base_height)
 {
+    console.log(cam_height,base_height);
     if(a==0 || b==0)
     {
         console.log("nepopunjene dimenzije");
@@ -921,6 +923,7 @@ function drawCylinder(a,b,dense,cam_height,base_height)
 
 function drawTruncatedCone(a,b,h,dense,cam_height,base_height)
 {
+    console.log(cam_height,base_height);
     if(a==0 || b==0 || h==0)
     {
         console.log("nepopunjene dimenzije");
@@ -1093,7 +1096,7 @@ function webgl(glDrawMode,animacija,height)
 
 
     
-    mat4.translate(viewMatrix,viewMatrix,[0.0,10.0,18.0]);
+    mat4.translate(viewMatrix,viewMatrix,[0.0,8.0,16.0]);
     mat4.invert(viewMatrix,viewMatrix);
 
     const normalMatrix = mat4.create();
