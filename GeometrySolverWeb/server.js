@@ -123,33 +123,20 @@ app.post("/createBody", async(req,res)=>{
   }
 });
 
-app.delete("/deleteBody", async(req,res)=>{
-  try{
+app.delete("/deleteBody", async (req, res) => {
+  try {
     const result = await BodyRepository.deleteBody(req.body.id);
-    // await UserRepository.removeProject(req.body.userID,req.body.id);
+
+    // Remove bodyID from the user's myProjects array
+    await UserRepository.removeProject(req.body.userID, req.body.id);
+
     res.json(result);
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error deleting body:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-})
-
-app.put("/addComment", async(req,res)=>{
-  try{
-    const comment = {
-      user: req.body.user,
-      time: moment().format('LT'),
-      content: req.body.content
-    }
-    const cmt = await BodyRepository.addComment(req.body.id,comment);
-    res.json(comment);
-  }
-  catch (error) {
-    console.error('Error commenting:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
 });
+
 
 app.put("/addFigure", async(req,res)=>{
   try{

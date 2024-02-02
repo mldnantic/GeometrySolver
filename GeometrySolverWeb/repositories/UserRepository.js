@@ -52,20 +52,22 @@ class UserRepository {
     }
   }
   
-  //remove from projects list NE RADI
-  // async removeProject(id, bodyID) {
-  //   try {
-
-  //     const filter = {_id: id};
-  //     const update = { $pull: { "myProjects": bodyID}};
-  //     const result = await UserModel.updateOne(filter, update);
-
-  //     return result;
-
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async removeProject(id, projectID) {
+    try {
+      const result = await UserModel.findByIdAndUpdate(
+        id,
+        { $pull: { myProjects: { projectid: projectID } } }
+      );
+  
+      if (!result) {
+        throw new Error('User not found');
+      }
+  
+      return { success: true, message: 'Project removed from user projects' };
+    } catch (error) {
+      throw error;
+    }
+  }
 
 }
 
