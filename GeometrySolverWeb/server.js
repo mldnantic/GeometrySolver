@@ -137,6 +137,21 @@ app.delete("/deleteBody", async (req, res) => {
   }
 });
 
+app.put("/addComment", async(req,res)=>{
+  try{
+    const comment = {
+      user: req.body.user,
+      time: moment().format('LT'),
+      content: req.body.content
+    }
+    const cmt = await BodyRepository.addComment(req.body.id,comment);
+    res.json(comment);
+  }
+  catch (error) {
+    console.error('Error commenting:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.put("/addFigure", async(req,res)=>{
   try{

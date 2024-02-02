@@ -399,7 +399,8 @@ function figureInput(bodyID)
     aDiv.appendChild(aLabel);
     
     var a = document.createElement("input");
-    a.id = "aInput"
+    a.id = "aInput";
+    a.placeholder = "cm";
     a.type = "number";
     aDiv.appendChild(a);
     
@@ -411,7 +412,8 @@ function figureInput(bodyID)
     bDiv.appendChild(bLabel);
     
     var b = document.createElement("input");
-    b.id = "bInput"
+    b.id = "bInput";
+    b.placeholder = "cm";
     b.type = "number";
     bDiv.appendChild(b);
     figureInput.appendChild(bDiv);
@@ -422,7 +424,8 @@ function figureInput(bodyID)
     hDiv.appendChild(hLabel);
     
     var h = document.createElement("input");
-    h.id = "hInput"
+    h.id = "hInput";
+    h.placeholder = "cm";
     h.type = "number";
     hDiv.appendChild(h);
     figureInput.appendChild(hDiv);
@@ -574,6 +577,8 @@ async function drawModel(projectID)
             let cam_distance = 0;
             let base_height = 0;
             let normaldir = -1.0;
+            let P;
+            let V;
             data.figures.forEach(f=>
                 {
                     switch(f.tip)
@@ -581,10 +586,20 @@ async function drawModel(projectID)
                         case "triangle":
                             cam_height+=f.h;
                             cam_distance+=f.a;
+                            //calculate cone surface and volume: P = aπ(a+s), s = sqrt(a*a+h*h)
+                            P = f.a*Math.PI*(f.a+Math.sqrt(f.a*f.a+f.h*f.h));
+                            V = (1/3)*(f.a*f.a*Math.PI*f.h);
+                            console.log(`Povrsina kupe je ${P}`);
+                            console.log(`Zapremina kupe je ${V}`);
                             break;
                         case "rectangle":
                             cam_height+=f.b;
                             cam_distance+=f.a;
+                            //calculate cylinder surface and volume
+                            P = 2*Math.PI*f.a*f.a+2*f.a*Math.PI*f.b;
+                            V = f.a*f.a*Math.PI*f.b;
+                            console.log(`Povrsina valjka je ${P}`);
+                            console.log(`Zapremina valjka je ${V}`);
                             break;
                         case "trapezoid":
                             cam_height+=f.h;
@@ -596,43 +611,61 @@ async function drawModel(projectID)
                             {
                                 cam_distance+=f.b;
                             }
+                            //calculate surface and volume
+                            P = Math.PI*(f.b*f.b+f.a*f.a+f.b*Math.sqrt((f.a-f.b)*(f.a-f.b)+f.h*f.h));
+                            V = (1/3)*Math.PI*f.h*(f.b*f.b+f.a*f.b+f.a*f.a);
+                            console.log(`Povrsina zarubljene kupe je ${P}`);
+                            console.log(`Zapremina zarubljene kupe je ${V}`);
                             break;
                     }
                 })
+            cam_height = cam_height/2;
+            cam_distance = cam_distance/2;
             data.figures.forEach(f=>{
-            vertexData=[];
-            colorData=[];
-            normalData=[];
-            drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance);
-            //calculate circle surface
-            normaldir = -normaldir;
             vertexData=[];
             colorData=[];
             normalData=[];
             switch(f.tip)
             {
                 case "triangle":
+                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    vertexData=[];
+                    colorData=[];
+                    normalData=[];
+                    normaldir = -normaldir;
                     drawCone(f.a,f.h,range_vrednost,cam_height,base_height,cam_distance);
-                    //calculate cone surface and volume
                     base_height+=f.h;
                     break;
                 case "rectangle":
+                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    vertexData=[];
+                    colorData=[];
+                    normalData=[];
+                    normaldir = -normaldir;
                     drawCylinder(f.a,f.b,range_vrednost,cam_height,base_height,cam_distance);
-                    //calculate cylinder surface and volume
                     base_height+=f.b;
+                    vertexData=[];
+                    colorData=[];
+                    normalData=[];
+                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.BACK);
+                    normaldir = -normaldir;
                     break;
                 case "trapezoid":
+                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    vertexData=[];
+                    colorData=[];
+                    normalData=[];
+                    normaldir = -normaldir;
                     drawTruncatedCone(f.a,f.b,f.h,range_vrednost,cam_height,base_height,cam_distance);
-                    //calculate surface and volume
                     base_height+=f.h;
+                    vertexData=[];
+                    colorData=[];
+                    normalData=[];
+                    drawCircle(range_vrednost,f.b,normaldir,cam_height,base_height,cam_distance,gl.BACK);
                     break;
             }
-            vertexData=[];
-            colorData=[];
-            normalData=[];
-            drawCircle(range_vrednost,f.a,normaldir,base_height);
-            //calculate circle surface
-            normaldir = -normaldir;
+            
+            
 
             });
             
@@ -829,7 +862,7 @@ function modelColor()
 // }
 // drawGrid(true);
 
-function drawCircle(dense,r,normalDir,camheight,height,cam_distance)
+function drawCircle(dense,r,normalDir,camheight,height,cam_distance,cullDir)
 {
     let density = dense;
     let size = r;
@@ -856,7 +889,7 @@ function drawCircle(dense,r,normalDir,camheight,height,cam_distance)
         normalData.push(...[0.0,normalDir,0.0]);
         normalData.push(...[0.0,normalDir,0.0]);
     }
-    webgl(gl.TRIANGLE_FAN,false,camheight,cam_distance);
+    webgl(gl.TRIANGLE_FAN,false,camheight,cam_distance,cullDir);
 }
 
 function drawCone(a,h,dense,cam_height,base_height,cam_distance)
@@ -910,7 +943,7 @@ function drawCone(a,h,dense,cam_height,base_height,cam_distance)
             normalData.push(...normalVector);
 
         }
-        webgl(gl.TRIANGLES,false,cam_height,cam_distance);
+        webgl(gl.TRIANGLES,false,cam_height,cam_distance,gl.BACK);
     }
         
 }
@@ -989,7 +1022,7 @@ function drawCylinder(a,b,dense,cam_height,base_height,cam_distance)
             vertexData.push(...wrapVertexBottom);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance);
+        webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance,gl.BACK);
     }
 }
 
@@ -1057,11 +1090,11 @@ function drawTruncatedCone(a,b,h,dense,cam_height,base_height,cam_distance)
             vertexData.push(...wrapVertexOuter);
             colorData.push(...modelColor());
         }
-        webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance);
+        webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance,gl.BACK);
     }
 }
 
-function webgl(glDrawMode,animacija,height,distance)
+function webgl(glDrawMode,animacija,height,distance,cullDirection)
 {
 
 
@@ -1145,7 +1178,7 @@ function webgl(glDrawMode,animacija,height,distance)
     gl.useProgram(program);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
-    gl.cullFace(gl.BACK);
+    gl.cullFace(cullDirection);
 
     const uniformLocations = {
         matrix: gl.getUniformLocation(program,`matrix`),
