@@ -575,22 +575,35 @@ function figureInput(bodyID)
                 izvrnuta:inverted,
                 bodyID:bodyID
             }
-            await fetch(`/addFigure?id=${bodyID}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newFigure),
+            await fetch(`/getWriteUser?id=${bodyID}`)
+            .then(response=>response.json())
+            .then(data=>{
+                if(data.userID != userID)
+                {
+                    notification.style.backgroundColor = "rgb(180, 138, 32)";
+                    notification.innerHTML = "You don't have write privileges";
+                    setTimeout(resetNotification,2000);
+                }
+                else
+                {
+                    fetch(`/addFigure?id=${bodyID}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(newFigure),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                            console.log(data);
+                            drawModel(bodyID);
+                            socket.emit("figureAdded",body);
+                        })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+                }
             })
-            .then(response => response.json())
-            .then(data => {
-                    console.log(data);
-                    drawModel(bodyID);
-                    socket.emit("figureAdded",body);
-                })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
         }
     };
     figureInput.appendChild(btnAddFigure);

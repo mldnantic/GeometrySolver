@@ -106,6 +106,15 @@ class BodyRepository {
     }
   }
 
+  async getWriteUser(id) {
+    try {
+      const body = await BodyModel.findById(id);
+      return body.watchers[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getAllBodies() {
     try {
       const bodies = await BodyModel.find();

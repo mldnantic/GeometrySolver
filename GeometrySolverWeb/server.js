@@ -119,6 +119,17 @@ app.get('/getBody', async (req, res) => {
   }
 });
 
+app.get("/getWriteUser", async (req, res) => {
+  try {
+    const id = req.query.id;
+    const body = await BodyRepository.getWriteUser(id);
+    res.json(body);
+  } catch (error) {
+    console.error('Error fetching bodies:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post("/createBody", async(req,res)=>{
   try{
     
