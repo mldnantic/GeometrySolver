@@ -3,8 +3,6 @@ const socket = io();
 var userID = "";
 var userName = "";
 
-
-
 let host = document.body;
 
 let notificationsDiv = document.createElement("div");
@@ -45,7 +43,7 @@ function commentSection(bodyID)
                 content: komentar.value
             }
     
-            socket.emit("comment",comment);
+            socket.emit("comment",{comment,bodyID});
             
             let sadrzaj = komentar.value;
             komentar.value="";
@@ -266,12 +264,14 @@ function resetNotification()
 
 async function modelCreateAndSelect()
 {
+    let divTmp = document.createElement("div");
+    divTmp.className = "menuDiv";
     let lbl = document.createElement("label");
     lbl.innerHTML = "New project name:"
-    menu.appendChild(lbl);
+    divTmp.appendChild(lbl);
     let bodyNameInput = document.createElement("input");
     bodyNameInput.id = "bodyName"
-    menu.appendChild(bodyNameInput);
+    divTmp.appendChild(bodyNameInput);
     let createBodyBtn = document.createElement("button");
     createBodyBtn.innerHTML="Create project";
     createBodyBtn.onclick =async (ev) =>{
@@ -297,6 +297,7 @@ async function modelCreateAndSelect()
                 {
                     figureInput(data._id);
                     drawModel(data._id);
+                    socket.emit("openbody",data._id);
                 }
                 if(document.getElementById("userInteraction")==null)
                 {
@@ -308,7 +309,7 @@ async function modelCreateAndSelect()
             });
         }
     };
-    menu.appendChild(createBodyBtn);
+    divTmp.appendChild(createBodyBtn);
 
     let deleteBodyBtn = document.createElement("button");
     deleteBodyBtn.innerHTML="Delete project";
@@ -334,7 +335,8 @@ async function modelCreateAndSelect()
             console.error("Error registering user:", error);
         });
     }
-    menu.appendChild(deleteBodyBtn);
+    divTmp.appendChild(deleteBodyBtn);
+    menu.appendChild(divTmp);
 
     let selectModel = document.createElement("select");
     selectModel.id = "bodySelect"
@@ -343,6 +345,7 @@ async function modelCreateAndSelect()
     renderBtn.innerHTML="Open project";
     renderBtn.onclick = async (ev) =>{
         drawModel(document.getElementById("bodySelect").value);
+        socket.emit("openbody",document.getElementById("bodySelect").value);
     };
     menu.appendChild(renderBtn);
     await fetch("/getAllBodies")
