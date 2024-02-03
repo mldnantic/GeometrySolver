@@ -34,13 +34,16 @@ io.on("connection", socket =>{
     console.log(`"#${socket.id}# has entered comment section"`);
   }
 
-  socket.on("openbody",({bodyID})=>
+  socket.on("openbody",(bodyID)=>
   {
     socket.join(bodyID);
+    console.log(`User has opened project ${bodyID}`);
   })
 
-  socket.on("comment",({comment,bodyID})=>{
-        io.to(bodyID).emit("comment",`${comment.user} ${moment().format('LT')} ${comment.content}`);
+  socket.on("comment",(comment)=>{
+
+      io.to(comment.bodyID).emit("comment",`${comment.user} ${moment().format('LT')} ${comment.content}`);
+        
     });
 
   socket.on("disconnect",()=>{

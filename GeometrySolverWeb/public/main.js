@@ -40,10 +40,11 @@ function commentSection(bodyID)
         {
             let comment = {
                 user: userName,
-                content: komentar.value
+                content: komentar.value,
+                bodyID: bodyID
             }
     
-            socket.emit("comment",{comment,bodyID});
+            socket.emit("comment",comment);
             
             let sadrzaj = komentar.value;
             komentar.value="";
@@ -297,7 +298,7 @@ async function modelCreateAndSelect()
                 {
                     figureInput(data._id);
                     drawModel(data._id);
-                    socket.emit("openbody",data._id);
+                    socket.emit("openbody",(data._id));
                 }
                 if(document.getElementById("userInteraction")==null)
                 {
