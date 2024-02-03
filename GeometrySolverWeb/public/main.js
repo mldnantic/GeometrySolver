@@ -239,6 +239,27 @@ btnLogin.onclick = async (ev) =>{
                 let logoffBtn = document.createElement("button");
                 logoffBtn.innerHTML = "Log off";
                 document.getElementById("registerLoginDiv").appendChild(logoffBtn);
+                logoffBtn.onclick = async (ev)=>{
+                    let watcher = 
+                    {
+                        id: document.getElementById("bodySelect").value,
+                        userID: userID
+                    }
+                    await fetch("/deleteWatcher", {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(watcher),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error("Error registering user:", error);
+                    });
+                }
 
             }
             else
@@ -361,12 +382,7 @@ async function modelCreateAndSelect()
         })
         .then(response => response.json())
         .then(data => {
-                // console.log(data);
-                // drawModel(bodyID);
-                // socket.emit("figureAdded",body);
                 console.log(data);
-
-
             })
         .catch(error => {
             console.error('Error fetching data:', error);

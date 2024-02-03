@@ -192,4 +192,15 @@ app.put("/addWatcher", async(req,res)=>{
   }
 });
 
+app.delete("/deleteWatcher", async (req, res) => {
+  try {
+    const result = await BodyRepository.removeWatcher(req.body.userID, req.body.id);
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error deleting body:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 server.listen(port, () => console.log(`Server running on port ${port}`));

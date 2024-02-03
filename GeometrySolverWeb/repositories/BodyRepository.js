@@ -56,6 +56,24 @@ class BodyRepository {
     }
   }
 
+  async removeWatcher(userID,id)
+  {
+    try {
+      const result = await BodyModel.findByIdAndUpdate(
+        id,
+        { $pull: { watchers: { userID: userID } } }
+      );
+  
+      if (!result) {
+        throw new Error('User not found');
+      }
+  
+      return { success: true, message: 'Watcher removed from list' };
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   async addFigure(id, figure) {
     try {
