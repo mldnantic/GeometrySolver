@@ -45,6 +45,10 @@ io.on("connection", socket =>{
       io.to(comment.bodyID).emit("comment",`${comment.user} ${moment().format('LT')} ${comment.content}`);
         
     });
+    
+  socket.on("figureAdded",(body)=>{
+    io.to(body.bodyID).emit("figureAdded",body);
+  });
 
   socket.on("disconnect",()=>{
     const user = socket.id;
@@ -169,6 +173,18 @@ app.put("/addFigure", async(req,res)=>{
   }
   catch (error) {
     console.error('Error commenting:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.put("/addWatcher", async(req,res)=>{
+  try{
+
+    const watc = await BodyRepository.addWatcher(req.body.bodyID,req.body.userID);
+    res.json(watc);
+  }
+  catch (error) {
+    console.error('Error adding watcher:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

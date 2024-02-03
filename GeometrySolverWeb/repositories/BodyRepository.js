@@ -35,6 +35,28 @@ class BodyRepository {
     }
   }
 
+  async addWatcher(id,userID) {
+    try {
+
+      const filter = {_id: id};
+      const update = { $push: { watchers: userID } };
+      const result = await BodyModel.updateOne(filter, update);
+
+      if(result.modifiedCount === 1)
+      {
+        return userID;
+      }
+      else
+      {
+        console.log("nothing happened...");
+      }
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
   async addFigure(id, figure) {
     try {
 

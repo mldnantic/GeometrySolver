@@ -347,6 +347,30 @@ async function modelCreateAndSelect()
     renderBtn.onclick = async (ev) =>{
         drawModel(document.getElementById("bodySelect").value);
         socket.emit("openbody",document.getElementById("bodySelect").value);
+
+        let BodySent = {
+            user:userID,
+            body:document.getElementById("bodySelect").value
+        };
+        await fetch(`/addWatcher`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(BodySent),
+        })
+        .then(response => response.json())
+        .then(data => {
+                // console.log(data);
+                // drawModel(bodyID);
+                // socket.emit("figureAdded",body);
+                console.log(data);
+
+
+            })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
     };
     menu.appendChild(renderBtn);
     await fetch("/getAllBodies")
@@ -462,6 +486,7 @@ function figureInput(bodyID)
     let btnAddFigure = document.createElement("button");
     btnAddFigure.innerHTML = "Insert figure";
     btnAddFigure.onclick = async (ev) => {
+
     
         let oblik = document.getElementById("shapes").value;
     
@@ -525,6 +550,15 @@ function figureInput(bodyID)
                 tip:oblik,
                 izvrnuta:inverted
             }
+
+            let body = {
+                a:aa,
+                b:be,
+                h:ha,
+                tip:oblik,
+                izvrnuta:inverted,
+                bodyID:bodyID
+            }
             await fetch(`/addFigure?id=${bodyID}`, {
                 method: "PUT",
                 headers: {
@@ -536,6 +570,7 @@ function figureInput(bodyID)
             .then(data => {
                     console.log(data);
                     drawModel(bodyID);
+                    socket.emit("figureAdded",body);
                 })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -710,6 +745,10 @@ socket.on("comment",comment=>{
     let listaKomentara = document.getElementById("commentList");
     listaKomentara.value+=comment+"\n\n";
     listaKomentara.scrollTop = listaKomentara.scrollHeight;
+});
+
+socket.on("figureAdded",body=>{
+    drawModel(body.bodyID);
 });
 
 function drawShape()
