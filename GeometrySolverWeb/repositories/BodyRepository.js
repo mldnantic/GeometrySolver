@@ -35,16 +35,16 @@ class BodyRepository {
     }
   }
 
-  async addWatcher(id,userID) {
+  async addWatcher(id,watcher) {
     try {
 
       const filter = {_id: id};
-      const update = { $push: { watchers: userID } };
+      const update = { $push: { watchers: watcher } };
       const result = await BodyModel.updateOne(filter, update);
 
       if(result.modifiedCount === 1)
       {
-        return userID;
+        return watcher;
       }
       else
       {

@@ -22,7 +22,7 @@ const bodySchema = new mongoose.Schema({
   },
   watchers:{
     type:[{
-      userID:String,
+      userID:String
     }]
   }
 },{ versionKey: false });

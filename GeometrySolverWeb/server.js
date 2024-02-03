@@ -179,9 +179,12 @@ app.put("/addFigure", async(req,res)=>{
 
 app.put("/addWatcher", async(req,res)=>{
   try{
-
-    const watc = await BodyRepository.addWatcher(req.body.bodyID,req.body.userID);
-    res.json(watc);
+    const watcher =
+    {
+      userID: req.body.user
+    }
+    await BodyRepository.addWatcher(req.body.body,watcher);
+    res.json(watcher);
   }
   catch (error) {
     console.error('Error adding watcher:', error);
