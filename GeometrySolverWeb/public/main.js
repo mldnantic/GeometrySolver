@@ -144,7 +144,7 @@ function drawPoprecni()
     poprecni.id="poprecniPresek";
     glavniDiv.appendChild(poprecni);
 }
-drawPoprecni();
+// drawPoprecni();
 
 //brisemo postojecu komponentu i pravimo prazan div
 function redraw(componentID,componentClassName)
@@ -235,63 +235,78 @@ btnLogin.innerHTML="Login";
 btnLogin.onclick = async (ev) =>{
     if(!usernameInput.value=="")
     {
-    let notification = document.getElementById("notification");
-    await fetch(`/getUserByUsername?username=${usernameInput.value}`)
-        .then(response => response.json())
-        .then(data => {
-            if(data!=null)
-            {
-                userID = data._id;
-                userName = data.username;
-                notification.style.backgroundColor = "rgb(20, 150, 20)";
-                notification.innerHTML = `Welcome ${userName}`;
-                setTimeout(resetNotification, 2000);
-                modelCreateAndSelect();
-                redraw("registerLoginDiv","menuDiv");
-                let logoffBtn = document.createElement("button");
-                logoffBtn.innerHTML = "Log off";
-                document.getElementById("registerLoginDiv").appendChild(logoffBtn);
-                
-                //ODVOJI LOGOFF AKCIJU U ZASEBNU F-JU
-                // logoffBtn.onclick = async (ev)=>{
-                //     let watcher = 
-                //     {
-                //         id: document.getElementById("bodySelect").value,
-                //         userID: userID
-                //     }
-                //     await fetch("/deleteWatcher", {
-                //         method: "DELETE",
-                //         headers: {
-                //             "Content-Type": "application/json",
-                //         },
-                //         body: JSON.stringify(watcher),
-                //     })
-                //     .then(response => response.json())
-                //     .then(data => {
-                //         console.log(data);
-                //         redraw("registerLoginDiv","menuDiv");
-                //         redraw("figureInput","menuDiv");
-                //     })
-                //     .catch(error => {
-                //         console.error("Error registering user:", error);
-                //     });
-                // }
 
-            }
-            else
-            {
-                notification.style.backgroundColor = "rgb(192, 64, 64)";
-                notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
-                setTimeout(resetNotification, 2000);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+        let notification = document.getElementById("notification");
+        await fetch(`/getUserByUsername?username=${usernameInput.value}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data!=null)
+                {
+                    userID = data._id;
+                    userName = data.username;
+                    notification.style.backgroundColor = "rgb(20, 150, 20)";
+                    notification.innerHTML = `Welcome ${userName}`;
+                    setTimeout(resetNotification, 2000);
+                    modelCreateAndSelect();
+                    redraw("registerLoginDiv","menuDiv");
+                    // let logoffBtn = document.createElement("button");
+                    // logoffBtn.innerHTML = "Log off";
+                    // document.getElementById("registerLoginDiv").appendChild(logoffBtn);
+                    
+                    // logoffBtn.onclick = async (ev)=>{
+                    //     let watcher = 
+                    //     {
+                    //         id: document.getElementById("bodySelect").value,
+                    //         userID: userID
+                    //     }
+                    //     await fetch("/deleteWatcher", {
+                    //         method: "DELETE",
+                    //         headers: {
+                    //             "Content-Type": "application/json",
+                    //         },
+                    //         body: JSON.stringify(watcher),
+                    //     })
+                    //     .then(response => response.json())
+                    //     .then(data => {
+                    //         console.log(data);
+                    //         redraw("registerLoginDiv","menuDiv");
+                    //         redraw("figureInput","menuDiv");
+                    //     })
+                    //     .catch(error => {
+                    //         console.error("Error registering user:", error);
+                    //     });
+                    // }
+
+                }
+                else
+                {
+                    notification.style.backgroundColor = "rgb(192, 64, 64)";
+                    notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
+                    setTimeout(resetNotification, 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     }
 }
 divTmp.appendChild(btnLogin);
 registerLoginDiv.appendChild(divTmp);
+//TODO
+function OkNotification(message)
+{
+
+}
+//TODO
+function WarningNotification(message)
+{
+    
+}
+//TODO
+function ErrorNotification(message)
+{
+    
+}
 
 function resetNotification()
 {
@@ -299,10 +314,57 @@ function resetNotification()
     notification.style.backgroundColor = "rgb(90, 90, 95)";
     notification.innerHTML = "";
 }
-
+//treba da crta kockice za projekte koji su javno dostupni ili korisnikovi, zavisi od selektovanog menija
 async function modelCreateAndSelect()
 {
     let menu = document.getElementById("menuDiv");
+
+    let selectModel = document.createElement("menuDiv");
+    selectModel.className = "bodiesDiv";
+    selectModel.id = "bodiesDiv";
+    menu.appendChild(selectModel);
+
+    await fetch("/getAllBodies")
+        .then(response => response.json())
+        .then(data => {
+                data.forEach(item =>{
+                        let bodyOption = document.createElement("label");
+                        // bodyOption.value = item._id;
+                        bodyOption.innerHTML = item.projectname;
+                        selectModel.appendChild(bodyOption);
+                })
+            })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+    });
+
+    let renderBtn = document.createElement("button");
+    renderBtn.innerHTML="Open project";
+    renderBtn.onclick = async (ev) =>{
+        drawModel(document.getElementById("bodySelect").value);
+        socket.emit("openbody",document.getElementById("bodySelect").value);
+
+        let BodySent = {
+            user:userID,
+            body:document.getElementById("bodySelect").value
+        };
+        await fetch(`/addWatcher`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(BodySent),
+        })
+        .then(response => response.json())
+        .then(data => {
+                console.log(data);
+            })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+    };
+    menu.appendChild(renderBtn);
+    
     let lbl = document.createElement("label");
     lbl.innerHTML = "New project name:"
     menu.appendChild(lbl);
@@ -373,49 +435,6 @@ async function modelCreateAndSelect()
         });
     }
     menu.appendChild(deleteBodyBtn);
-
-    let selectModel = document.createElement("select");
-    selectModel.id = "bodySelect"
-    menu.appendChild(selectModel);
-    let renderBtn = document.createElement("button");
-    renderBtn.innerHTML="Open project";
-    renderBtn.onclick = async (ev) =>{
-        drawModel(document.getElementById("bodySelect").value);
-        socket.emit("openbody",document.getElementById("bodySelect").value);
-
-        let BodySent = {
-            user:userID,
-            body:document.getElementById("bodySelect").value
-        };
-        await fetch(`/addWatcher`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(BodySent),
-        })
-        .then(response => response.json())
-        .then(data => {
-                console.log(data);
-            })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-    };
-    menu.appendChild(renderBtn);
-    await fetch("/getAllBodies")
-        .then(response => response.json())
-        .then(data => {
-                data.forEach(item =>{
-                        let bodyOption = document.createElement("option");
-                        bodyOption.value = item._id;
-                        bodyOption.textContent = item.projectname;
-                        selectModel.appendChild(bodyOption);
-                })
-            })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
 }
 
 function figureInput(bodyID)
