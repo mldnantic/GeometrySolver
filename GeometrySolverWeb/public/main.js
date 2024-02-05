@@ -2,6 +2,7 @@ const connectionString = 'mongodb://localhost:27017';
 const socket = io();
 var userID = "";
 var userName = "";
+var bodyID = "";
 
 let host = document.body;
 
@@ -254,10 +255,10 @@ btnLogin.onclick = async (ev) =>{
                     document.getElementById("registerLoginDiv").appendChild(logoffBtn);
                     
                     logoffBtn.onclick = async (ev)=>{
-                        redraw("registerLoginDiv","menuDiv");
+
                         let watcher = 
                         {
-                            id: document.getElementById("bodySelect").value,
+                            id: bodyID,
                             userID: userID
                         }
                         await fetch("/deleteWatcher", {
@@ -270,7 +271,8 @@ btnLogin.onclick = async (ev) =>{
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
-                            // redraw("figureInput","menuDiv");
+                            redraw("registerLoginDiv","menuDiv");
+                            redraw("figureInput","menuDiv");
                         })
                         .catch(error => {
                             console.error("Error registering user:", error);
@@ -319,14 +321,19 @@ async function modelCreateAndSelect()
 {
     let menu = document.getElementById("menuDiv");
     
+    let tmp = document.createElement("div");
+    tmp.className = "menuDiv";
+    tmp.id = "bodiesSelect";
+    menu.appendChild(tmp);
+
     let lbl = document.createElement("label");
     lbl.innerHTML = "Click on a project to open:"
-    menu.appendChild(lbl);
+    tmp.appendChild(lbl);
     
     let selectModel = document.createElement("div");
     selectModel.className = "bodiesDiv";
     selectModel.id = "bodiesDiv";
-    menu.appendChild(selectModel);
+    tmp.appendChild(selectModel);
 
     // let selectModel = document.createElement("select");
     // selectModel.className = "bodiesDiv";
@@ -342,12 +349,13 @@ async function modelCreateAndSelect()
                         bodyOption.innerHTML = item.projectname;
                         bodyOption.onclick = async (ev) =>{
 
-                            drawModel(item._id);
-                            socket.emit("openbody", item._id);
+                            bodyID = item._id;
+                            drawModel(bodyID);
+                            socket.emit("openbody", bodyID);
                     
                             let BodySent = {
                                 user: userID,
-                                body: item._id
+                                body: bodyID
                             };
                             
                             await fetch(`/addWatcher`, {
@@ -359,7 +367,8 @@ async function modelCreateAndSelect()
                             })
                             .then(response => response.json())
                             .then(data => {
-                                    console.log(data);
+                                    redraw("bodiesSelect","menuDiv");
+                                    redraw("newProjectDiv","menuDiv");
                                 })
                             .catch(error => {
                                 console.error('Error fetching data:', error);
@@ -372,39 +381,18 @@ async function modelCreateAndSelect()
             console.error('Error fetching data:', error);
     });
 
-    let renderBtn = document.createElement("button");
-    renderBtn.innerHTML="Open project";
-    renderBtn.onclick = async (ev) =>{
-        drawModel(document.getElementById("bodySelect").value);
-        socket.emit("openbody",document.getElementById("bodySelect").value);
+    tmp = document.createElement("div");
+    tmp.className = "menuDiv";
+    tmp.id = "newProjectDiv";
+    menu.appendChild(tmp);
 
-        let BodySent = {
-            user:userID,
-            body:document.getElementById("bodySelect").value
-        };
-        await fetch(`/addWatcher`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(BodySent),
-        })
-        .then(response => response.json())
-        .then(data => {
-                console.log(data);
-            })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-    };
-    menu.appendChild(renderBtn);
     
     lbl = document.createElement("label");
     lbl.innerHTML = "New project name:"
-    menu.appendChild(lbl);
+    tmp.appendChild(lbl);
     let bodyNameInput = document.createElement("input");
     bodyNameInput.id = "bodyName"
-    menu.appendChild(bodyNameInput);
+    tmp.appendChild(bodyNameInput);
     let createBodyBtn = document.createElement("button");
     createBodyBtn.innerHTML="Create project";
     createBodyBtn.onclick =async (ev) =>{
@@ -426,6 +414,10 @@ async function modelCreateAndSelect()
             })
             .then(response => response.json())
             .then(data => {
+
+                redraw("bodiesSelect","menuDiv");
+                redraw("newProjectDiv","menuDiv");
+                
                 if(document.getElementById("figureInput")==null)
                 {
                     drawModel(data._id);
@@ -441,7 +433,7 @@ async function modelCreateAndSelect()
             });
         }
     };
-    menu.appendChild(createBodyBtn);
+    tmp.appendChild(createBodyBtn);
 
     let deleteBodyBtn = document.createElement("button");
     deleteBodyBtn.innerHTML="Delete project";
@@ -449,7 +441,7 @@ async function modelCreateAndSelect()
 
         let bodyToDelete = 
         {
-            id: document.getElementById("bodySelect").value,
+            id: bodyID,
             userID: userID
         }
         await fetch("/deleteBody", {
@@ -462,12 +454,14 @@ async function modelCreateAndSelect()
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            redraw("bodiesSelect","menuDiv");
+            redraw("newProjectDiv","menuDiv");
         })
         .catch(error => {
             console.error("Error registering user:", error);
         });
     }
-    menu.appendChild(deleteBodyBtn);
+    tmp.appendChild(deleteBodyBtn);
 }
 
 function figureInput(bodyID)
