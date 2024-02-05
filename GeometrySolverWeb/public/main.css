@@ -16,11 +16,14 @@ canvas
     display: flex;
     flex-flow:row wrap;
     min-width: 50%;
+    height: 100%;
     flex:2 0;
     justify-content:flex-start;
+    align-self: center;
     background-color: rgb(105,105,105);
     margin: 4px;
     margin-right: 2px;
+    object-fit: contain;
 }
 
 .notificationsDiv

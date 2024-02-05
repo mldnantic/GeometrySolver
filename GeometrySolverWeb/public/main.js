@@ -69,6 +69,12 @@ function commentSection(bodyID)
                 console.error("Error registering user:", error);
             });
         }
+        else
+        {
+            notification.style.backgroundColor = "rgb(180, 138, 32)";
+            notification.innerHTML = "You cannot send empty comment";
+            setTimeout(resetNotification,2000);
+        }
 
     }
     userInteraction.appendChild(btnKomentar);
@@ -85,10 +91,14 @@ function commentSection(bodyID)
 }
 
 let canvas = document.createElement("canvas");
+canvas.id = "platno3D";
 glavniDiv.appendChild(canvas);
-const _c = document.getElementsByTagName('canvas')[0];
-_c.width = window.innerWidth;
-_c.height = window.innerHeight;
+
+//ovo treba da se racuna na svaki resize web browser-a
+canvas.width = canvas.offsetWidth/2;
+console.log(canvas.offsetWidth);
+canvas.height = canvas.offsetHeight;
+console.log(canvas.offsetHeight);
 
 canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
@@ -138,8 +148,8 @@ drawPoprecni();
 //brisemo postojecu komponentu i pravimo prazan div
 function redraw(componentID,componentClassName)
 {
-    var component = document.getElementById(componentID);
-    var parent = component.parentNode;
+    let component = document.getElementById(componentID);
+    let parent = component.parentNode;
     parent.removeChild(component);
 
     component = document.createElement("div");
@@ -177,7 +187,7 @@ let btnRegister = document.createElement("button");
 btnRegister.innerHTML="Register";
 btnRegister.onclick =async (ev) =>{
     
-    if(!usernameInput.value=="")
+    if(usernameInput.value!="")
     {
         var newUser = {
             username: usernameInput.value
@@ -255,6 +265,7 @@ btnLogin.onclick = async (ev) =>{
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
+                        redraw("registerLoginDiv","menuDiv");
                     })
                     .catch(error => {
                         console.error("Error registering user:", error);

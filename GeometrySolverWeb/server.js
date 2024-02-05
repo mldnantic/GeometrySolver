@@ -37,7 +37,7 @@ io.on("connection", socket =>{
   socket.on("openbody",(bodyID)=>
   {
     socket.join(bodyID);
-    console.log(`User has opened project ${bodyID}`);
+    // console.log(`User has opened project ${bodyID}`);
   })
 
   socket.on("comment",(comment)=>{
