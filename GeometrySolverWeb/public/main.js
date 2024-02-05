@@ -256,27 +256,37 @@ btnLogin.onclick = async (ev) =>{
                     
                     logoffBtn.onclick = async (ev)=>{
 
-                        let watcher = 
+                        if(bodyID!="")
                         {
-                            id: bodyID,
-                            userID: userID
+                            let watcher = 
+                            {
+                                id: bodyID,
+                                userID: userID
+                            }
+                            await fetch("/deleteWatcher", {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(watcher),
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data);
+                                redraw("registerLoginDiv","menuDiv");
+                                redraw("figureInput","menuDiv");
+                            })
+                            .catch(error => {
+                                console.error("Error registering user:", error);
+                            });
                         }
-                        await fetch("/deleteWatcher", {
-                            method: "DELETE",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(watcher),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data);
+                        else
+                        {
                             redraw("registerLoginDiv","menuDiv");
-                            redraw("figureInput","menuDiv");
-                        })
-                        .catch(error => {
-                            console.error("Error registering user:", error);
-                        });
+                            redraw("bodiesSelect","menuDiv");
+                            redraw("newProjectDiv","menuDiv");
+                        }
+                        
                     }
 
                 }
