@@ -319,17 +319,23 @@ async function modelCreateAndSelect()
 {
     let menu = document.getElementById("menuDiv");
 
-    let selectModel = document.createElement("menuDiv");
+    let selectModel = document.createElement("div");
     selectModel.className = "bodiesDiv";
     selectModel.id = "bodiesDiv";
     menu.appendChild(selectModel);
+
+    // let selectModel = document.createElement("select");
+    // selectModel.className = "bodiesDiv";
+    // selectModel.id = "bodySelect";
+    // menu.appendChild(selectModel);
 
     await fetch("/getAllBodies")
         .then(response => response.json())
         .then(data => {
                 data.forEach(item =>{
-                        let bodyOption = document.createElement("label");
+                        let bodyOption = document.createElement("button");
                         // bodyOption.value = item._id;
+                        bodyOption.className = "bodyDiv";
                         bodyOption.innerHTML = item.projectname;
                         selectModel.appendChild(bodyOption);
                 })
@@ -394,7 +400,6 @@ async function modelCreateAndSelect()
             .then(data => {
                 if(document.getElementById("figureInput")==null)
                 {
-                    figureInput(data._id);
                     drawModel(data._id);
                     socket.emit("openbody",(data._id));
                 }
@@ -410,31 +415,31 @@ async function modelCreateAndSelect()
     };
     menu.appendChild(createBodyBtn);
 
-    let deleteBodyBtn = document.createElement("button");
-    deleteBodyBtn.innerHTML="Delete project";
-    deleteBodyBtn.onclick = async (ev) => {
+    // let deleteBodyBtn = document.createElement("button");
+    // deleteBodyBtn.innerHTML="Delete project";
+    // deleteBodyBtn.onclick = async (ev) => {
 
-        let bodyToDelete = 
-        {
-            id: document.getElementById("bodySelect").value,
-            userID: userID
-        }
-        await fetch("/deleteBody", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(bodyToDelete),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error("Error registering user:", error);
-        });
-    }
-    menu.appendChild(deleteBodyBtn);
+    //     let bodyToDelete = 
+    //     {
+    //         id: document.getElementById("bodySelect").value,
+    //         userID: userID
+    //     }
+    //     await fetch("/deleteBody", {
+    //         method: "DELETE",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify(bodyToDelete),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log(data);
+    //     })
+    //     .catch(error => {
+    //         console.error("Error registering user:", error);
+    //     });
+    // }
+    // menu.appendChild(deleteBodyBtn);
 }
 
 function figureInput(bodyID)
