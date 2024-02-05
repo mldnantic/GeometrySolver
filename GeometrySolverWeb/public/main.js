@@ -95,10 +95,11 @@ canvas.id = "platno3D";
 glavniDiv.appendChild(canvas);
 
 //ovo treba da se racuna na svaki resize web browser-a
-canvas.width = canvas.offsetWidth/2;
-console.log(canvas.offsetWidth);
-canvas.height = canvas.offsetHeight;
-console.log(canvas.offsetHeight);
+let height = canvas.offsetHeight/2;
+let width = canvas.offsetWidth/2;
+canvas.width = width;
+canvas.height = height;
+console.log(`Rezolucija prikaza je ${canvas.width}x${canvas.height}`)
 
 canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
@@ -200,6 +201,7 @@ btnRegister.onclick =async (ev) =>{
                 {
                     notification.style.backgroundColor = "rgb(180, 138, 32)";
                     notification.innerHTML = "Account with this username is already registered";
+                    setTimeout(resetNotification, 2000);
                 }
                 else
                 {
@@ -214,12 +216,12 @@ btnRegister.onclick =async (ev) =>{
                     .then(data => {
                         notification.style.backgroundColor = "rgb(20, 150, 20)";
                         notification.innerHTML = `Account ${newUser.username} registered successfully`;
+                        setTimeout(resetNotification, 2000);
                     })
                     .catch(error => {
                         console.error("Error registering user:", error);
                     });
                 }
-                setTimeout(resetNotification, 2000);
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -243,42 +245,45 @@ btnLogin.onclick = async (ev) =>{
                 userName = data.username;
                 notification.style.backgroundColor = "rgb(20, 150, 20)";
                 notification.innerHTML = `Welcome ${userName}`;
+                setTimeout(resetNotification, 2000);
                 modelCreateAndSelect();
-                // figureInput();
                 redraw("registerLoginDiv","menuDiv");
                 let logoffBtn = document.createElement("button");
                 logoffBtn.innerHTML = "Log off";
                 document.getElementById("registerLoginDiv").appendChild(logoffBtn);
-                logoffBtn.onclick = async (ev)=>{
-                    let watcher = 
-                    {
-                        id: document.getElementById("bodySelect").value,
-                        userID: userID
-                    }
-                    await fetch("/deleteWatcher", {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(watcher),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        redraw("registerLoginDiv","menuDiv");
-                    })
-                    .catch(error => {
-                        console.error("Error registering user:", error);
-                    });
-                }
+                
+                //ODVOJI LOGOFF AKCIJU U ZASEBNU F-JU
+                // logoffBtn.onclick = async (ev)=>{
+                //     let watcher = 
+                //     {
+                //         id: document.getElementById("bodySelect").value,
+                //         userID: userID
+                //     }
+                //     await fetch("/deleteWatcher", {
+                //         method: "DELETE",
+                //         headers: {
+                //             "Content-Type": "application/json",
+                //         },
+                //         body: JSON.stringify(watcher),
+                //     })
+                //     .then(response => response.json())
+                //     .then(data => {
+                //         console.log(data);
+                //         redraw("registerLoginDiv","menuDiv");
+                //         redraw("figureInput","menuDiv");
+                //     })
+                //     .catch(error => {
+                //         console.error("Error registering user:", error);
+                //     });
+                // }
 
             }
             else
             {
                 notification.style.backgroundColor = "rgb(192, 64, 64)";
                 notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
+                setTimeout(resetNotification, 2000);
             }
-            setTimeout(resetNotification, 2000);
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -297,14 +302,13 @@ function resetNotification()
 
 async function modelCreateAndSelect()
 {
-    let divTmp = document.createElement("div");
-    divTmp.className = "menuDiv";
+    let menu = document.getElementById("menuDiv");
     let lbl = document.createElement("label");
     lbl.innerHTML = "New project name:"
-    divTmp.appendChild(lbl);
+    menu.appendChild(lbl);
     let bodyNameInput = document.createElement("input");
     bodyNameInput.id = "bodyName"
-    divTmp.appendChild(bodyNameInput);
+    menu.appendChild(bodyNameInput);
     let createBodyBtn = document.createElement("button");
     createBodyBtn.innerHTML="Create project";
     createBodyBtn.onclick =async (ev) =>{
@@ -342,7 +346,7 @@ async function modelCreateAndSelect()
             });
         }
     };
-    divTmp.appendChild(createBodyBtn);
+    menu.appendChild(createBodyBtn);
 
     let deleteBodyBtn = document.createElement("button");
     deleteBodyBtn.innerHTML="Delete project";
@@ -368,8 +372,7 @@ async function modelCreateAndSelect()
             console.error("Error registering user:", error);
         });
     }
-    divTmp.appendChild(deleteBodyBtn);
-    menu.appendChild(divTmp);
+    menu.appendChild(deleteBodyBtn);
 
     let selectModel = document.createElement("select");
     selectModel.id = "bodySelect"
@@ -707,7 +710,7 @@ async function drawModel(projectID)
             switch(f.tip)
             {
                 case "triangle":
-                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    drawCircle(range_vrednost,f.a,-1.0,cam_height,base_height,cam_distance,gl.FRONT);
                     vertexData=[];
                     colorData=[];
                     normalData=[];
@@ -716,7 +719,8 @@ async function drawModel(projectID)
                     base_height+=f.h;
                     break;
                 case "rectangle":
-                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    // drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    //draw truncated cone instead, h is 0.0
                     vertexData=[];
                     colorData=[];
                     normalData=[];
@@ -726,11 +730,13 @@ async function drawModel(projectID)
                     vertexData=[];
                     colorData=[];
                     normalData=[];
-                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.BACK);
+                    // drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.BACK);
+                    //same as above, draw truncated cone instead, h is 0.0
                     normaldir = -normaldir;
                     break;
                 case "trapezoid":
-                    drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    // drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
+                    //draw truncated cone instead, h is 0.0
                     vertexData=[];
                     colorData=[];
                     normalData=[];
@@ -740,7 +746,8 @@ async function drawModel(projectID)
                     vertexData=[];
                     colorData=[];
                     normalData=[];
-                    drawCircle(range_vrednost,f.b,normaldir,cam_height,base_height,cam_distance,gl.BACK);
+                    // drawCircle(range_vrednost,f.b,normaldir,cam_height,base_height,cam_distance,gl.BACK);
+                    //draw truncated cone instead, h is 0.0
                     break;
             }
             
@@ -1179,8 +1186,6 @@ function drawTruncatedCone(a,b,h,dense,cam_height,base_height,cam_distance)
 
 function webgl(glDrawMode,animacija,height,distance,cullDirection)
 {
-
-
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
