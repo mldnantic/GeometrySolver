@@ -249,33 +249,33 @@ btnLogin.onclick = async (ev) =>{
                     setTimeout(resetNotification, 2000);
                     modelCreateAndSelect();
                     redraw("registerLoginDiv","menuDiv");
-                    // let logoffBtn = document.createElement("button");
-                    // logoffBtn.innerHTML = "Log off";
-                    // document.getElementById("registerLoginDiv").appendChild(logoffBtn);
+                    let logoffBtn = document.createElement("button");
+                    logoffBtn.innerHTML = "Log off";
+                    document.getElementById("registerLoginDiv").appendChild(logoffBtn);
                     
-                    // logoffBtn.onclick = async (ev)=>{
-                    //     let watcher = 
-                    //     {
-                    //         id: document.getElementById("bodySelect").value,
-                    //         userID: userID
-                    //     }
-                    //     await fetch("/deleteWatcher", {
-                    //         method: "DELETE",
-                    //         headers: {
-                    //             "Content-Type": "application/json",
-                    //         },
-                    //         body: JSON.stringify(watcher),
-                    //     })
-                    //     .then(response => response.json())
-                    //     .then(data => {
-                    //         console.log(data);
-                    //         redraw("registerLoginDiv","menuDiv");
-                    //         redraw("figureInput","menuDiv");
-                    //     })
-                    //     .catch(error => {
-                    //         console.error("Error registering user:", error);
-                    //     });
-                    // }
+                    logoffBtn.onclick = async (ev)=>{
+                        redraw("registerLoginDiv","menuDiv");
+                        let watcher = 
+                        {
+                            id: document.getElementById("bodySelect").value,
+                            userID: userID
+                        }
+                        await fetch("/deleteWatcher", {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(watcher),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            // redraw("figureInput","menuDiv");
+                        })
+                        .catch(error => {
+                            console.error("Error registering user:", error);
+                        });
+                    }
 
                 }
                 else
@@ -318,7 +318,11 @@ function resetNotification()
 async function modelCreateAndSelect()
 {
     let menu = document.getElementById("menuDiv");
-
+    
+    let lbl = document.createElement("label");
+    lbl.innerHTML = "Click on a project to open:"
+    menu.appendChild(lbl);
+    
     let selectModel = document.createElement("div");
     selectModel.className = "bodiesDiv";
     selectModel.id = "bodiesDiv";
@@ -334,9 +338,33 @@ async function modelCreateAndSelect()
         .then(data => {
                 data.forEach(item =>{
                         let bodyOption = document.createElement("button");
-                        // bodyOption.value = item._id;
                         bodyOption.className = "bodyDiv";
                         bodyOption.innerHTML = item.projectname;
+                        bodyOption.onclick = async (ev) =>{
+
+                            drawModel(item._id);
+                            socket.emit("openbody", item._id);
+                    
+                            let BodySent = {
+                                user: userID,
+                                body: item._id
+                            };
+                            
+                            await fetch(`/addWatcher`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(BodySent),
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                    console.log(data);
+                                })
+                            .catch(error => {
+                                console.error('Error fetching data:', error);
+                            });
+                        };
                         selectModel.appendChild(bodyOption);
                 })
             })
@@ -371,7 +399,7 @@ async function modelCreateAndSelect()
     };
     menu.appendChild(renderBtn);
     
-    let lbl = document.createElement("label");
+    lbl = document.createElement("label");
     lbl.innerHTML = "New project name:"
     menu.appendChild(lbl);
     let bodyNameInput = document.createElement("input");
@@ -415,31 +443,31 @@ async function modelCreateAndSelect()
     };
     menu.appendChild(createBodyBtn);
 
-    // let deleteBodyBtn = document.createElement("button");
-    // deleteBodyBtn.innerHTML="Delete project";
-    // deleteBodyBtn.onclick = async (ev) => {
+    let deleteBodyBtn = document.createElement("button");
+    deleteBodyBtn.innerHTML="Delete project";
+    deleteBodyBtn.onclick = async (ev) => {
 
-    //     let bodyToDelete = 
-    //     {
-    //         id: document.getElementById("bodySelect").value,
-    //         userID: userID
-    //     }
-    //     await fetch("/deleteBody", {
-    //         method: "DELETE",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify(bodyToDelete),
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log(data);
-    //     })
-    //     .catch(error => {
-    //         console.error("Error registering user:", error);
-    //     });
-    // }
-    // menu.appendChild(deleteBodyBtn);
+        let bodyToDelete = 
+        {
+            id: document.getElementById("bodySelect").value,
+            userID: userID
+        }
+        await fetch("/deleteBody", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(bodyToDelete),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error registering user:", error);
+        });
+    }
+    menu.appendChild(deleteBodyBtn);
 }
 
 function figureInput(bodyID)
