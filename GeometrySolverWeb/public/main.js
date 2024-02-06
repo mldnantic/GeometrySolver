@@ -442,6 +442,8 @@ async function modelCreateAndSelect()
 
                 console.log(data);
 
+                bodyID = data._id;
+
                 let BodySent = {
                     user: userID,
                     body: data._id
