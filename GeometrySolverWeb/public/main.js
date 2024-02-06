@@ -24,81 +24,22 @@ let glavniDiv = document.createElement("div");
 glavniDiv.className="glavniDiv";
 glavniDiv.id = "glavniDiv";
 host.appendChild(glavniDiv);
-//TODO
-function mainDiv()
-{
-
-}
-
-function commentSection(bodyID)
-{
-    let userInteraction = document.createElement("div");
-    userInteraction.className = "userInteraction";
-    userInteraction.id = "userInteraction";
-    host.appendChild(userInteraction);
-    
-    var btnKomentar = document.createElement("button");
-    btnKomentar.innerHTML="Send";
-    btnKomentar.onclick =async (ev) =>{
-        let komentar = document.getElementById("commentText");
-        
-        if(komentar.value!="")
-        {
-            let comment = {
-                user: userName,
-                content: komentar.value,
-                bodyID: bodyID
-            }
-    
-            socket.emit("comment",comment);
-            
-            let sadrzaj = komentar.value;
-            komentar.value="";
-            komentar.focus();
-            var newCmt = {
-                id: bodyID,
-                user: userName,
-                content: sadrzaj
-            };
-            fetch("/addComment", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newCmt),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error("Error registering user:", error);
-            });
-        }
-        else
-        {
-            notification.style.backgroundColor = "rgb(180, 138, 32)";
-            notification.innerHTML = "You cannot send empty comment";
-            setTimeout(resetNotification,2000);
-        }
-
-    }
-    userInteraction.appendChild(btnKomentar);
-    
-    var komentar = document.createElement("input");
-    komentar.placeholder = "Type your comment here...";
-    komentar.id = "commentText";
-    userInteraction.appendChild(komentar);
-    
-    var commentList = document.createElement("textarea");
-    commentList.id="commentList";
-    commentList.readOnly = true;
-    userInteraction.appendChild(commentList);    
-}
 
 let canvas = document.createElement("canvas");
 canvas.id = "platno3D";
 glavniDiv.appendChild(canvas);
+
+var menu = document.createElement("div");
+menu.className="menuDiv";
+menu.id="menuDiv";
+glavniDiv.appendChild(menu);
+registerLoginForm();
+//TODO
+function menuDiv()
+{
+
+}
+
 //TODO
 function canvasResize()
 {
@@ -173,152 +114,154 @@ function redraw(componentID,componentClassName)
 //TODO
 function registerLoginForm()
 {
+    let registerLoginDiv = document.createElement("div");
+    registerLoginDiv.className = "registerLoginDiv";
+    registerLoginDiv.id = "registerLoginDiv";
+    menu.appendChild(registerLoginDiv);
 
-}
-var menu = document.createElement("div");
-menu.className="menuDiv";
-menu.id="menuDiv";
-glavniDiv.appendChild(menu);
+    let divTmp = document.createElement("div");
 
-let registerLoginDiv = document.createElement("div");
-registerLoginDiv.className = "registerLoginDiv";
-registerLoginDiv.id = "registerLoginDiv";
-menu.appendChild(registerLoginDiv);
+    let userLabel = document.createElement("label");
+    userLabel.innerHTML = "Username:";
+    divTmp.appendChild(userLabel);
 
-let divTmp = document.createElement("div");
+    var usernameInput = document.createElement("input");
+    usernameInput.id = "usernameInput";
+    divTmp.appendChild(usernameInput);
 
-let userLabel = document.createElement("label");
-userLabel.innerHTML = "Username:";
-divTmp.appendChild(userLabel);
+    registerLoginDiv.appendChild(divTmp);
+    divTmp = document.createElement("div");
 
-var usernameInput = document.createElement("input");
-usernameInput.id = "usernameInput";
-divTmp.appendChild(usernameInput);
-
-registerLoginDiv.appendChild(divTmp);
-divTmp = document.createElement("div");
-
-let btnRegister = document.createElement("button");
-btnRegister.innerHTML="Register";
-btnRegister.onclick =async (ev) =>{
-    
-    if(usernameInput.value!="")
-    {
-        var newUser = {
-            username: usernameInput.value
-        };
-        let notification = document.getElementById("notification");
-        await fetch(`/getUserByUsername?username=${usernameInput.value}`)
-        .then(response => response.json())
-        .then(data => {
-                if(data!=null && data.username==usernameInput.value)
-                {
-                    notification.style.backgroundColor = "rgb(180, 138, 32)";
-                    notification.innerHTML = "Account with this username is already registered";
-                    setTimeout(resetNotification, 2000);
-                }
-                else
-                {
-                    fetch("/createUser", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(newUser),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        notification.style.backgroundColor = "rgb(20, 150, 20)";
-                        notification.innerHTML = `Account ${newUser.username} registered successfully`;
-                        setTimeout(resetNotification, 2000);
-                    })
-                    .catch(error => {
-                        console.error("Error registering user:", error);
-                    });
-                }
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-    }
-}
-divTmp.appendChild(btnRegister);
-
-let btnLogin = document.createElement("button");
-btnLogin.innerHTML="Login";
-btnLogin.onclick = async (ev) =>{
-    if(!usernameInput.value=="")
-    {
-
-        let notification = document.getElementById("notification");
-        await fetch(`/getUserByUsername?username=${usernameInput.value}`)
+    let btnRegister = document.createElement("button");
+    btnRegister.innerHTML="Register";
+    btnRegister.onclick =async (ev) =>{
+        
+        if(usernameInput.value!="")
+        {
+            var newUser = {
+                username: usernameInput.value
+            };
+            let notification = document.getElementById("notification");
+            await fetch(`/getUserByUsername?username=${usernameInput.value}`)
             .then(response => response.json())
             .then(data => {
-                if(data!=null)
-                {
-                    userID = data._id;
-                    userName = data.username;
-                    notification.style.backgroundColor = "rgb(20, 150, 20)";
-                    notification.innerHTML = `Welcome ${userName}`;
-                    setTimeout(resetNotification, 2000);
-                    modelCreateAndSelect();
-                    redraw("registerLoginDiv","menuDiv");
-                    let logoffBtn = document.createElement("button");
-                    logoffBtn.innerHTML = "Log off";
-                    document.getElementById("registerLoginDiv").appendChild(logoffBtn);
-                    
-                    logoffBtn.onclick = async (ev)=>{
-
-                        if(bodyID!="")
-                        {
-                            let watcher = 
-                            {
-                                id: bodyID,
-                                userID: userID
-                            }
-                            await fetch("/deleteWatcher", {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify(watcher),
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                redraw("registerLoginDiv","menuDiv");
-                                redraw("figureInput","menuDiv");
-                                registerLoginForm();
-                            })
-                            .catch(error => {
-                                console.error("Error registering user:", error);
-                            });
-                        }
-                        else
-                        {
-                            redraw("registerLoginDiv","menuDiv");
-                            redraw("bodiesSelect","menuDiv");
-                            redraw("newProjectDiv","menuDiv");
-                            registerLoginForm();
-                        }
-                        
+                    if(data!=null && data.username==usernameInput.value)
+                    {
+                        notification.style.backgroundColor = "rgb(180, 138, 32)";
+                        notification.innerHTML = "Account with this username is already registered";
+                        setTimeout(resetNotification, 2000);
                     }
-
-                }
-                else
-                {
-                    notification.style.backgroundColor = "rgb(192, 64, 64)";
-                    notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
-                    setTimeout(resetNotification, 2000);
-                }
+                    else
+                    {
+                        fetch("/createUser", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(newUser),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            notification.style.backgroundColor = "rgb(20, 150, 20)";
+                            notification.innerHTML = `Account ${newUser.username} registered successfully`;
+                            setTimeout(resetNotification, 2000);
+                        })
+                        .catch(error => {
+                            console.error("Error registering user:", error);
+                        });
+                    }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+        }
     }
+    divTmp.appendChild(btnRegister);
+
+    let btnLogin = document.createElement("button");
+    btnLogin.innerHTML="Login";
+    btnLogin.onclick = async (ev) =>{
+        if(!usernameInput.value=="")
+        {
+
+            let notification = document.getElementById("notification");
+            await fetch(`/getUserByUsername?username=${usernameInput.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data!=null)
+                    {
+                        userID = data._id;
+                        userName = data.username;
+                        notification.style.backgroundColor = "rgb(20, 150, 20)";
+                        notification.innerHTML = `Welcome ${userName}`;
+                        setTimeout(resetNotification, 2000);
+                        modelCreateAndSelect();
+                        redraw("registerLoginDiv","menuDiv");
+                        let logoffBtn = document.createElement("button");
+                        logoffBtn.innerHTML = "Log off";
+                        document.getElementById("registerLoginDiv").appendChild(logoffBtn);
+                        
+                        logoffBtn.onclick = async (ev)=>{
+
+                            if(bodyID!="")
+                            {
+                                let watcher = 
+                                {
+                                    id: bodyID,
+                                    userID: userID
+                                }
+                                await fetch("/deleteWatcher", {
+                                    method: "DELETE",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(watcher),
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+                                    redraw("registerLoginDiv","menuDiv");
+                                    redraw("figureInput","menuDiv");
+                                    registerLoginForm();
+                                })
+                                .catch(error => {
+                                    console.error("Error registering user:", error);
+                                });
+                            }
+                            else
+                            {
+                                redraw("registerLoginDiv","menuDiv");
+                                redraw("bodiesSelect","menuDiv");
+                                redraw("newProjectDiv","menuDiv");
+                                registerLoginForm();
+                            }
+                            
+                        }
+
+                    }
+                    else
+                    {
+                        notification.style.backgroundColor = "rgb(192, 64, 64)";
+                        notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
+                        setTimeout(resetNotification, 2000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+    }
+    divTmp.appendChild(btnLogin);
+    registerLoginDiv.appendChild(divTmp);
 }
-divTmp.appendChild(btnLogin);
-registerLoginDiv.appendChild(divTmp);
+
+function logOffAction()
+{
+    userID = "";
+    userName = "";
+
+}
+
 //TODO
 function OkNotification(message)
 {
@@ -726,6 +669,72 @@ function figureInput(bodyID)
         drawShape();
     }
     };
+}
+
+function commentSection(bodyID)
+{
+    let userInteraction = document.createElement("div");
+    userInteraction.className = "userInteraction";
+    userInteraction.id = "userInteraction";
+    host.appendChild(userInteraction);
+    
+    var btnKomentar = document.createElement("button");
+    btnKomentar.innerHTML="Send";
+    btnKomentar.onclick =async (ev) =>{
+        let komentar = document.getElementById("commentText");
+        
+        if(komentar.value!="")
+        {
+            let comment = {
+                user: userName,
+                content: komentar.value,
+                bodyID: bodyID
+            }
+    
+            socket.emit("comment",comment);
+            
+            let sadrzaj = komentar.value;
+            komentar.value="";
+            komentar.focus();
+            var newCmt = {
+                id: bodyID,
+                user: userName,
+                content: sadrzaj
+            };
+            fetch("/addComment", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newCmt),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Error registering user:", error);
+            });
+        }
+        else
+        {
+            notification.style.backgroundColor = "rgb(180, 138, 32)";
+            notification.innerHTML = "You cannot send empty comment";
+            setTimeout(resetNotification,2000);
+        }
+
+    }
+    userInteraction.appendChild(btnKomentar);
+    
+    var komentar = document.createElement("input");
+    komentar.placeholder = "Type your comment here...";
+    komentar.id = "commentText";
+    userInteraction.appendChild(komentar);
+    
+    var commentList = document.createElement("textarea");
+    commentList.id="commentList";
+    commentList.readOnly = true;
+    userInteraction.appendChild(commentList);    
 }
 
 async function drawModel(projectID)
