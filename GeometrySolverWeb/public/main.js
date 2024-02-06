@@ -440,6 +440,28 @@ async function modelCreateAndSelect()
             .then(response => response.json())
             .then(data => {
 
+                console.log(data);
+
+                let BodySent = {
+                    user: userID,
+                    body: data._id
+                };
+
+                fetch(`/addWatcher`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(BodySent),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+
                 redraw("bodiesSelect","menuDiv");
                 redraw("newProjectDiv","menuDiv");
                 
