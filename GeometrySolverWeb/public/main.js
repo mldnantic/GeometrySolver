@@ -375,6 +375,7 @@ async function modelCreateAndSelect()
                         bodyOption.onclick = async (ev) =>{
 
                             bodyID = item._id;
+                            figureInput(bodyID);
                             drawModel(bodyID);
                             socket.emit("openbody", bodyID);
                     
@@ -469,6 +470,7 @@ async function modelCreateAndSelect()
                 
                 if(document.getElementById("figureInput")==null)
                 {
+                    figureInput(data._id);
                     drawModel(data._id);
                     socket.emit("openbody",(data._id));
                 }
@@ -842,7 +844,6 @@ async function drawModel(projectID)
                         listaKomentara.scrollTop = listaKomentara.scrollHeight;
                     });
             }
-            figureInput(id);
             if(document.getElementById("userInteraction")==null)
             {
                 commentSection(id);
