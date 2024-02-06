@@ -24,6 +24,11 @@ let glavniDiv = document.createElement("div");
 glavniDiv.className="glavniDiv";
 glavniDiv.id = "glavniDiv";
 host.appendChild(glavniDiv);
+//TODO
+function mainDiv()
+{
+
+}
 
 function commentSection(bodyID)
 {
@@ -94,7 +99,11 @@ function commentSection(bodyID)
 let canvas = document.createElement("canvas");
 canvas.id = "platno3D";
 glavniDiv.appendChild(canvas);
+//TODO
+function canvasResize()
+{
 
+}
 //ovo treba da se racuna na svaki resize web browser-a
 let height = canvas.offsetHeight/2;
 let width = canvas.offsetWidth/2;
@@ -161,7 +170,11 @@ function redraw(componentID,componentClassName)
 
     return component;
 }
+//TODO
+function registerLoginForm()
+{
 
+}
 var menu = document.createElement("div");
 menu.className="menuDiv";
 menu.id="menuDiv";
@@ -275,6 +288,7 @@ btnLogin.onclick = async (ev) =>{
                                 console.log(data);
                                 redraw("registerLoginDiv","menuDiv");
                                 redraw("figureInput","menuDiv");
+                                registerLoginForm();
                             })
                             .catch(error => {
                                 console.error("Error registering user:", error);
@@ -285,6 +299,7 @@ btnLogin.onclick = async (ev) =>{
                             redraw("registerLoginDiv","menuDiv");
                             redraw("bodiesSelect","menuDiv");
                             redraw("newProjectDiv","menuDiv");
+                            registerLoginForm();
                         }
                         
                     }
@@ -326,7 +341,7 @@ function resetNotification()
     notification.style.backgroundColor = "rgb(90, 90, 95)";
     notification.innerHTML = "";
 }
-//treba da crta kockice za projekte koji su javno dostupni ili korisnikovi, zavisi od selektovanog menija
+
 async function modelCreateAndSelect()
 {
     let menu = document.getElementById("menuDiv");
@@ -448,7 +463,6 @@ async function modelCreateAndSelect()
     let deleteBodyBtn = document.createElement("button");
     deleteBodyBtn.innerHTML="Delete project";
     deleteBodyBtn.onclick = async (ev) => {
-
         let bodyToDelete = 
         {
             id: bodyID,
@@ -596,22 +610,6 @@ function figureInput(bodyID)
             be = document.getElementById("bInput").value;
             ha = document.getElementById("hInput").value;
         }
-
-        // vertexData=[];
-        // colorData=[];
-        // normalData=[];
-        // switch(oblik)
-        // {
-        //     case "triangle":
-        //         drawCone(aa,ha,range.value);
-        //         break;
-        //     case "rectangle":
-        //         drawCylinder(aa,be,range.value);
-        //         break;
-        //     case "trapezoid":
-        //         drawTruncatedCone(aa,be,ha,range.value);
-        //         break;
-        // }
 
         let inverted;
         if(document.getElementById("izvrnuta").checked == true)
@@ -776,7 +774,7 @@ async function drawModel(projectID)
                     break;
                 case "rectangle":
                     // drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
-                    //draw truncated cone instead, h is 0.0
+                    //draw truncated cone instead, h is 0.0, take into account f-1.a - f.a
                     vertexData=[];
                     colorData=[];
                     normalData=[];
@@ -787,12 +785,12 @@ async function drawModel(projectID)
                     colorData=[];
                     normalData=[];
                     // drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.BACK);
-                    //same as above, draw truncated cone instead, h is 0.0
+                    //same as above, draw truncated cone instead, h is 0.0, take into account f-1.a - f.a
                     normaldir = -normaldir;
                     break;
                 case "trapezoid":
                     // drawCircle(range_vrednost,f.a,normaldir,cam_height,base_height,cam_distance,gl.FRONT);
-                    //draw truncated cone instead, h is 0.0
+                    //draw truncated cone instead, h is 0.0, take into account f-1.a - f.a
                     vertexData=[];
                     colorData=[];
                     normalData=[];
@@ -803,12 +801,9 @@ async function drawModel(projectID)
                     colorData=[];
                     normalData=[];
                     // drawCircle(range_vrednost,f.b,normaldir,cam_height,base_height,cam_distance,gl.BACK);
-                    //draw truncated cone instead, h is 0.0
+                    //draw truncated cone instead, h is 0.0, take into account f-1.a - f.a
                     break;
             }
-            
-            
-
             });
             
             //sum of surface and volumes is shown
@@ -823,10 +818,7 @@ async function drawModel(projectID)
                         listaKomentara.scrollTop = listaKomentara.scrollHeight;
                     });
             }
-            if(document.getElementById("figureInput")==null)
-            {
-                figureInput(id);
-            }
+            figureInput(id);
             if(document.getElementById("userInteraction")==null)
             {
                 commentSection(id);
