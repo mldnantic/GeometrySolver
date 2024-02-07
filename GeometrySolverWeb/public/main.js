@@ -51,7 +51,7 @@ function clearPoprecni()
     let ctx = platno2D.getContext("2d");
     ctx.clearRect(0, 0, platno2D.width, platno2D.height);
     ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = "#555555";
     ctx.font = `${platno2D.width/32}px Calibri`;
     let offset = 4;
     let density = 16;
@@ -1059,7 +1059,7 @@ function drawShape(type,a,b,h,base2DHeight)
     // ctx.stroke();
     // ctx.fillText("X", canvas.width-factorWidth + offset, canvas.height-factorHeight);
 
-    ctx.strokeStyle = "#0000ff";
+    ctx.strokeStyle = "#ffff00";
 
     if (type === "triangle") 
     {
