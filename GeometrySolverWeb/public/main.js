@@ -228,6 +228,7 @@ function registerLoginForm()
 
 async function logOffAction()
 {
+    console.log(bodyID);
     if(bodyID!="")
     {
         let watcher = 
@@ -244,11 +245,11 @@ async function logOffAction()
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            remove("registerLoginDiv","menuDiv");
-            remove("figureInput","menuDiv");
             userID = "";
             userName = "";
+            bodyID="";
+            remove("registerLoginDiv","menuDiv");
+            remove("figureInput","menuDiv");
             registerLoginForm();
         })
         .catch(error => {
@@ -289,28 +290,28 @@ function resetNotification()
 
 async function removeWatcher()
 {
-    let watcher = 
+    if(bodyID!="")
     {
-        id: bodyID,
-        userID: userID
+        let watcher = 
+        {
+            id: bodyID,
+            userID: userID
+        }
+        await fetch("/deleteWatcher", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(watcher),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error registering user:", error);
+        });
     }
-    await fetch("/deleteWatcher", {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(watcher),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        remove("registerLoginDiv","menuDiv");
-        remove("figureInput","menuDiv");
-        registerLoginForm();
-    })
-    .catch(error => {
-        console.error("Error registering user:", error);
-    });
 }
 
 function showADialog(e)
@@ -469,7 +470,7 @@ async function modelCreateAndSelect()
     tmp.appendChild(createBodyBtn);
 }
 
-function figureInput(bodyID)
+function figureInput(body)
 {
     let figureInput = document.createElement("div");
     figureInput.className = "menuDiv";
@@ -481,7 +482,7 @@ function figureInput(bodyID)
     deleteBodyBtn.onclick = async (ev) => {
         let bodyToDelete = 
         {
-            id: bodyID,
+            id: body,
             userID: userID
         }
         await fetch("/deleteBody", {
@@ -494,8 +495,8 @@ function figureInput(bodyID)
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            bodyID="";
             remove("figureInput","menuDiv");
-            // remove("registerLoginDiv","menuDiv");
             modelCreateAndSelect();
         })
         .catch(error => {
