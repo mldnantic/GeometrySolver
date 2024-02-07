@@ -38,7 +38,7 @@ function drawPoprecni()
     glavniDiv.appendChild(poprecni);
 
     let height = poprecni.offsetHeight;
-    let width = poprecni.offsetWidth;
+    let width = poprecni.offsetWidth/2;
     poprecni.width = width;
     poprecni.height = height;
     console.log(`Rezolucija prikaza je ${poprecni.width}x${poprecni.height}`);
@@ -525,6 +525,12 @@ function figureInput(body)
     figureInput.appendChild(select);
     figureInput.appendChild(label);
     
+    
+    var option1 = document.createElement("option");
+    option1.value = "triangle";
+    option1.textContent = "Triangle";
+    select.appendChild(option1);
+    
     var option2 = document.createElement("option");
     option2.value = "trapezoid";
     option2.textContent = "Trapezoid";
@@ -534,11 +540,6 @@ function figureInput(body)
     option3.value = "rectangle";
     option3.textContent = "Rectangle";
     select.appendChild(option3);
-    
-    var option1 = document.createElement("option");
-    option1.value = "triangle";
-    option1.textContent = "Triangle";
-    select.appendChild(option1);
     
     figureInput.appendChild(select);
     
@@ -726,7 +727,7 @@ function figureInput(body)
     }
     if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a,b,h);
+        drawShape(a.value,b.value,h.value);
     }
     };
 }
@@ -952,48 +953,55 @@ function drawShape(a,b,h)
     
     // let density = 16;
     // let factor = canvas.width/density;
-    
-    // for (i = 0; i <= density; i++)
-    // {
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/density,canvas.height/density+factor*i);
-    //     ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factor*i);
-    //     ctx.stroke();
 
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/density+factor*i,canvas.height/density);
-    //     ctx.lineTo(canvas.width/density+factor*i,(density-1)*canvas.height/density);
-    //     ctx.stroke();
-    // }
+    var selectedValue = document.getElementById("shapes").value;
+    
+    var canvas = document.getElementById("poprecniPresek");
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#ffffff";
+    let density = 16;
+    let factorWidth = canvas.width / density;
+    let factorHeight = canvas.height / density;
+    
+    for (i = 0; i < density; i++)
+    {
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/density+factorWidth*i,canvas.height/density);
+        ctx.lineTo(canvas.width/density+factorWidth*i,(density-1)*canvas.height/density);
+        ctx.stroke();
+    }
 
+    for (i = 0; i < density-1; i++)
+    {
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/density,canvas.height/density+factorHeight*i);
+        ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factorHeight*i);
+        ctx.stroke();
+    }
 
+    ctx.font = `${canvas.width/32}px Calibri`;
+    let offset = 4;
 
-        var selectedValue = document.getElementById("shapes").value;
-    
-        var canvas = document.getElementById("poprecniPresek");
-        var ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#ffffff";
-        ctx.strokeStyle = "#ffffff";
-    
-        let density = 16;
-        let factor = canvas.width / density;
-    
-        for (i = 0; i <= density; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height / density + factor * i);
-            ctx.lineTo(canvas.width, canvas.height / density + factor * i);
-            ctx.stroke();
-    
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / density + factor * i, 0);
-            ctx.lineTo(canvas.width / density + factor * i, canvas.height);
-            ctx.stroke();
-        }
-    
-    ctx.font = `${canvas.width/64}px Calibri`;
+    //Y-osa
+    ctx.strokeStyle = "#00ff00";
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2, canvas.height / density);
+    ctx.lineTo(canvas.width/2, canvas.height-factorHeight);
+    ctx.stroke();
+    ctx.fillText("Y", canvas.width/2, canvas.height / density - offset);
+
+    //X-osa
+    ctx.strokeStyle = "#ff0000";
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2, canvas.height-factorHeight);
+    ctx.lineTo(canvas.width-factorWidth, canvas.height-factorHeight);
+    ctx.stroke();
+    ctx.fillText("X", canvas.width-factorWidth + offset, canvas.height-factorHeight);
+
     ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
-
+    ctx.strokeStyle = "#ff00ff";
     if (selectedValue === "triangle") 
     {
         // ctx.beginPath();
@@ -1003,7 +1011,6 @@ function drawShape(a,b,h)
         // ctx.closePath();
         // ctx.stroke();
 
-        let offset = 4;
 
         ctx.beginPath();
         ctx.moveTo(canvas.width/10,canvas.height-10);
@@ -1043,7 +1050,7 @@ function drawShape(a,b,h)
     }
     else if (selectedValue === "rectangle") 
     {
-        ctx.strokeRect(canvas.width/10, canvas.height/2, canvas.width/2-canvas.width/10, canvas.height/2-10);
+        ctx.strokeRect(canvas.width/2, canvas.height-factorHeight, a*density, -b*density);
     }
 }
 
