@@ -555,7 +555,7 @@ function figureInput(body)
     a.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value,64);
+        drawShape(select.value,a.value,b.value,h.value,64);
     }
     }
     figureInput.appendChild(aDiv);
@@ -573,7 +573,7 @@ function figureInput(body)
     b.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value,64);
+        drawShape(select.value,a.value,b.value,h.value,64);
     }
     }
     figureInput.appendChild(bDiv);
@@ -591,7 +591,7 @@ function figureInput(body)
     h.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value,64);
+        drawShape(select.value,a.value,b.value,h.value,64);
     }
     }
     figureInput.appendChild(hDiv);
@@ -743,7 +743,7 @@ function figureInput(body)
     }
     if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value,64);
+        drawShape(izabrano,a.value,b.value,h.value,64);
     }
     };
 }
@@ -882,6 +882,7 @@ async function drawModel(projectID)
                     normalData=[];
                     normaldir = -normaldir;
                     drawCone(f.a,f.h,range_vrednost,cam_height,base_height,cam_distance);
+                    drawShape("triangle",f.a,f.b,f.h,base_height*16);
                     base_height+=f.h;
                     break;
                 case "rectangle":
@@ -892,6 +893,7 @@ async function drawModel(projectID)
                     normalData=[];
                     normaldir = -normaldir;
                     drawCylinder(f.a,f.b,range_vrednost,cam_height,base_height,cam_distance);
+                    drawShape("rectangle",f.a,f.b,f.h,base_height*16);
                     base_height+=f.b;
                     vertexData=[];
                     colorData=[];
@@ -908,6 +910,7 @@ async function drawModel(projectID)
                     normalData=[];
                     normaldir = -normaldir;
                     drawTruncatedCone(f.a,f.b,f.h,range_vrednost,cam_height,base_height,cam_distance);
+                    drawShape("trapezoid",f.a,f.b,f.h,base_height*16);
                     base_height+=f.h;
                     vertexData=[];
                     colorData=[];
@@ -957,59 +960,60 @@ socket.on("figureAdded",body=>{
     drawModel(body.bodyID);
 });
 
-function drawShape(a,b,h,base2DHeight)
+function drawShape(type,a,b,h,base2DHeight)
 {
 
     var selectedValue = document.getElementById("shapes").value;
     var canvas = document.getElementById("poprecniPresek");
     var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#ffffff";
     ctx.strokeStyle = "#ffffff";
+    ctx.font = `${canvas.width/32}px Calibri`;
+    let offset = 4;
     let density = 16;
     let factorWidth = canvas.width / density;
     let factorHeight = canvas.height / density;
     
-    for (i = 0; i < density; i++)
-    {
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/density+factorWidth*i,canvas.height/density);
-        ctx.lineTo(canvas.width/density+factorWidth*i,(density-1)*canvas.height/density);
-        ctx.stroke();
-    }
+    // for (i = 0; i < density; i++)
+    // {
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/density+factorWidth*i,canvas.height/density);
+    //     ctx.lineTo(canvas.width/density+factorWidth*i,(density-1)*canvas.height/density);
+    //     ctx.stroke();
+    // }
 
-    for (i = 0; i < density-1; i++)
-    {
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/density,canvas.height/density+factorHeight*i);
-        ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factorHeight*i);
-        ctx.stroke();
-    }
+    // for (i = 0; i < density-1; i++)
+    // {
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/density,canvas.height/density+factorHeight*i);
+    //     ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factorHeight*i);
+    //     ctx.stroke();
+    // }
 
-    ctx.font = `${canvas.width/32}px Calibri`;
-    let offset = 4;
+    
 
-    //Y-osa
-    ctx.strokeStyle = "#00ff00";
-    ctx.beginPath();
-    ctx.moveTo(canvas.width/2, canvas.height / density);
-    ctx.lineTo(canvas.width/2, canvas.height-factorHeight);
-    ctx.stroke();
-    ctx.fillText("Y", canvas.width/2, canvas.height / density - offset);
+    // //Y-osa
+    // ctx.strokeStyle = "#00ff00";
+    // ctx.beginPath();
+    // ctx.moveTo(canvas.width/2, canvas.height / density);
+    // ctx.lineTo(canvas.width/2, canvas.height-factorHeight);
+    // ctx.stroke();
+    // ctx.fillText("Y", canvas.width/2, canvas.height / density - offset);
 
-    //X-osa
-    ctx.strokeStyle = "#ff0000";
-    ctx.beginPath();
-    ctx.moveTo(canvas.width/2, canvas.height-factorHeight);
-    ctx.lineTo(canvas.width-factorWidth, canvas.height-factorHeight);
-    ctx.stroke();
-    ctx.fillText("X", canvas.width-factorWidth + offset, canvas.height-factorHeight);
+    // //X-osa
+    // ctx.strokeStyle = "#ff0000";
+    // ctx.beginPath();
+    // ctx.moveTo(canvas.width/2, canvas.height-factorHeight);
+    // ctx.lineTo(canvas.width-factorWidth, canvas.height-factorHeight);
+    // ctx.stroke();
+    // ctx.fillText("X", canvas.width-factorWidth + offset, canvas.height-factorHeight);
 
     ctx.strokeStyle = "#0000ff";
 
-    if (selectedValue === "triangle") 
+    if (type === "triangle") 
     {
-        ctx.fillText(`a:${a} h:${h}`, canvas.width/20, canvas.height/20);
+        // ctx.fillText(`a:${a} h:${h}`, canvas.width/20, canvas.height/20);
 
         ctx.beginPath();
         ctx.moveTo(canvas.width/2, canvas.height - factorHeight - base2DHeight);
@@ -1026,13 +1030,13 @@ function drawShape(a,b,h,base2DHeight)
         ctx.lineTo(canvas.width/2, canvas.height - factorHeight - base2DHeight);
         ctx.stroke();
 
-        ctx.font = `${canvas.width/24}px Calibri`;
+        // ctx.font = `${canvas.width/24}px Calibri`;
         ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset - base2DHeight);
         ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2 - base2DHeight);
     }
-    else if (selectedValue === "trapezoid") 
+    else if (type === "trapezoid") 
     {
-        ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
+        // ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
         ctx.beginPath();
         ctx.moveTo(canvas.width/2, canvas.height-factorHeight - base2DHeight);
         ctx.lineTo(canvas.width/2+a*density, canvas.height-factorHeight - base2DHeight);
@@ -1040,16 +1044,16 @@ function drawShape(a,b,h,base2DHeight)
         ctx.lineTo(canvas.width/2, canvas.height-factorHeight-h*density - base2DHeight);
         ctx.closePath();
         ctx.stroke();
-        ctx.font = `${canvas.width/24}px Calibri`;
+        // ctx.font = `${canvas.width/24}px Calibri`;
         ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset - base2DHeight);
         ctx.fillText(b, canvas.width/2 + b*density/2, canvas.height - factorHeight - h*density + 4*offset - base2DHeight);
         ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2 - base2DHeight);
     }
-    else if (selectedValue === "rectangle") 
+    else if (type === "rectangle") 
     {
-        ctx.fillText(`a:${a} b:${b}`, canvas.width/20, canvas.height/20);
+        // ctx.fillText(`a:${a} b:${b}`, canvas.width/20, canvas.height/20);
         ctx.strokeRect(canvas.width/2, canvas.height - factorHeight - base2DHeight, a*density, -b*density );
-        ctx.font = `${canvas.width/24}px Calibri`;
+        // ctx.font = `${canvas.width/24}px Calibri`;
         ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset - base2DHeight);
         ctx.fillText(b, canvas.width/2 - 4*offset, canvas.height-factorHeight - b*density/2 - base2DHeight);
     }
