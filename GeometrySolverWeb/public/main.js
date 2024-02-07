@@ -228,9 +228,6 @@ function registerLoginForm()
 
 async function logOffAction()
 {
-    userID = "";
-    userName = "";
-
     if(bodyID!="")
     {
         let watcher = 
@@ -250,6 +247,8 @@ async function logOffAction()
             console.log(data);
             remove("registerLoginDiv","menuDiv");
             remove("figureInput","menuDiv");
+            userID = "";
+            userName = "";
             registerLoginForm();
         })
         .catch(error => {
@@ -287,6 +286,43 @@ function resetNotification()
     notification.style.backgroundColor = "rgb(90, 90, 95)";
     notification.innerHTML = "";
 }
+
+async function doSomething()
+{
+    let watcher = 
+    {
+        id: bodyID,
+        userID: userID
+    }
+    await fetch("/deleteWatcher", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(watcher),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        remove("registerLoginDiv","menuDiv");
+        remove("figureInput","menuDiv");
+        registerLoginForm();
+    })
+    .catch(error => {
+        console.error("Error registering user:", error);
+    });
+}
+
+function showADialog(e)
+{
+    var confirmationMessage = `uklonjen watcher`;
+    return confirmationMessage;
+}
+
+window.addEventListener("beforeunload", function (e) {
+    doSomething();
+    return showADialog(e);  
+});
 
 async function modelCreateAndSelect()
 {
