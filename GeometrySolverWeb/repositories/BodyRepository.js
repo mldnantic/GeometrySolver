@@ -74,18 +74,18 @@ class BodyRepository {
     }
   }
 
-
   async addFigure(id, figure) {
     try {
 
       const filter = {_id: id};
       const update = { $push: { figures: figure } };
-      //TODO increment length attribute by 1
+      await BodyModel.updateOne(filter,{$inc: {length:1}})
       const result = await BodyModel.updateOne(filter, update);
+      const duzina = await BodyModel.findById(id);
 
       if(result.modifiedCount === 1)
       {
-        return figure;
+        return duzina;
       }
       else
       {

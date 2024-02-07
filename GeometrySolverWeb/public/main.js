@@ -3,6 +3,7 @@ const socket = io();
 var userID = "";
 var userName = "";
 var bodyID = "";
+var length = 0;
 
 let host = document.body;
 
@@ -247,7 +248,8 @@ async function logOffAction()
         .then(data => {
             userID = "";
             userName = "";
-            bodyID="";
+            bodyID = "";
+            length = 0;
             remove("registerLoginDiv","menuDiv");
             remove("figureInput","menuDiv");
             registerLoginForm();
@@ -273,7 +275,9 @@ function OkNotification(message)
 //TODO
 function WarningNotification(message)
 {
-    
+    notification.style.backgroundColor = "rgb(180, 138, 32)";
+    notification.innerHTML = message;
+    setTimeout(resetNotification, 2000);
 }
 //TODO
 function ErrorNotification(message)
@@ -343,11 +347,6 @@ async function modelCreateAndSelect()
     selectModel.id = "bodiesDiv";
     tmp.appendChild(selectModel);
 
-    // let selectModel = document.createElement("select");
-    // selectModel.className = "bodiesDiv";
-    // selectModel.id = "bodySelect";
-    // menu.appendChild(selectModel);
-
     await fetch("/getAllBodies")
         .then(response => response.json())
         .then(data => {
@@ -358,6 +357,7 @@ async function modelCreateAndSelect()
                         bodyOption.onclick = async (ev) =>{
 
                             bodyID = item._id;
+                            length = item.length;
                             figureInput(bodyID);
                             drawModel(bodyID);
                             socket.emit("openbody", bodyID);
@@ -597,7 +597,6 @@ function figureInput(body)
     btnAddFigure.innerHTML = "Insert figure";
     btnAddFigure.onclick = async (ev) => {
 
-    
         let oblik = document.getElementById("shapes").value;
     
         if(oblik === "rectangle")
@@ -633,7 +632,7 @@ function figureInput(body)
 
         if(aa==0 || be==0 || ha==0)
         {
-            console.log("nepopunjene dimenzije");
+            WarningNotification("You have to input correct dimensions")
         }
         else
         {
@@ -645,7 +644,7 @@ function figureInput(body)
                 izvrnuta:inverted
             }
 
-            let body = {
+            let telo = {
                 a:aa,
                 b:be,
                 h:ha,
@@ -653,6 +652,7 @@ function figureInput(body)
                 izvrnuta:inverted,
                 bodyID:bodyID
             }
+
             await fetch(`/getWriteUser?id=${bodyID}`)
             .then(response=>response.json())
             .then(data=>{
@@ -664,22 +664,30 @@ function figureInput(body)
                 }
                 else
                 {
-                    fetch(`/addFigure?id=${bodyID}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(newFigure),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                            console.log(data);
-                            drawModel(bodyID);
-                            socket.emit("figureAdded",body);
+                    if(length==8)
+                    {
+                        WarningNotification("You can't add more than 8 figures to the body")
+                    }
+                    else
+                    {
+                        fetch(`/addFigure?id=${bodyID}`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(newFigure),
                         })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                                length = data.length;
+                                console.log(length);
+                                drawModel(bodyID);
+                                socket.emit("figureAdded",telo);
+                            })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
+                    }
                 }
             })
         }
@@ -801,8 +809,8 @@ async function drawModel(projectID)
                             //calculate cone surface and volume: P = aπ(a+s), s = sqrt(a*a+h*h)
                             P = f.a*Math.PI*(f.a+Math.sqrt(f.a*f.a+f.h*f.h));
                             V = (1/3)*(f.a*f.a*Math.PI*f.h);
-                            console.log(`Povrsina kupe je ${P}`);
-                            console.log(`Zapremina kupe je ${V}`);
+                            // console.log(`Povrsina kupe je ${P}`);
+                            // console.log(`Zapremina kupe je ${V}`);
                             break;
                         case "rectangle":
                             cam_height+=f.b;
@@ -810,8 +818,8 @@ async function drawModel(projectID)
                             //calculate cylinder surface and volume
                             P = 2*Math.PI*f.a*f.a+2*f.a*Math.PI*f.b;
                             V = f.a*f.a*Math.PI*f.b;
-                            console.log(`Povrsina valjka je ${P}`);
-                            console.log(`Zapremina valjka je ${V}`);
+                            // console.log(`Povrsina valjka je ${P}`);
+                            // console.log(`Zapremina valjka je ${V}`);
                             break;
                         case "trapezoid":
                             cam_height+=f.h;
@@ -826,8 +834,8 @@ async function drawModel(projectID)
                             //calculate surface and volume
                             P = Math.PI*(f.b*f.b+f.a*f.a+f.b*Math.sqrt((f.a-f.b)*(f.a-f.b)+f.h*f.h));
                             V = (1/3)*Math.PI*f.h*(f.b*f.b+f.a*f.b+f.a*f.a);
-                            console.log(`Povrsina zarubljene kupe je ${P}`);
-                            console.log(`Zapremina zarubljene kupe je ${V}`);
+                            // console.log(`Povrsina zarubljene kupe je ${P}`);
+                            // console.log(`Zapremina zarubljene kupe je ${V}`);
                             break;
                     }
                 })

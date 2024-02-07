@@ -180,7 +180,11 @@ app.put("/addFigure", async(req,res)=>{
   try{
     const bodyID = req.query.id;
     const fig = await BodyRepository.addFigure(bodyID,req.body);
-    res.json(req.body);
+    const duzina =
+    {
+      length: fig.length
+    }
+    res.json(duzina);
   }
   catch (error) {
     console.error('Error commenting:', error);
