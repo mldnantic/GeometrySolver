@@ -119,7 +119,6 @@ function remove(componentID)
     parent.removeChild(component);
 }
 
-//TODO
 function registerLoginForm()
 {
     let registerLoginDiv = document.createElement("div");
@@ -209,43 +208,7 @@ function registerLoginForm()
                         logoffBtn.innerHTML = "Log off";
                         document.getElementById("registerLoginDiv").appendChild(logoffBtn);
                         
-                        logoffBtn.onclick = async (ev)=>{
-
-                            if(bodyID!="")
-                            {
-                                let watcher = 
-                                {
-                                    id: bodyID,
-                                    userID: userID
-                                }
-                                await fetch("/deleteWatcher", {
-                                    method: "DELETE",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(watcher),
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log(data);
-                                    remove("registerLoginDiv","menuDiv");
-                                    remove("figureInput","menuDiv");
-                                    registerLoginForm();
-                                })
-                                .catch(error => {
-                                    console.error("Error registering user:", error);
-                                });
-                            }
-                            else
-                            {
-                                remove("registerLoginDiv","menuDiv");
-                                remove("bodiesSelect","menuDiv");
-                                remove("newProjectDiv","menuDiv");
-                                registerLoginForm();
-                            }
-                            
-                        }
-
+                        logoffBtn.onclick=(ev)=>logOffAction();
                     }
                     else
                     {
@@ -263,11 +226,43 @@ function registerLoginForm()
     registerLoginDiv.appendChild(divTmp);
 }
 
-function logOffAction()
+async function logOffAction()
 {
     userID = "";
     userName = "";
 
+    if(bodyID!="")
+    {
+        let watcher = 
+        {
+            id: bodyID,
+            userID: userID
+        }
+        await fetch("/deleteWatcher", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(watcher),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            remove("registerLoginDiv","menuDiv");
+            remove("figureInput","menuDiv");
+            registerLoginForm();
+        })
+        .catch(error => {
+            console.error("Error registering user:", error);
+        });
+    }
+    else
+    {
+        remove("registerLoginDiv","menuDiv");
+        remove("bodiesSelect","menuDiv");
+        remove("newProjectDiv","menuDiv");
+        registerLoginForm();
+    }
 }
 
 //TODO
