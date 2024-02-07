@@ -525,7 +525,6 @@ function figureInput(body)
     figureInput.appendChild(select);
     figureInput.appendChild(label);
     
-    
     var option1 = document.createElement("option");
     option1.value = "triangle";
     option1.textContent = "Triangle";
@@ -553,7 +552,12 @@ function figureInput(body)
     a.placeholder = "cm";
     a.type = "number";
     aDiv.appendChild(a);
-    
+    a.onchange=(ev)=>{
+        if(document.getElementById("poprecniPresek"))
+    {
+        drawShape(a.value,b.value,h.value);
+    }
+    }
     figureInput.appendChild(aDiv);
     
     var bDiv = document.createElement("div");
@@ -566,6 +570,12 @@ function figureInput(body)
     b.placeholder = "cm";
     b.type = "number";
     bDiv.appendChild(b);
+    b.onchange=(ev)=>{
+        if(document.getElementById("poprecniPresek"))
+    {
+        drawShape(a.value,b.value,h.value);
+    }
+    }
     figureInput.appendChild(bDiv);
     
     var hDiv = document.createElement("div");
@@ -578,6 +588,12 @@ function figureInput(body)
     h.placeholder = "cm";
     h.type = "number";
     hDiv.appendChild(h);
+    h.onchange=(ev)=>{
+        if(document.getElementById("poprecniPresek"))
+    {
+        drawShape(a.value,b.value,h.value);
+    }
+    }
     figureInput.appendChild(hDiv);
 
     let divTmp = document.createElement("div");
@@ -1035,6 +1051,10 @@ function drawShape(a,b,h)
         ctx.lineTo(canvas.width/2, canvas.height-factorHeight-h*density);
         ctx.closePath();
         ctx.stroke();
+        ctx.font = `${canvas.width/24}px Calibri`;
+        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset);
+        ctx.fillText(b, canvas.width/2 + b*density/2, canvas.height - factorHeight - h*density + 4*offset);
+        ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2);
     }
     else if (selectedValue === "rectangle") 
     {
