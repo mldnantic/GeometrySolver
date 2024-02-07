@@ -46,8 +46,8 @@ function canvasResize()
 
 }
 //ovo treba da se racuna na svaki resize web browser-a
-let height = canvas.offsetHeight/2;
-let width = canvas.offsetWidth/2;
+let height = canvas.offsetHeight;
+let width = canvas.offsetWidth;
 canvas.width = width;
 canvas.height = height;
 console.log(`Rezolucija prikaza je ${canvas.width}x${canvas.height}`)
@@ -111,6 +111,14 @@ function redraw(componentID,componentClassName)
 
     return component;
 }
+
+function remove(componentID)
+{
+    let component = document.getElementById(componentID);
+    let parent = component.parentNode;
+    parent.removeChild(component);
+}
+
 //TODO
 function registerLoginForm()
 {
@@ -220,8 +228,8 @@ function registerLoginForm()
                                 .then(response => response.json())
                                 .then(data => {
                                     console.log(data);
-                                    redraw("registerLoginDiv","menuDiv");
-                                    redraw("figureInput","menuDiv");
+                                    remove("registerLoginDiv","menuDiv");
+                                    remove("figureInput","menuDiv");
                                     registerLoginForm();
                                 })
                                 .catch(error => {
@@ -230,9 +238,9 @@ function registerLoginForm()
                             }
                             else
                             {
-                                redraw("registerLoginDiv","menuDiv");
-                                redraw("bodiesSelect","menuDiv");
-                                redraw("newProjectDiv","menuDiv");
+                                remove("registerLoginDiv","menuDiv");
+                                remove("bodiesSelect","menuDiv");
+                                remove("newProjectDiv","menuDiv");
                                 registerLoginForm();
                             }
                             
@@ -336,8 +344,8 @@ async function modelCreateAndSelect()
                             })
                             .then(response => response.json())
                             .then(data => {
-                                    redraw("bodiesSelect","menuDiv");
-                                    redraw("newProjectDiv","menuDiv");
+                                    remove("bodiesSelect","menuDiv");
+                                    remove("newProjectDiv","menuDiv");
                                 })
                             .catch(error => {
                                 console.error('Error fetching data:', error);
@@ -408,8 +416,8 @@ async function modelCreateAndSelect()
                     console.error('Error fetching data:', error);
                 });
 
-                redraw("bodiesSelect","menuDiv");
-                redraw("newProjectDiv","menuDiv");
+                remove("bodiesSelect","menuDiv");
+                remove("newProjectDiv","menuDiv");
                 
                 if(document.getElementById("figureInput")==null)
                 {
@@ -447,8 +455,8 @@ async function modelCreateAndSelect()
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            redraw("bodiesSelect","menuDiv");
-            redraw("newProjectDiv","menuDiv");
+            remove("bodiesSelect","menuDiv");
+            remove("newProjectDiv","menuDiv");
         })
         .catch(error => {
             console.error("Error registering user:", error);
