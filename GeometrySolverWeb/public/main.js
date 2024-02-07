@@ -202,11 +202,11 @@ function registerLoginForm()
                         notification.style.backgroundColor = "rgb(20, 150, 20)";
                         notification.innerHTML = `Welcome ${userName}`;
                         setTimeout(resetNotification, 2000);
-                        modelCreateAndSelect();
                         redraw("registerLoginDiv","menuDiv");
                         let logoffBtn = document.createElement("button");
                         logoffBtn.innerHTML = "Log off";
                         document.getElementById("registerLoginDiv").appendChild(logoffBtn);
+                        modelCreateAndSelect();
                         
                         logoffBtn.onclick=(ev)=>logOffAction();
                     }
@@ -287,7 +287,7 @@ function resetNotification()
     notification.innerHTML = "";
 }
 
-async function doSomething()
+async function removeWatcher()
 {
     let watcher = 
     {
@@ -320,7 +320,7 @@ function showADialog(e)
 }
 
 window.addEventListener("beforeunload", function (e) {
-    doSomething();
+    removeWatcher();
     return showADialog(e);  
 });
 
@@ -467,6 +467,14 @@ async function modelCreateAndSelect()
         }
     };
     tmp.appendChild(createBodyBtn);
+}
+
+function figureInput(bodyID)
+{
+    let figureInput = document.createElement("div");
+    figureInput.className = "menuDiv";
+    figureInput.id="figureInput";
+    menu.appendChild(figureInput);
 
     let deleteBodyBtn = document.createElement("button");
     deleteBodyBtn.innerHTML="Delete project";
@@ -486,22 +494,15 @@ async function modelCreateAndSelect()
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            remove("bodiesSelect","menuDiv");
-            remove("newProjectDiv","menuDiv");
+            remove("figureInput","menuDiv");
+            // remove("registerLoginDiv","menuDiv");
+            modelCreateAndSelect();
         })
         .catch(error => {
             console.error("Error registering user:", error);
         });
     }
-    tmp.appendChild(deleteBodyBtn);
-}
-
-function figureInput(bodyID)
-{
-    let figureInput = document.createElement("div");
-    figureInput.className = "menuDiv";
-    figureInput.id="figureInput";
-    menu.appendChild(figureInput);
+    figureInput.appendChild(deleteBodyBtn);
     
     var label = document.createElement("label");
     label.setAttribute("for", "shapes");
