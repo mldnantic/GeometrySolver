@@ -1000,57 +1000,49 @@ function drawShape(a,b,h)
     ctx.stroke();
     ctx.fillText("X", canvas.width-factorWidth + offset, canvas.height-factorHeight);
 
-    ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
-    ctx.strokeStyle = "#ff00ff";
+    ctx.strokeStyle = "#0000ff";
+
     if (selectedValue === "triangle") 
     {
-        // ctx.beginPath();
-        // ctx.moveTo(10, 190);
-        // ctx.lineTo(10, 10);
-        // ctx.lineTo(290, 190);
-        // ctx.closePath();
-        // ctx.stroke();
-
+        ctx.fillText(`a:${a} h:${h}`, canvas.width/20, canvas.height/20);
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width/10,canvas.height-10);
-        ctx.lineTo(canvas.width/2,canvas.height-10);
+        ctx.moveTo(canvas.width/2, canvas.height - factorHeight);
+        ctx.lineTo(canvas.width/2 + a*density, canvas.height - factorHeight);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width/10,canvas.height-10);
-        ctx.lineTo(canvas.width/10,3*canvas.height/4);
+        ctx.moveTo(canvas.width/2 + a*density, canvas.height - factorHeight);
+        ctx.lineTo(canvas.width/2, canvas.height-factorHeight - h*density);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width/10,3*canvas.height/4);
-        ctx.lineTo(canvas.width/10,canvas.height/2);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/10,canvas.height/2);
-        ctx.lineTo(canvas.width/2,canvas.height-10);
+        ctx.moveTo(canvas.width/2, canvas.height - factorHeight - h*density);
+        ctx.lineTo(canvas.width/2, canvas.height - factorHeight);
         ctx.stroke();
 
         ctx.font = `${canvas.width/24}px Calibri`;
-        ctx.fillText("2.38", canvas.width/4, canvas.height-10-offset);
-        ctx.fillText("10.44", canvas.width/10+offset, (canvas.height-canvas.height/4));
-        ctx.fillText("10.71", canvas.width/3+offset, (canvas.height-canvas.height/4));
-    
+        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset);
+        ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2);
     }
     else if (selectedValue === "trapezoid") 
     {
+        ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
         ctx.beginPath();
-        ctx.moveTo(canvas.width/10, canvas.height-10);
-        ctx.lineTo(canvas.width/2, canvas.height-10);
-        ctx.lineTo(canvas.width/4, canvas.height/2);
-        ctx.lineTo(canvas.width/10, canvas.height/2);
+        ctx.moveTo(canvas.width/2, canvas.height-factorHeight);
+        ctx.lineTo(canvas.width/2+a*density, canvas.height-factorHeight);
+        ctx.lineTo(canvas.width/2+b*density, canvas.height-factorHeight-h*density);
+        ctx.lineTo(canvas.width/2, canvas.height-factorHeight-h*density);
         ctx.closePath();
         ctx.stroke();
     }
     else if (selectedValue === "rectangle") 
     {
+        ctx.fillText(`a:${a} b:${b}`, canvas.width/20, canvas.height/20);
         ctx.strokeRect(canvas.width/2, canvas.height-factorHeight, a*density, -b*density);
+        ctx.font = `${canvas.width/24}px Calibri`;
+        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset);
+        ctx.fillText(b, canvas.width/2 - 4*offset, canvas.height-factorHeight - b*density/2);
     }
 }
 
