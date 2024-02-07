@@ -91,11 +91,14 @@ textarea
     background-color: rgb(32, 32, 32);
     display: flex;
     min-width: 20%;
+    /* min-width: 221px;
+    height: 387px; */
     flex-flow:row wrap;
     flex:1 0;
     justify-content:flex-start;
     margin-left: 2px;
     margin-right: 2px;
+    object-fit:contain;
 }
 
 .menuDiv{

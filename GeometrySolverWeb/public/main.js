@@ -30,11 +30,29 @@ let canvas = document.createElement("canvas");
 canvas.id = "platno3D";
 glavniDiv.appendChild(canvas);
 
+function drawPoprecni()
+{
+    let poprecni = document.createElement("canvas");
+    poprecni.className="poprecniPresek";
+    poprecni.id="poprecniPresek";
+    glavniDiv.appendChild(poprecni);
+
+    let height = poprecni.offsetHeight;
+    let width = poprecni.offsetWidth;
+    poprecni.width = width;
+    poprecni.height = height;
+    console.log(`Rezolucija prikaza je ${poprecni.width}x${poprecni.height}`);
+}
+drawPoprecni();
+
+
 var menu = document.createElement("div");
 menu.className="menuDiv";
 menu.id="menuDiv";
 glavniDiv.appendChild(menu);
 registerLoginForm();
+
+
 //TODO
 function menuDiv()
 {
@@ -51,7 +69,7 @@ let height = canvas.offsetHeight;
 let width = canvas.offsetWidth;
 canvas.width = width;
 canvas.height = height;
-console.log(`Rezolucija prikaza je ${canvas.width}x${canvas.height}`)
+console.log(`Rezolucija prikaza je ${canvas.width}x${canvas.height}`);
 
 canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
@@ -89,14 +107,7 @@ var normalData = [
     //normalizovan vektor za svaku stranu 3D modela
 ];
 
-function drawPoprecni()
-{
-    let poprecni = document.createElement("canvas");
-    poprecni.className="poprecniPresek";
-    poprecni.id="poprecniPresek";
-    glavniDiv.appendChild(poprecni);
-}
-// drawPoprecni();
+
 
 //brisemo postojecu komponentu i pravimo prazan div
 function redraw(componentID,componentClassName)
@@ -715,7 +726,7 @@ function figureInput(body)
     }
     if(document.getElementById("poprecniPresek"))
     {
-        drawShape();
+        drawShape(a,b,h);
     }
     };
 }
@@ -929,83 +940,111 @@ socket.on("figureAdded",body=>{
     drawModel(body.bodyID);
 });
 
-function drawShape()
+function drawShape(a,b,h)
 {
-    var selectedValue = document.getElementById("shapes").value;
+    // var selectedValue = document.getElementById("shapes").value;
 
-    var canvas = document.getElementById("poprecniPresek");
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#ffffff";
+    // var canvas = document.getElementById("poprecniPresek");
+    // var ctx = canvas.getContext("2d");
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = "#ffffff";
+    // ctx.strokeStyle = "#ffffff";
     
-    let density = 10;
-    let factor = canvas.width/density;
+    // let density = 16;
+    // let factor = canvas.width/density;
     
-    for (i = 0; i <= density; i++)
+    // for (i = 0; i <= density; i++)
+    // {
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/density,canvas.height/density+factor*i);
+    //     ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factor*i);
+    //     ctx.stroke();
+
+    //     ctx.beginPath();
+    //     ctx.moveTo(canvas.width/density+factor*i,canvas.height/density);
+    //     ctx.lineTo(canvas.width/density+factor*i,(density-1)*canvas.height/density);
+    //     ctx.stroke();
+    // }
+
+
+
+        var selectedValue = document.getElementById("shapes").value;
+    
+        var canvas = document.getElementById("poprecniPresek");
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#ffffff";
+    
+        let density = 16;
+        let factor = canvas.width / density;
+    
+        for (i = 0; i <= density; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / density + factor * i);
+            ctx.lineTo(canvas.width, canvas.height / density + factor * i);
+            ctx.stroke();
+    
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / density + factor * i, 0);
+            ctx.lineTo(canvas.width / density + factor * i, canvas.height);
+            ctx.stroke();
+        }
+    
+    ctx.font = `${canvas.width/64}px Calibri`;
+    ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
+
+    if (selectedValue === "triangle") 
+    {
+        // ctx.beginPath();
+        // ctx.moveTo(10, 190);
+        // ctx.lineTo(10, 10);
+        // ctx.lineTo(290, 190);
+        // ctx.closePath();
+        // ctx.stroke();
+
+        let offset = 4;
+
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,canvas.height-10);
+        ctx.lineTo(canvas.width/2,canvas.height-10);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,canvas.height-10);
+        ctx.lineTo(canvas.width/10,3*canvas.height/4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,3*canvas.height/4);
+        ctx.lineTo(canvas.width/10,canvas.height/2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/10,canvas.height/2);
+        ctx.lineTo(canvas.width/2,canvas.height-10);
+        ctx.stroke();
+
+        ctx.font = `${canvas.width/24}px Calibri`;
+        ctx.fillText("2.38", canvas.width/4, canvas.height-10-offset);
+        ctx.fillText("10.44", canvas.width/10+offset, (canvas.height-canvas.height/4));
+        ctx.fillText("10.71", canvas.width/3+offset, (canvas.height-canvas.height/4));
+    
+    }
+    else if (selectedValue === "trapezoid") 
     {
         ctx.beginPath();
-        ctx.moveTo(canvas.width/density,canvas.height/density+factor*i);
-        ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factor*i);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/density+factor*i,canvas.height/density);
-        ctx.lineTo(canvas.width/density+factor*i,(density-1)*canvas.height/density);
+        ctx.moveTo(canvas.width/10, canvas.height-10);
+        ctx.lineTo(canvas.width/2, canvas.height-10);
+        ctx.lineTo(canvas.width/4, canvas.height/2);
+        ctx.lineTo(canvas.width/10, canvas.height/2);
+        ctx.closePath();
         ctx.stroke();
     }
-
-    // if (selectedValue === "triangle") 
-    // {
-    //     // ctx.beginPath();
-    //     // ctx.moveTo(10, 190);
-    //     // ctx.lineTo(10, 10);
-    //     // ctx.lineTo(290, 190);
-    //     // ctx.closePath();
-    //     // ctx.stroke();
-
-    //     let offset = 4;
-
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/10,canvas.height-10);
-    //     ctx.lineTo(canvas.width/2,canvas.height-10);
-    //     ctx.stroke();
-
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/10,canvas.height-10);
-    //     ctx.lineTo(canvas.width/10,3*canvas.height/4);
-    //     ctx.stroke();
-
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/10,3*canvas.height/4);
-    //     ctx.lineTo(canvas.width/10,canvas.height/2);
-    //     ctx.stroke();
-
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/10,canvas.height/2);
-    //     ctx.lineTo(canvas.width/2,canvas.height-10);
-    //     ctx.stroke();
-
-    //     ctx.font = `${canvas.width/24}px Calibri`;
-    //     ctx.fillText("2.38", canvas.width/4, canvas.height-10-offset);
-    //     ctx.fillText("10.44", canvas.width/10+offset, (canvas.height-canvas.height/4));
-    //     ctx.fillText("10.71", canvas.width/3+offset, (canvas.height-canvas.height/4));
-    
-    // }
-    // else if (selectedValue === "trapezoid") 
-    // {
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/10, canvas.height-10);
-    //     ctx.lineTo(canvas.width/2, canvas.height-10);
-    //     ctx.lineTo(canvas.width/4, canvas.height/2);
-    //     ctx.lineTo(canvas.width/10, canvas.height/2);
-    //     ctx.closePath();
-    //     ctx.stroke();
-    // }
-    // else if (selectedValue === "rectangle") 
-    // {
-    //     ctx.strokeRect(canvas.width/10, canvas.height/2, canvas.width/2-canvas.width/10, canvas.height/2-10);
-    // }
+    else if (selectedValue === "rectangle") 
+    {
+        ctx.strokeRect(canvas.width/10, canvas.height/2, canvas.width/2-canvas.width/10, canvas.height/2-10);
+    }
 }
 
 // function changeShape() {
