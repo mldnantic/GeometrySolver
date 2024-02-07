@@ -555,7 +555,7 @@ function figureInput(body)
     a.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value);
+        drawShape(a.value,b.value,h.value,64);
     }
     }
     figureInput.appendChild(aDiv);
@@ -573,7 +573,7 @@ function figureInput(body)
     b.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value);
+        drawShape(a.value,b.value,h.value,64);
     }
     }
     figureInput.appendChild(bDiv);
@@ -591,7 +591,7 @@ function figureInput(body)
     h.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value);
+        drawShape(a.value,b.value,h.value,64);
     }
     }
     figureInput.appendChild(hDiv);
@@ -743,7 +743,7 @@ function figureInput(body)
     }
     if(document.getElementById("poprecniPresek"))
     {
-        drawShape(a.value,b.value,h.value);
+        drawShape(a.value,b.value,h.value,64);
     }
     };
 }
@@ -957,21 +957,10 @@ socket.on("figureAdded",body=>{
     drawModel(body.bodyID);
 });
 
-function drawShape(a,b,h)
+function drawShape(a,b,h,base2DHeight)
 {
-    // var selectedValue = document.getElementById("shapes").value;
-
-    // var canvas = document.getElementById("poprecniPresek");
-    // var ctx = canvas.getContext("2d");
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // ctx.fillStyle = "#ffffff";
-    // ctx.strokeStyle = "#ffffff";
-    
-    // let density = 16;
-    // let factor = canvas.width/density;
 
     var selectedValue = document.getElementById("shapes").value;
-    
     var canvas = document.getElementById("poprecniPresek");
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1023,46 +1012,46 @@ function drawShape(a,b,h)
         ctx.fillText(`a:${a} h:${h}`, canvas.width/20, canvas.height/20);
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width/2, canvas.height - factorHeight);
-        ctx.lineTo(canvas.width/2 + a*density, canvas.height - factorHeight);
+        ctx.moveTo(canvas.width/2, canvas.height - factorHeight - base2DHeight);
+        ctx.lineTo(canvas.width/2 + a*density, canvas.height - factorHeight - base2DHeight);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width/2 + a*density, canvas.height - factorHeight);
-        ctx.lineTo(canvas.width/2, canvas.height-factorHeight - h*density);
+        ctx.moveTo(canvas.width/2 + a*density, canvas.height - factorHeight - base2DHeight);
+        ctx.lineTo(canvas.width/2, canvas.height-factorHeight - h*density - base2DHeight);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width/2, canvas.height - factorHeight - h*density);
-        ctx.lineTo(canvas.width/2, canvas.height - factorHeight);
+        ctx.moveTo(canvas.width/2, canvas.height - factorHeight - h*density - base2DHeight);
+        ctx.lineTo(canvas.width/2, canvas.height - factorHeight - base2DHeight);
         ctx.stroke();
 
         ctx.font = `${canvas.width/24}px Calibri`;
-        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset);
-        ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2);
+        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset - base2DHeight);
+        ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2 - base2DHeight);
     }
     else if (selectedValue === "trapezoid") 
     {
         ctx.fillText(`a:${a} b:${b} h:${h}`, canvas.width/20, canvas.height/20);
         ctx.beginPath();
-        ctx.moveTo(canvas.width/2, canvas.height-factorHeight);
-        ctx.lineTo(canvas.width/2+a*density, canvas.height-factorHeight);
-        ctx.lineTo(canvas.width/2+b*density, canvas.height-factorHeight-h*density);
-        ctx.lineTo(canvas.width/2, canvas.height-factorHeight-h*density);
+        ctx.moveTo(canvas.width/2, canvas.height-factorHeight - base2DHeight);
+        ctx.lineTo(canvas.width/2+a*density, canvas.height-factorHeight - base2DHeight);
+        ctx.lineTo(canvas.width/2+b*density, canvas.height-factorHeight-h*density - base2DHeight);
+        ctx.lineTo(canvas.width/2, canvas.height-factorHeight-h*density - base2DHeight);
         ctx.closePath();
         ctx.stroke();
         ctx.font = `${canvas.width/24}px Calibri`;
-        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset);
-        ctx.fillText(b, canvas.width/2 + b*density/2, canvas.height - factorHeight - h*density + 4*offset);
-        ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2);
+        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset - base2DHeight);
+        ctx.fillText(b, canvas.width/2 + b*density/2, canvas.height - factorHeight - h*density + 4*offset - base2DHeight);
+        ctx.fillText(h, canvas.width/2 - 4*offset, canvas.height-factorHeight - h*density/2 - base2DHeight);
     }
     else if (selectedValue === "rectangle") 
     {
         ctx.fillText(`a:${a} b:${b}`, canvas.width/20, canvas.height/20);
-        ctx.strokeRect(canvas.width/2, canvas.height-factorHeight, a*density, -b*density);
+        ctx.strokeRect(canvas.width/2, canvas.height - factorHeight - base2DHeight, a*density, -b*density );
         ctx.font = `${canvas.width/24}px Calibri`;
-        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset);
-        ctx.fillText(b, canvas.width/2 - 4*offset, canvas.height-factorHeight - b*density/2);
+        ctx.fillText(a, canvas.width/2 + a*density/2, canvas.height - factorHeight + 4*offset - base2DHeight);
+        ctx.fillText(b, canvas.width/2 - 4*offset, canvas.height-factorHeight - b*density/2 - base2DHeight);
     }
 }
 
