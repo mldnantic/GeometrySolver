@@ -13,7 +13,7 @@ notificationsDiv.id="notificationsDiv";
 host.appendChild(notificationsDiv);
 
 let naziv = document.createElement("h1");
-naziv.innerHTML="GeometrySolver";
+naziv.innerHTML=/*window.devicePixelRatio;*/"GeometrySolver";
 notificationsDiv.appendChild(naziv);
 
 let notification = document.createElement("div");
@@ -1499,7 +1499,7 @@ function webgl(glDrawMode,animacija,height,distance,cullDirection)
 
     mat4.perspective(projectionMatrix,
         75*Math.PI/180,
-        canvas.width/canvas.height,
+        canvas.clientWidth/canvas.clientHeight,
         1e-4,
         1e2);
 
