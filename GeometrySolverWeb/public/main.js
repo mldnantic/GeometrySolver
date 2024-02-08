@@ -124,7 +124,6 @@ if(!gl)
 {
     throw new Error("WEBGL NOT SUPPORTED");
 }
-// alert("Dobrodosli u GeometrySolver :D");
 
 //unloadovanje struktura za matrice jer drugacije ne radi
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
@@ -152,8 +151,6 @@ var colorData = [
 var normalData = [
     //normalizovan vektor za svaku stranu 3D modela
 ];
-
-
 
 //brisemo postojecu komponentu i pravimo prazan div
 function redraw(componentID,componentClassName)
@@ -1113,79 +1110,69 @@ function drawShape(type,a,b,h,base2DHeight)
     }
 }
 
-// function changeShape() {
-//     var selectedShape = document.getElementById("shape").value;
-    
-//     document.getElementById("triangle").style.display = "none";
-//     document.getElementById("trapezoid").style.display = "none";
-//     document.getElementById("rectangle").style.display = "none";
-
-//     document.getElementById(selectedShape).style.display = "block";
-// }
-
 function modelColor()
 {
     return [0.6,0.6,0.6];
 }
-
-// function drawGrid(rotating)
-// {
-//     vertexData= [
-//         //koordinatne ose
-//         1.0, 0.0, 0.0,
-//         0.0, 0.0, 0.0,
-//         0.0, 1.0, 0.0,
-//         0.0, 0.0, 0.0,
-//         0.0, 0.0, 1.0,
-//         0.0, 0.0, 0.0
-//     ];
+//treba da se preprave parametri za webgl poziv
+function drawGrid(rotating)
+{
+    vertexData= [
+        //koordinatne ose
+        1.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0
+    ];
     
-//     colorData = [
-//         //boje x,y,z ose
-//         1.0, 0.0, 0.0,
-//         1.0, 0.0, 0.0,
-//         0.0, 1.0, 0.0,
-//         0.0, 1.0, 0.0,
-//         0.0, 0.0, 1.0,
-//         0.0, 0.0, 1.0,
-//     ];
+    colorData = [
+        //boje x,y,z ose
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+    ];
 
-//     normalData = [
-//         //vektor normale
-//         0.0,1.0,0.0,
-//         0.0,1.0,0.0,
-//         0.0,1.0,0.0,
-//         0.0,1.0,0.0,
-//         0.0,1.0,0.0,
-//         0.0,1.0,0.0,
-//     ];
+    normalData = [
+        //vektor normale
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+        0.0,1.0,0.0,
+    ];
 
-//     let density = 8;
-//     let size = 4.0;
-//     let factor = size/density;
+    let density = 8;
+    let size = 4.0;
+    let factor = size/density;
     
-//     for (i = 0; i <= density*2; i++)
-//         {
-//             gridVertex1 = [size,-0.01,-size+factor*i];
-//             gridVertex2 = [-size,-0.01,-size+factor*i];
-//             vertexData.push(...gridVertex1);
-//             vertexData.push(...gridVertex2);
-//             gridColor = [0.6,0.6,0.6];
-//             colorData.push(...gridColor);
-//             colorData.push(...gridColor);
-//             normalData.push(...[0.0,1.0,0.0]);
-//             normalData.push(...[0.0,1.0,0.0]);
-//             gridVertex3 = [size-factor*i,-0.01,size];
-//             gridVertex4 = [size-factor*i,-0.01,-size];
-//             vertexData.push(...gridVertex3);
-//             vertexData.push(...gridVertex4);
-//             colorData.push(...gridColor);
-//             colorData.push(...gridColor);
-//             normalData.push(...[0.0,1.0,0.0]);
-//             normalData.push(...[0.0,1.0,0.0]);
-//         }
-//     webgl(gl.LINES,rotating);
-// }
+    for (i = 0; i <= density*2; i++)
+        {
+            gridVertex1 = [size,-0.01,-size+factor*i];
+            gridVertex2 = [-size,-0.01,-size+factor*i];
+            vertexData.push(...gridVertex1);
+            vertexData.push(...gridVertex2);
+            gridColor = [0.6,0.6,0.6];
+            colorData.push(...gridColor);
+            colorData.push(...gridColor);
+            normalData.push(...[0.0,1.0,0.0]);
+            normalData.push(...[0.0,1.0,0.0]);
+            gridVertex3 = [size-factor*i,-0.01,size];
+            gridVertex4 = [size-factor*i,-0.01,-size];
+            vertexData.push(...gridVertex3);
+            vertexData.push(...gridVertex4);
+            colorData.push(...gridColor);
+            colorData.push(...gridColor);
+            normalData.push(...[0.0,1.0,0.0]);
+            normalData.push(...[0.0,1.0,0.0]);
+        }
+    webgl(gl.LINES,rotating);
+}
 // drawGrid(true);
 
 function drawCircle(dense,r,normalDir,camheight,height,cam_distance,cullDir)
