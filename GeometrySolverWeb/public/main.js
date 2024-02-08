@@ -152,7 +152,6 @@ var normalData = [
     //normalizovan vektor za svaku stranu 3D modela
 ];
 
-//brisemo postojecu komponentu i pravimo prazan div
 function redraw(componentID,componentClassName)
 {
     let component = document.getElementById(componentID);
@@ -303,6 +302,7 @@ async function logOffAction()
             remove("userInteraction");
             clearPoprecni();
             registerLoginForm();
+            drawGrid(false);
         })
         .catch(error => {
             console.error("Error registering user:", error);
@@ -552,6 +552,7 @@ function figureInput(body)
             remove("figureInput");
             remove("userInteraction");
             modelCreateAndSelect();
+            drawGrid(false);
             clearPoprecni();
         })
         .catch(error => {
@@ -1112,7 +1113,7 @@ function modelColor()
 {
     return [0.6,0.6,0.6];
 }
-//treba da se preprave parametri za webgl poziv
+
 function drawGrid(rotating)
 {
     vertexData= [
@@ -1169,9 +1170,9 @@ function drawGrid(rotating)
             normalData.push(...[0.0,1.0,0.0]);
             normalData.push(...[0.0,1.0,0.0]);
         }
-    webgl(gl.LINES,rotating);
+    webgl(gl.LINES,rotating,1.0,1.0,gl.BACK);
 }
-// drawGrid(true);
+drawGrid(false);
 
 function drawCircle(dense,r,normalDir,camheight,height,cam_distance,cullDir)
 {
