@@ -1030,40 +1030,6 @@ function drawShape(type,a,b,h,base2DHeight)
     let density = 16;
     let factorWidth = canvas.width / density;
     let factorHeight = canvas.height / density;
-    
-    // for (i = 0; i < density; i++)
-    // {
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/density+factorWidth*i,canvas.height/density);
-    //     ctx.lineTo(canvas.width/density+factorWidth*i,(density-1)*canvas.height/density);
-    //     ctx.stroke();
-    // }
-
-    // for (i = 0; i < density-1; i++)
-    // {
-    //     ctx.beginPath();
-    //     ctx.moveTo(canvas.width/density,canvas.height/density+factorHeight*i);
-    //     ctx.lineTo((density-1)*canvas.width/density,canvas.height/density+factorHeight*i);
-    //     ctx.stroke();
-    // }
-
-    
-
-    // //Y-osa
-    // ctx.strokeStyle = "#00ff00";
-    // ctx.beginPath();
-    // ctx.moveTo(canvas.width/2, canvas.height / density);
-    // ctx.lineTo(canvas.width/2, canvas.height-factorHeight);
-    // ctx.stroke();
-    // ctx.fillText("Y", canvas.width/2, canvas.height / density - offset);
-
-    // //X-osa
-    // ctx.strokeStyle = "#ff0000";
-    // ctx.beginPath();
-    // ctx.moveTo(canvas.width/2, canvas.height-factorHeight);
-    // ctx.lineTo(canvas.width-factorWidth, canvas.height-factorHeight);
-    // ctx.stroke();
-    // ctx.fillText("X", canvas.width-factorWidth + offset, canvas.height-factorHeight);
 
     ctx.strokeStyle = "#ffff00";
 
@@ -1411,4 +1377,3 @@ function drawTruncatedCone(a,b,h,dense,cam_height,base_height,cam_distance)
         webgl(gl.TRIANGLE_STRIP,false,cam_height,cam_distance,gl.BACK);
     }
 }
-
