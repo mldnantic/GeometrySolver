@@ -310,6 +310,7 @@ async function logOffAction()
             remove("registerLoginDiv","menuDiv");
             remove("figureInput","menuDiv");
             remove("userInteraction","menuDiv");
+            clearPoprecni();
             registerLoginForm();
         })
         .catch(error => {
