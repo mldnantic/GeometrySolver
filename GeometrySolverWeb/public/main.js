@@ -298,9 +298,9 @@ async function logOffAction()
             userName = "";
             bodyID = "";
             length = 0;
-            remove("registerLoginDiv","menuDiv");
-            remove("figureInput","menuDiv");
-            remove("userInteraction","menuDiv");
+            remove("registerLoginDiv");
+            remove("figureInput");
+            remove("userInteraction");
             clearPoprecni();
             registerLoginForm();
         })
@@ -310,9 +310,9 @@ async function logOffAction()
     }
     else
     {
-        remove("registerLoginDiv","menuDiv");
-        remove("bodiesSelect","menuDiv");
-        remove("newProjectDiv","menuDiv");
+        remove("registerLoginDiv");
+        remove("bodiesSelect");
+        remove("newProjectDiv");
         registerLoginForm();
     }
 }
@@ -429,8 +429,8 @@ async function modelCreateAndSelect()
                             })
                             .then(response => response.json())
                             .then(data => {
-                                    remove("bodiesSelect","menuDiv");
-                                    remove("newProjectDiv","menuDiv");
+                                    remove("bodiesSelect");
+                                    remove("newProjectDiv");
                                 })
                             .catch(error => {
                                 console.error('Error fetching data:', error);
@@ -501,8 +501,8 @@ async function modelCreateAndSelect()
                     console.error('Error fetching data:', error);
                 });
 
-                remove("bodiesSelect","menuDiv");
-                remove("newProjectDiv","menuDiv");
+                remove("bodiesSelect");
+                remove("newProjectDiv");
                 
                 if(document.getElementById("figureInput")==null)
                 {
@@ -549,8 +549,8 @@ function figureInput(body)
         .then(data => {
             console.log(data);
             bodyID="";
-            remove("figureInput","menuDiv");
-            remove("userInteraction","menuDiv");
+            remove("figureInput");
+            remove("userInteraction");
             modelCreateAndSelect();
             clearPoprecni();
         })
