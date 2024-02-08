@@ -120,8 +120,6 @@ console.log(`Rezolucija prikaza je ${canvas.width}x${canvas.height}`);
 canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
 
-clearWebGL();
-
 if(!gl)
 {
     throw new Error("WEBGL NOT SUPPORTED");
@@ -153,6 +151,24 @@ var colorData = [
 var normalData = [
     //normalizovan vektor za svaku stranu 3D modela
 ];
+
+
+socket.on("message", message =>{
+    let notification = document.getElementById("notification");
+    notification.style.backgroundColor = "rgb(20, 150, 20)";
+    notification.innerHTML = message;
+    setTimeout(resetNotification,2000);
+});
+
+socket.on("comment",comment=>{
+    let listaKomentara = document.getElementById("commentList");
+    listaKomentara.value+=comment+"\n\n";
+    listaKomentara.scrollTop = listaKomentara.scrollHeight;
+});
+
+socket.on("figureAdded",body=>{
+    drawModel(body.bodyID);
+});
 
 function redraw(componentID,componentClassName)
 {
@@ -302,10 +318,9 @@ async function logOffAction()
             remove("registerLoginDiv");
             remove("figureInput");
             remove("userInteraction");
-            clearWebGL();
             clearPoprecni();
             registerLoginForm();
-            drawGrid(false);
+            // drawGrid(false);
         })
         .catch(error => {
             console.error("Error registering user:", error);
@@ -556,9 +571,8 @@ function figureInput(body)
             remove("figureInput");
             remove("userInteraction");
             modelCreateAndSelect();
-            clearWebGL();
             clearPoprecni();
-            drawGrid(false);
+            // drawGrid(false);
         })
         .catch(error => {
             console.error("Error registering user:", error);
@@ -922,10 +936,10 @@ async function drawModel(projectID)
                 })
 
             clearPoprecni();
-            clearWebGL();
 
             cam_height = cam_height/2;
             cam_distance = cam_distance/2;
+            
             data.figures.forEach(f=>{
             vertexData=[];
             colorData=[];
@@ -1000,23 +1014,6 @@ async function drawModel(projectID)
             console.error('Error fetching data:', error);
         });
 }
-
-socket.on("message", message =>{
-    let notification = document.getElementById("notification");
-    notification.style.backgroundColor = "rgb(20, 150, 20)";
-    notification.innerHTML = message;
-    setTimeout(resetNotification,2000);
-});
-
-socket.on("comment",comment=>{
-    let listaKomentara = document.getElementById("commentList");
-    listaKomentara.value+=comment+"\n\n";
-    listaKomentara.scrollTop = listaKomentara.scrollHeight;
-});
-
-socket.on("figureAdded",body=>{
-    drawModel(body.bodyID);
-});
 
 function drawShape(type,a,b,h,base2DHeight)
 {
@@ -1144,7 +1141,7 @@ function drawGrid(rotating)
         }
     webgl(gl.LINES,rotating,1.0,1.0,gl.BACK);
 }
-drawGrid(false);
+// drawGrid(false);
 
 function drawCircle(dense,r,normalDir,camheight,height,cam_distance,cullDir)
 {

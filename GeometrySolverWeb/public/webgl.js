@@ -109,13 +109,6 @@ function webgl(glDrawMode,animacija,height,distance,cullDirection)
 
     function animate() {
 
-        // if(height==camheight)
-        // {
-        //     gl.clearColor(0.612, 0.929, 1.0, 1.0);
-        //     gl.clear(gl.COLOR_BUFFER_BIT);
-        // }
-
-
         mat4.rotateY(modelMatrix, modelMatrix, Math.PI/200);
         mat4.multiply(mvMatrix,viewMatrix,modelMatrix);
         mat4.multiply(mvpMatrix,projectionMatrix,mvMatrix);
@@ -133,7 +126,8 @@ function webgl(glDrawMode,animacija,height,distance,cullDirection)
     // mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2);
     if(!animacija)
     {
-        // if(height==camheight)
+        //pravi probleme
+        // if(clearBuffer)
         // {
         //     gl.clearColor(0.612, 0.929, 1.0, 1.0);
         //     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -154,10 +148,4 @@ function webgl(glDrawMode,animacija,height,distance,cullDirection)
     {
         animate();
     }
-}
-
-function clearWebGL()
-{
-    gl.clearColor(0.612, 0.929, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
 }
