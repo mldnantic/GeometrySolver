@@ -90,6 +90,7 @@ function clearPoprecni()
     ctx.stroke();
     ctx.fillText("X", platno2D.width-factorWidth + offset, platno2D.height-factorHeight);
 }
+clearPoprecni();
 
 var menu = document.createElement("div");
 menu.className="menuDiv";
@@ -308,6 +309,7 @@ async function logOffAction()
             length = 0;
             remove("registerLoginDiv","menuDiv");
             remove("figureInput","menuDiv");
+            remove("userInteraction","menuDiv");
             registerLoginForm();
         })
         .catch(error => {
@@ -324,19 +326,19 @@ async function logOffAction()
 }
 
 //TODO
-function OkNotification(message)
+function okNotification(message)
 {
 
 }
-//TODO
-function WarningNotification(message)
+
+function warningNotification(message)
 {
     notification.style.backgroundColor = "rgb(180, 138, 32)";
     notification.innerHTML = message;
     setTimeout(resetNotification, 2000);
 }
 //TODO
-function ErrorNotification(message)
+function errorNotification(message)
 {
     
 }
@@ -553,7 +555,9 @@ function figureInput(body)
             console.log(data);
             bodyID="";
             remove("figureInput","menuDiv");
+            remove("userInteraction","menuDiv");
             modelCreateAndSelect();
+            clearPoprecni();
         })
         .catch(error => {
             console.error("Error registering user:", error);
@@ -615,6 +619,7 @@ function figureInput(body)
     b.id = "bInput";
     b.placeholder = "cm";
     b.type = "number";
+    b.disabled = true;
     bDiv.appendChild(b);
     b.onchange=(ev)=>{
         if(document.getElementById("poprecniPresek"))
@@ -708,7 +713,7 @@ function figureInput(body)
 
         if(aa==0 || be==0 || ha==0)
         {
-            WarningNotification("You have to input correct dimensions")
+            warningNotification("You have to input correct dimensions");
         }
         else
         {
@@ -734,15 +739,13 @@ function figureInput(body)
             .then(data=>{
                 if(data.userID != userID)
                 {
-                    notification.style.backgroundColor = "rgb(180, 138, 32)";
-                    notification.innerHTML = "You don't have write privileges";
-                    setTimeout(resetNotification,2000);
+                    warningNotification("You don't have write privileges");
                 }
                 else
                 {
                     if(length==8)
                     {
-                        WarningNotification("You can't add more than 8 figures to the body")
+                        warningNotification("You can't add more than 8 figures to the body");
                     }
                     else
                     {
