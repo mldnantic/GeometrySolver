@@ -224,9 +224,7 @@ function registerLoginForm()
                         })
                         .then(response => response.json())
                         .then(data => {
-                            notification.style.backgroundColor = "rgb(20, 150, 20)";
-                            notification.innerHTML = `Account ${newUser.username} registered successfully`;
-                            setTimeout(resetNotification, 2000);
+                            okNotification(`Account ${newUser.username} registered successfully`);
                         })
                         .catch(error => {
                             console.error("Error registering user:", error);
@@ -254,9 +252,7 @@ function registerLoginForm()
                     {
                         userID = data._id;
                         userName = data.username;
-                        notification.style.backgroundColor = "rgb(20, 150, 20)";
-                        notification.innerHTML = `Welcome ${userName}`;
-                        setTimeout(resetNotification, 2000);
+                        okNotification(`Welcome ${userName}`);
                         redraw("registerLoginDiv","menuDiv");
                         let logoffBtn = document.createElement("button");
                         logoffBtn.innerHTML = "Log off";
@@ -267,9 +263,7 @@ function registerLoginForm()
                     }
                     else
                     {
-                        notification.style.backgroundColor = "rgb(192, 64, 64)";
-                        notification.innerHTML = `Account with username ${usernameInput.value} doesn't exist`;
-                        setTimeout(resetNotification, 2000);
+                        errorNotification(`Account with username ${usernameInput.value} doesn't exist`);
                     }
                 })
                 .catch(error => {
@@ -323,10 +317,11 @@ async function logOffAction()
     }
 }
 
-//TODO
 function okNotification(message)
 {
-
+    notification.style.backgroundColor = "rgb(20, 150, 20)";
+    notification.innerHTML = message;
+    setTimeout(resetNotification, 2000);
 }
 
 function warningNotification(message)
@@ -335,10 +330,12 @@ function warningNotification(message)
     notification.innerHTML = message;
     setTimeout(resetNotification, 2000);
 }
-//TODO
+
 function errorNotification(message)
 {
-    
+    notification.style.backgroundColor = "rgb(192, 64, 64)";
+    notification.innerHTML = message;
+    setTimeout(resetNotification, 2000);
 }
 
 function resetNotification()
