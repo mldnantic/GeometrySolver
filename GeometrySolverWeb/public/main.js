@@ -926,7 +926,8 @@ async function drawModel(projectID)
             switch(f.tip)
             {
                 case "triangle":
-                    drawCircle(range_vrednost,f.a,-1.0,cam_height,base_height,cam_distance,gl.FRONT);
+                    //glitchuje kad se dodiruje sa omotacem bilo cega, treba drawTruncatedCone sa prosledjenim h=0.0
+                    // drawCircle(range_vrednost,f.a,-1.0,cam_height,base_height,cam_distance,gl.FRONT);
                     vertexData=[];
                     colorData=[];
                     normalData=[];

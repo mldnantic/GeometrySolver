@@ -1,7 +1,6 @@
 body
 {
-    /* background-color: black; */
-    background-color: white;
+    background-color: black;
     font-family: "Century Gothic";
     /* font-size: large; */
 }
@@ -21,15 +20,13 @@ canvas
     justify-content:flex-start;
     /* align-self: center; */
     background-color: rgb(105,105,105);
-    margin: 4px;
-    margin-right: 2px;
     object-fit: contain;
 }
 
 .notificationsDiv
 {
     margin: 5%;
-    margin-bottom: 0%;
+    margin-bottom: 4px;
 }
 
 .notification
@@ -81,8 +78,10 @@ textarea
     outline: none !important;
     flex:1 0;
     overflow-y: scroll;
-    background-color: rgb(44, 44, 48);
+    background-color: rgb(32, 32, 32);
     border: 0px;
+    border-radius: 5px;
+    margin: 5px;
     resize: none;
 }
 
@@ -94,8 +93,6 @@ textarea
     flex-flow:row wrap;
     flex:1 0;
     justify-content:flex-start;
-    margin-left: 2px;
-    margin-right: 2px;
     object-fit:contain;
 }
 
@@ -105,8 +102,6 @@ textarea
     flex-flow: column wrap;
     justify-content: space-evenly;
     background-color: darkgray;
-    margin: 4px;
-    margin-left: 2px;
 }
 
 .bodiesDiv
@@ -177,12 +172,11 @@ button
 {
     display: flex;
     flex-direction: column-reverse;
-    height: 15em;
-    background-color: rgb(44, 44, 48);
-    padding: 5px;
-    border: 4px solid white;
+    height: 11em;
+    background-color: rgb(90, 90, 95);
+    border-radius: 5px;
     margin: 5%;
-    margin-top: 0%;
+    margin-top: 4px;
     margin-bottom: 0%;
 }
 
