@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "Century Gothic";
+    src: url('CenturyGothic.ttf');
+}
+
 body
 {
     background-color: black;
@@ -5,9 +10,21 @@ body
     /* font-size: large; */
 }
 
-@font-face {
-    font-family: "Century Gothic";
-    src: url('CenturyGothic.ttf');
+
+h1
+{
+    flex:3 0;
+    background-color: rgb(90, 90, 95);
+    color:gainsboro;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    margin: 0%;
+    user-select: none;
+}
+
+div
+{
+    display: flex;
 }
 
 canvas
@@ -21,6 +38,52 @@ canvas
     /* align-self: center; */
     background-color: rgb(105,105,105);
     object-fit: contain;
+}
+
+textarea
+{
+    color: gainsboro;
+    outline: none !important;
+    flex:1 0;
+    overflow-y: scroll;
+    background-color: rgb(32, 32, 32);
+    border: 0px;
+    border-radius: 5px;
+    margin: 5px;
+    resize: none;
+}
+
+label
+{
+    color: black;   
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px;
+    user-select: none;
+}
+
+select
+{
+    font-family: "Century Gothic";
+    margin: 5px;
+}
+
+input
+{
+    width: 90%;
+    align-self: center;
+    border-radius: 5px;
+    border:1px solid rgb(90, 90, 95);
+}
+
+button
+{
+    width: 90%;
+    align-self: center;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius:5px;
+    font-family: "Century Gothic";
 }
 
 .notificationsDiv
@@ -46,22 +109,6 @@ canvas
     user-select: none;
 }
 
-h1
-{
-    flex:3 0;
-    background-color: rgb(90, 90, 95);
-    color:gainsboro;
-    padding: 10px;
-    border-top-left-radius: 10px;
-    margin: 0%;
-    user-select: none;
-}
-
-div
-{
-    display: flex;
-}
-
 .glavniDiv
 {
     display: flex;
@@ -70,19 +117,6 @@ div
     margin: 5%;
     margin-top: 0%;
     margin-bottom: 0%;
-}
-
-textarea
-{
-    color: gainsboro;
-    outline: none !important;
-    flex:1 0;
-    overflow-y: scroll;
-    background-color: rgb(32, 32, 32);
-    border: 0px;
-    border-radius: 5px;
-    margin: 5px;
-    resize: none;
 }
 
 .poprecniPresek
@@ -96,7 +130,8 @@ textarea
     object-fit:contain;
 }
 
-.menuDiv{
+.menuDiv
+{
     display:flex;
     flex:1 0;
     flex-flow: column wrap;
@@ -132,40 +167,9 @@ textarea
     border-radius: 5px;
 }
 
-label
-{
-    color: black;   
-    padding: 5px;
-    border-radius: 5px;
-    margin: 5px;
-    user-select: none;
-}
-
-select
-{
-    font-family: "Century Gothic";
-    margin: 5px;
-}
-
-input
-{
-    width: 90%;
-    align-self: center;
-    border-radius: 5px;
-    border:1px solid rgb(90, 90, 95);
-}
 .stiklirano
 {
     width:auto;
-}
-button
-{
-    width: 90%;
-    align-self: center;
-    margin: 5px;
-    border: 1px solid black;
-    border-radius:5px;
-    font-family: "Century Gothic";
 }
 
 .userInteraction
