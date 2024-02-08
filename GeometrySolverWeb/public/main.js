@@ -4,6 +4,8 @@ var userID = "";
 var userName = "";
 var bodyID = "";
 var length = 0;
+let Sum_P = 0;
+let Sum_V = 0;
 
 let host = document.body;
 
@@ -675,6 +677,24 @@ function figureInput(body)
     izvrnutaCheck.type = "checkbox";
     divTmp.appendChild(izvrnutaCheck);
 
+    let povrsinaDiv = document.createElement("div");
+    let povrsinaLbl = document.createElement("label");
+    povrsinaLbl.innerHTML = "P: ";
+    povrsinaDiv.appendChild(povrsinaLbl);
+    let povrsinaPrikaz = document.createElement("div");
+    povrsinaPrikaz.id = "povrsina-prikaz";
+    povrsinaDiv.appendChild(povrsinaPrikaz);
+    divTmp.appendChild(povrsinaDiv);
+
+    let zapreminaDiv = document.createElement("div");
+    let zapreminaLbl = document.createElement("label");
+    zapreminaLbl.innerHTML = "V: ";
+    zapreminaDiv.appendChild(zapreminaLbl);
+    let zapreminaPrikaz = document.createElement("div");
+    zapreminaPrikaz.id = "zapremina-prikaz";
+    zapreminaDiv.appendChild(zapreminaPrikaz);
+    divTmp.appendChild(zapreminaDiv);
+
     figureInput.appendChild(divTmp);
     
     var aa,be,ha;
@@ -904,6 +924,8 @@ async function drawModel(projectID)
                             //calculate cone surface and volume: P = aπ(a+s), s = sqrt(a*a+h*h)
                             P = f.a*Math.PI*(f.a+Math.sqrt(f.a*f.a+f.h*f.h));
                             V = (1/3)*(f.a*f.a*Math.PI*f.h);
+                            Sum_P+=P;
+                            Sum_V+=V;
                             // console.log(`Povrsina kupe je ${P}`);
                             // console.log(`Zapremina kupe je ${V}`);
                             break;
@@ -913,6 +935,8 @@ async function drawModel(projectID)
                             //calculate cylinder surface and volume
                             P = 2*Math.PI*f.a*f.a+2*f.a*Math.PI*f.b;
                             V = f.a*f.a*Math.PI*f.b;
+                            Sum_P+=P;
+                            Sum_V+=V;
                             // console.log(`Povrsina valjka je ${P}`);
                             // console.log(`Zapremina valjka je ${V}`);
                             break;
@@ -929,11 +953,19 @@ async function drawModel(projectID)
                             //calculate surface and volume
                             P = Math.PI*(f.b*f.b+f.a*f.a+f.b*Math.sqrt((f.a-f.b)*(f.a-f.b)+f.h*f.h));
                             V = (1/3)*Math.PI*f.h*(f.b*f.b+f.a*f.b+f.a*f.a);
+                            Sum_P+=P;
+                            Sum_V+=V;
                             // console.log(`Povrsina zarubljene kupe je ${P}`);
                             // console.log(`Zapremina zarubljene kupe je ${V}`);
                             break;
                     }
                 })
+
+            let prikaz_P = document.getElementById("povrsina-prikaz");
+            prikaz_P.innerHTML = Sum_P.toFixed(2);
+    
+            let prikaz_V = document.getElementById("zapremina-prikaz");
+            prikaz_V.innerHTML = Sum_V.toFixed(2);
 
             clearPoprecni();
 
