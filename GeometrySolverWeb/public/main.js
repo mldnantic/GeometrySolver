@@ -120,6 +120,8 @@ console.log(`Rezolucija prikaza je ${canvas.width}x${canvas.height}`);
 canvas = document.querySelector("canvas");
 const gl = canvas.getContext('webgl');
 
+clearWebGL();
+
 if(!gl)
 {
     throw new Error("WEBGL NOT SUPPORTED");
@@ -300,6 +302,7 @@ async function logOffAction()
             remove("registerLoginDiv");
             remove("figureInput");
             remove("userInteraction");
+            clearWebGL();
             clearPoprecni();
             registerLoginForm();
             drawGrid(false);
@@ -549,11 +552,13 @@ function figureInput(body)
         .then(data => {
             console.log(data);
             bodyID="";
+            length=0;
             remove("figureInput");
             remove("userInteraction");
             modelCreateAndSelect();
-            drawGrid(false);
+            clearWebGL();
             clearPoprecni();
+            drawGrid(false);
         })
         .catch(error => {
             console.error("Error registering user:", error);
@@ -917,6 +922,7 @@ async function drawModel(projectID)
                 })
 
             clearPoprecni();
+            clearWebGL();
 
             cam_height = cam_height/2;
             cam_distance = cam_distance/2;
